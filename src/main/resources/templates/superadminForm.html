@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Quantitées Initiales</title>
+</head>
+
+<div layout:fragment="page_content" class="main-content">
+    <section class="section">
+        <div class="section-header">
+            <h1>Correction de Quantitées Initiales</h1>
+            <div class="section-header-button">
+                <a th:href="@{/superadmin/corection-stock-station}" class="btn btn-primary">Correction Qte Init Station</a>
+            </div>
+
+            <div class="section-header-button">
+                <a th:href="@{/superadmin/correction-stock-gestoci}" class="btn btn-primary">Correction Qte Init Gestoci</a>
+            </div>
+
+            <div class="section-header-button">
+                <a th:href="@{/superadmin/correction-prixPompe}" class="btn btn-primary">Correction prix pompe</a>
+            </div>
+
+            <div class="section-header-button">
+                <a th:href="@{/superadmin/correction/indexe/affichage}" class="btn btn-primary">Parametrage Indexe-cuve</a>
+            </div>
+
+
+            <div class="section-header-breadcrumb">
+                <div class="breadcrumb-item active"><a th:href="@{/}">Accueil</a></div>
+                <div class="breadcrumb-item"><a th:href="@{/admin/home}">Administration</a></div>
+                <div class="breadcrumb-item">Corrections</div>
+            </div>
+
+        </div>
+        <div class="section-body">
+            <h2 class="section-title">Correction des quantités Initiales</h2>
+            <p class="section-lead">
+                Vous pouvez gérer toutes vos Corrections de Quantités Initiales
+            </p>
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4>Corrections Quantités Initiales</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="clearfix mb-3"></div>
+<!--                            <img  class="img-fluid" th:src="@{/img/stock.jpg}" style="margin-left: 15%; height: 500px; 1100px"></img>-->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</div>
+
+</html>

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Utilisateurs</title>
+</head>
+
+<div layout:fragment="page_content" class="main-content">
+    <section class="section">
+        <div class="section-header">
+            <div class="section-header-back">
+                <a th:href="@{/admin/users}" class="btn btn-icon"><i class="fas fa-arrow-left"></i></a>
+            </div>
+            <h1>Créer Nouveau Utilisateur</h1>
+            <div class="section-header-breadcrumb">
+                <div class="breadcrumb-item active"><a th:href="@{/}">Accueil</a></div>
+                <div class="breadcrumb-item"><a th:href="@{/admin/home}">Administration</a></div>
+                <div class="breadcrumb-item">Utilisateurs</div>
+            </div>
+        </div>
+
+        <div class="section-body">
+            <h2 class="section-title">Créer Nouveau Utilisateur</h2>
+            <p class="section-lead">
+                Sur cette page vous pouvez créer une nouveau utilisateur.
+            </p>
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4>Créer votre utilisateur</h4>
+                        </div>
+                        <div class="card-body">
+                            <form th:action="@{/admin/newuser}" th:object="${user}" method="post">
+                                <div class="form-group row mb-4">
+                                    <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Matricule</label>
+                                    <div class="col-sm-12 col-md-7">
+                                        <input type="text" class="form-control" th:field="*{login}" autocomplete="off">
+                                    </div>
+                                </div>
+                                <div class="form-group row mb-4">
+                                    <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Nom Complet</label>
+                                    <div class="col-sm-12 col-md-7">
+                                        <input name="username" type="text" class="form-control" th:field="*{username}" autocomplete="off">
+                                    </div>
+                                </div>
+
+                                <div class="form-group row mb-4">
+                                    <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Email</label>
+                                    <div class="col-sm-12 col-md-7">
+                                        <input type="text" name="email" class="form-control"  th:field="*{email}" >
+                                    </div>
+                                </div>
+                                <div class="form-group row mb-4">
+                                    <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Contact</label>
+                                    <div class="col-sm-12 col-md-7">
+                                        <input type="text" name="contact" class="form-control"  th:field="*{contact}" >
+                                    </div>
+                                </div>
+                                <div class="form-group row mb-4" hidden>
+                                    <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Mot de passe</label>
+                                    <div class="col-sm-12 col-md-7">
+                                        <input type="password" name="password" class="form-control"  th:field="*{password}" value="123456" >
+                                    </div>
+                                </div>
+                                <div class="form-group row mb-4">
+                                    <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Roles</label>
+                                    <div class="col-sm-12 col-md-7">
+                                        <select name="roles" class="select2"  th:field="*{roles}" multiple>
+                                            <option th:each="role : ${roles}"
+                                                    th:value="${role.id}"
+                                                    th:text="${role.name}">
+                                            </option>
+                                        </select>
+
+                                        <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Station</label>
+                                        <select name="agence" class="select2" th:field="*{stations}">
+                                            <option th:each="s : ${station}"
+                                                    th:value="${s.id}"
+                                                    th:text="${s.nom}">
+                                            </option>
+                                        </select>
+                                    </div>
+
+
+                                </div>
+                                <div class="form-group row mb-4">
+                                    <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">
+                                        Statut
+                                    </label>
+                                    <div class="col-sm-12 col-md-7">
+                                        <div class="custom-checkbox custom-control">
+                                            <div class="col-sm-10">
+                                                <label class="btn btn-success active">
+                                                    <input type="radio" name="active" id="option1" th:field="*{statut}"  value="on"> Actif
+                                                </label>
+                                                <label class="btn btn-danger">
+                                                    <input type="radio" name="active" id="option2" checked="true" th:field="*{statut}" value="off"> Désactivé
+                                                </label>
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="form-group row mb-4">
+                                    <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3"></label>
+                                    <div class="col-sm-12 col-md-7">
+                                        <button type="submit" class="btn btn-primary">Valider</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+</html>

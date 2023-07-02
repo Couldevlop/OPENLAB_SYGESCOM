@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Quantitées Initiales</title>
+</head>
+
+<div layout:fragment="page_content" class="main-content">
+    <section class="section">
+        <div class="section-header">
+            <h1>Quantitées Initiales</h1>
+            <div class="section-header-button">
+                <a th:href="@{/parametrages/Stations}" class="btn btn-primary">Parametrage Qte Init Station</a>
+            </div>
+
+            <div class="section-header-button">
+                <a th:href="@{/parametrages/Gestoci}" class="btn btn-primary">Parametrage Qte Init Gestoci</a>
+            </div>
+
+            <div class="section-header-button">
+                <a th:href="@{/parametrages/prixPompe}" class="btn btn-primary">Parametrage prix pompe</a>
+            </div>
+
+            <div class="section-header-button">
+                <a th:href="@{/parametrages/newindexes1}" class="btn btn-primary">Parametrage Indexe-cuve</a>
+            </div>
+
+
+            <div class="section-header-breadcrumb">
+                <div class="breadcrumb-item active"><a th:href="@{/}">Accueil</a></div>
+                <div class="breadcrumb-item"><a th:href="@{/admin/home}">Administration</a></div>
+                <div class="breadcrumb-item">Quantités</div>
+            </div>
+
+        </div>
+        <div class="section-body">
+            <h2 class="section-title">Quantités Initiales</h2>
+            <p class="section-lead">
+                Vous pouvez gérer toutes vos Quantités Initiales
+            </p>
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4>Liste des Quantités Initiales</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="clearfix mb-3"></div>
+                            <!--<div class="table-responsive">
+                                <table class="table table-striped" id="table-2">
+                                    <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Stations</th>
+                                        <th>qte ini gaz</th>
+                                        <th>qte ini essence</th>
+                                        <th>Action</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="zone : ${zones}">
+                                        <td th:text="${zone.nom}" class="align-middle">0001</td>
+                                        <td th:text="${zone.createBy}" class="align-middle"></td>
+
+                                        <td>
+                                            <a th:href="@{'/admin/zone-details/' + ${zone.id}}"
+                                               class="btn btn-info" onclick="return confirm('Etes-vous sur de vouloir modifier ?');">Voir
+                                            </a>
+                                            <a th:href="@{'/admin/zone/' + ${zone.id} + '/delete'}"
+                                               class="btn btn-danger" onclick="return confirm('Etes-vous sur de vouloir supprimer?');">Supprimer
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>-->
+                            <img  class="img-fluid" th:src="@{/img/stock.jpg}" style="margin-left: 15%; height: 500px; 1100px"></img>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</div>
+
+</html>

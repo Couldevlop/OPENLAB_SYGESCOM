@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+
+      layout:decorate="~{layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Bon de livraison</title>
+</head>
+
+<div layout:fragment="page_content" class="main-content">
+    <section class="section">
+        <div class="section-header">
+            <div class="section-header-back">
+                <a th:href="@{/home}" class="btn btn-icon"><i class="fas fa-arrow-left"></i></a>
+            </div>
+            <h1>Bon de livraison</h1>
+            <div class="section-header-button"  sec:authorize="hasAnyRole('ADMIN','SUPERVISEUR')" >
+                <button  type="button" class="btn btn-primary"
+                         data-toggle="modal" data-target="#modalbl">
+                    Nouveau
+                </button>
+            </div>
+            <div  class="section-header-button"  sec:authorize="hasRole('GERANT')" >
+                <a th:href="@{/gerant/blValiderParHierachie}" class="btn btn-primary">BL Validé Par Hierachie</a>&nbsp;
+                <a th:href="@{/gerant/blAccepteGerant}" class="btn btn-primary">BL Acceptés</a>
+            </div>
+            <div class="section-header-breadcrumb">
+                <div class="breadcrumb-item active"><a th:href="@{/}">Accueil</a></div>
+                <div class="breadcrumb-item"><a th:href="@{/admin/home}">Administration</a></div>
+                <div class="breadcrumb-item">Bon de Livraison</div>
+            </div>
+
+        </div>
+        <div class="section-body">
+            <h2 class="section-title">Bon de livraison</h2>
+            <p class="section-lead">
+                Vous pouvez gérer tous vos Bon de livraison
+            </p>
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4>Liste des Bons de livraison</h4>
+                        </div>
+                        <div class="card-body">
+                            <div th:if="${message}" th:text="${message}" class="alert alert-danger"></div>
+                            <div class="clearfix mb-3"></div>
+                            <div class="table-responsive">
+                                <table sec:authorize="hasRole('GERANT')" class="table table-striped" id="table-2">
+                                    <thead>
+                                    <tr>
+                                        <th>N° BL</th>
+                                        <th>Date</th>
+                                        <th>Station</th>
+                                        <th>RefEssence</th>
+                                        <th>Qte Essence</th>
+                                        <th>RefGazoil</th>
+                                        <th>Qte Gazoil</th>
+                                        <!--                                        <th>Prestataire</th>-->
+                                        <th>Chauffeur</th>
+                                        <th>Fichier</th>
+                                        <th>Action</th>
+
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="b : ${bonlivraison}">
+                                        <td th:text="${b.numBL}" class="align-middle">Mohamed Traore</td>
+                                        <td th:text="${b.dateBL}" class="align-middle"></td>
+                                        <td  th:text="${b.stations.nom}" class="align-middle"></td>
+                                        <td  th:text="${b.refEs}" class="align-middle"></td>
+                                        <td  th:text="${b.qteEs}" class="align-middle"></td>
+                                        <td  th:text="${b.refGaz}" class="align-middle"></td>
+                                        <td  th:text="${b.qteGaz}" class="align-middle"></td>
+                                        <!--                                        <td  th:text="${b.prestataire.nom}" class="align-middle"></td>-->
+                                        <td  th:text="${b.prestataire.nomChauffeur}" class="align-middle"></td>
+                                        <td th:if="${b.doc.id}"><a th:href="@{'/gerant/downloadFile/'+${b.doc.id}}" class="badge badge-primary">Download</a></td>
+                                        <td>
+                                            <a th:href="@{'/gerant/bl/' + ${b.id}}"
+                                               class="btn btn-info" onclick="return confirm('Etes-vous sur de confirmer ce bon de livraison?');">Valider
+                                            </a>
+                                            <a th:href="@{'/gerant/bl/' + ${b.id} + '/rejeter'}"
+                                               class="btn btn-danger" onclick="return confirm('Etes-vous sur de vouloir envoyer ce BL pour validation au superieur Hiérachique?');">Validation Hierachique
+                                            </a>
+                                        </td>
+
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</div>
+
+</html>

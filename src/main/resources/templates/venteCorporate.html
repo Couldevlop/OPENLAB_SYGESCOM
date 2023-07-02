@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layout}">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Vente au Corporate</title>
+    <script type="text/javascript" th:src="@{js/main.js}"
+            src="../static/assets/js/main.js"></script>
+    <script type="text/javascript">
+
+    </script>
+
+
+</head>
+
+<div layout:fragment="page_content" class="main-content">
+    <section class="section">
+        <div class="section-header">
+            <h1>Vente au Corporate</h1>
+            <div class="section-header-button">
+                <!--<button type="button" class="btn btn-primary" th:href="@{/gerant/searchcorporate}">
+                    Recherche de client Corporate
+                </button>
+                <button type="button" class="btn btn-primary"
+                        data-toggle="modal" data-target="#modalKeepself">
+                    Recherche un Corporate
+                </button>-->
+                <button type="button" class="btn btn-primary"
+                        data-toggle="modal" data-target="#modalKeepself">
+                    Nouveau
+                </button>
+            </div>
+            <div class="section-header-breadcrumb">
+                <div class="breadcrumb-item active"><a th:href="@{/}">Accueil</a></div>
+                <div class="breadcrumb-item"><a th:href="@{/admin/home}">Administration</a></div>
+                <div class="breadcrumb-item">Vente Au Corporate</div>
+            </div>
+
+        </div>
+
+        <div class="section-body">
+            <h2 class="section-title">Vente</h2>
+            <p class="section-lead">
+                Vous pouvez voir tous vos ventes au corporate
+            </p>
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4>Liste des Ventes au Corporate avec remise</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="clearfix mb-3"></div>
+                            <div class="table-responsive">
+                                <table class="table table-striped" id="table-2">
+                                    <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Litrage Essence</th>
+                                        <th>Pu Essence</th>
+                                        <th>Mnt Remise</th>
+                                        <th>Mnt Totat Essence</th>
+                                        <th>Litrage Gazoil</th>
+                                        <th>Pu Gazoil</th>
+                                        <th>Mnt Remise</th>
+                                        <th>Mnt Totat Gazoil</th>
+                                        <th>Montant Payé</th>
+                                    </tr>
+                                    </thead>
+                                    <tr th:each="lc :${listCopr}">
+                                        <td th:text="${lc.getDateEng()}" class="align-middle"></td>
+                                        <td th:text="${lc.litrageEssence}" class="align-middle"></td>
+                                        <td th:text="${lc.puE}" class="align-middle"></td>
+                                        <td th:text="${lc.mntEssenceRemise}" class="align-middle"></td>
+                                        <td th:text="${lc.mntglobalEssence}" class="align-middle"></td>
+                                        <td  th:text="${lc.litrageGazoil}" class="align-middle"></td>
+                                        <td th:text="${lc.puG}" class="align-middle"></td>
+                                        <td th:text="${lc.mntGazoilRemise}" class="align-middle"></td>
+                                        <td th:text="${lc.mntglobaGazoil}" class="align-middle"></td>
+                                        <td th:text="${lc.mntTotal}" class="align-middle"></td>
+
+                                        <!--<td>
+                                            <a th:href="@{'/gerant/ventes/' + ${v.id}}"
+                                               class="btn btn-info" onclick="return confirm('Etes-vous sur de vouloir modifier?');">Voir
+                                            </a>
+                                            <a th:href="@{'/gerant/ventes/' + ${v.id} + '/delete'}"
+                                               class="btn btn-danger" onclick="return confirm('Etes-vous sur de vouloir supprimer?');">Supprimer
+                                            </a>
+                                        </td>-->
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+    <div class="modal fade"  id="modalKeepself" tabindex="-1" role="dialog"
+         aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg"style="width: 1300px; height: 500px" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" style="margin: auto" id="exampleModalLabel">Fenètre d'enégistrement d'une venteau client corporate</h5>
+
+                </div>
+                <div class="myForm">
+                    <form th:action="@{/gerant/saveVenteCorporate}" method="post"  >
+                        <div class="modal-body">
+                          <input type="hidden" name="idClient" th:value="${clientCpt.id}">
+                            <div class="row">
+                                <div class="col-12 col-md-12 col-lg-12 ">
+                                    <div class="card">
+                                        <div class="card-body" style="margin: auto">
+                                            <div class=" row">
+                                                <div class=" col-md-4">
+                                                    <div class="form-group">
+                                                        <label>Litrage Essence</label>
+                                                        <input type="text" for="id" name="litrageEssence" required
+                                                               class="form-control"
+                                                               autocomplete="off" >
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label>Litrage Gazoil</label>
+                                                        <input type="text" for="id" name="litrageGazoil"
+                                                               class="form-control"
+                                                               autocomplete="off"  id="litrageGazoil" required >
+                                                    </div>
+
+                                                </div>
+                                                <div class=" col-md-4">
+                                                    <div class="form-group">
+                                                        <label>PU Essence</label>
+                                                        <input type="text" for="id" name="puE" id="pue"
+                                                               class="form-control"
+                                                               autocomplete="off"  th:placeholder="${puE}" th:value="${puE}" >
+                                                    </div>
+
+                                                    <div class="form-group">
+                                                        <label>PU Gazoil</label>
+                                                        <input type="text" for="id" name="puG"
+                                                               class="form-control"
+                                                               autocomplete="off"  id="pug"
+                                                                 th:placeholder="${puG}" th:value="${puG}">
+                                                    </div>
+                                                </div>
+                                                <div class=" col-md-4">
+                                                    <div class="form-group">
+                                                        <label>Montant remise Essence</label>
+                                                        <input type="text"  name="mntEssenceRemise"
+                                                               class="form-control"
+                                                               autocomplete="off" id="mntEssenceRemise" required>
+                                                    </div>
+
+                                                    <div class="form-group">
+                                                        <label>Montant remise Gazoil</label>
+                                                        <input type="text" for="id" name="mntGazoilRemise"
+                                                               class="form-control"
+                                                               autocomplete="off" required>
+                                                    </div>
+
+                                                    <script type="text/javascript">
+                                                       /* function calculer(){
+                                                            var pue = document.getElementById("pue").innerHTML;
+                                                            var puer = document.getElementById("puer").innerHTML;
+                                                            document.getElementById("pue").innerHTML = pue-puer;
+                                                        }
+                                                        function calculer1(){
+                                                            var pug = document.getElementById("pug").innerHTML;
+                                                            var pugr = document.getElementById("pugr").innerHTML;
+                                                            document.getElementById("pug").innerHTML = pug-pugr;
+                                                        }*/
+                                                    </script>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                                <button type="submit" class="btn btn-primary">Valider</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<style type="text/css">
+    .scrollable-menu{
+        height: auto;
+        max-height: 200px;
+        overflow-y: hidden;
+    }
+</style>
+</html>
+

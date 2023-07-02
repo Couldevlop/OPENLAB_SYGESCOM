@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+
+      layout:decorate="~{layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Bon de livraison rejété</title>
+</head>
+
+<div layout:fragment="page_content" class="main-content">
+    <section class="section">
+        <div class="section-header">
+            <h1>Bon de livraison rejété</h1>
+            <div class="section-header-breadcrumb">
+                <div class="breadcrumb-item active"><a th:href="@{/}">Accueil</a></div>
+                <div class="breadcrumb-item"><a th:href="@{/gerant/gerantlistbl}">Administration</a></div>
+                <div class="breadcrumb-item">Utilisateurs</div>
+            </div>
+
+        </div>
+        <div class="section-body">
+            <h2 class="section-title">Bon de livraison</h2>
+            <p class="section-lead">
+                Vous pouvez gérer tous vos Bon de livraison
+            </p>
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4>Liste des Bons de livraison rejété</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="clearfix mb-3"></div>
+                            <form th:action="@{/gerant/blRejeter}" method="post" >
+                                <div class="modal-body">
+                                    <input type="hidden" th:value="${bonLivraison.id}" name="id">
+                                    <div class="row">
+                                        <div class="col-12 col-md-12 col-lg-12 ">
+                                            <div class="card">
+                                                <div class="card-body" style="margin: auto">
+                                                    <div class=" row">
+                                                        <div class=" col-md-6">
+                                                            <div class="form-group">
+                                                                <label>Quantité essence</label>
+                                                                <input type="number" for="id" name="saisieEssence"
+                                                                       class="form-control"
+                                                                       autocomplete="off"  id="ecartEss" required >
+                                                            </div>
+
+
+                                                        </div>
+
+                                                        <div class=" col-md-6">
+                                                            <div class="form-group">
+                                                                <label>Quantité Gasoil</label>
+                                                                <input type="number" for="id" name="saisieGazoil"
+                                                                       class="form-control"
+                                                                       autocomplete="off" value="" id="ecartGaz" required >
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+
+                                                    <div class=" row">
+                                                        <div class=" col-md-12">
+
+                                                            <label>Motif</label>
+                                                            <div class="form-group">
+                                                                <textarea rows="4" cols="50" name="motif"></textarea>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer" style="margin-right: 40%">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                                        <button type="submit" class="btn btn-primary">Valider</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</div>
+
+</html>
+

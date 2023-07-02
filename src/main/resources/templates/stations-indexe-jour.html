@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layout}">
+
+<script type="text/javascript" src="../static/js/popup.js" th:src="@{../js/popup.js}"/>
+<head>
+    <meta charset="UTF-8">
+    <title>Etat réél des stations</title>
+    <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css"/>
+</head>
+
+<div layout:fragment="page_content" class="main-content">
+    <section class="section">
+        <div class="section-header">
+            <h1>Etat réél des stations</h1>
+            <div class="section-header-button">
+                <a th:href="@{/dg/stat-indexe/jour}" class="btn btn-primary">Toutes les indexes du jour</a>
+
+            </div>&nbsp;&nbsp;
+            <div>
+                <a th:href="@{/dg/stat-indexe/excelExport}" class="btn btn-primary">Export data into Excel
+                    <i class="fas fa-file-excel" style="color: #ffffff;"></i></a>
+
+            </div><br/>
+            <div class="section-header-breadcrumb">
+                <div class="breadcrumb-item active"><a th:href="@{/}">Accueil</a></div>
+                <div class="breadcrumb-item"><a th:href="@{/admin/home}">Administration</a></div>
+                <div class="breadcrumb-item">Statistiques Journalière des indexes</div>
+            </div>
+
+        </div>
+        <div class="section-body">
+            <h2 class="section-title">Indexe du jour</h2>
+            <p class="section-lead">
+                Vous pouvez Consulter toutes les indexes du jour globalement ou par station
+            </p>
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4>Suivi des indexes du jour</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="clearfix mb-3"></div>
+                            <div  class="table-responsive" th:if="${indexeList}">
+                                <table class="table table-striped" id="table-2" >
+                                    <thead>
+                                    <tr>
+                                        <th>Stations</th>
+                                        <th>Gérant</th>
+                                        <th>Essence restatnt</th>
+                                        <th>Gazoil restant</th>
+                                        <th>Cuve Essence</th>
+                                        <th>Cuve Gazoil</th>
+                                        <th>Date</th>
+
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="ind : ${indexeList}">
+                                        <td th:text="${ind.stations.nom}" class="align-middle">0001</td>
+                                        <td th:text="${ind.createBy}" class="align-middle">0001</td>
+                                        <td th:text="${ind.qtiteRestantEssence}" class="align-middle">0001</td>
+                                        <td th:text="${ind.qtiteRestantGasoil}" class="align-middle"></td>
+
+                                        <td th:text="${ind.cuveEssence}" class="align-middle">0001</td>
+                                        <td th:text="${ind.cuveGazoil}" class="align-middle"></td>
+
+                                        <td th:text="${ind.dateJour}" class="align-middle">0001</td>
+
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <!-- Cas des indexes journaliers des stations  -->
+
+                            <div th:if="${indexeListJour}" class="table-responsive">
+                                <table class="table table-striped" id="table-2">
+                                    <thead>
+                                    <tr>
+                                        <th>Stations</th>
+                                        <th>Gérant</th>
+                                        <th>Essence vendu</th>
+                                        <th>Gazoil vendu</th>
+                                        <th>Essence restant</th>
+                                        <th>Gazoil restant</th>
+                                      <!--  <th>Ecart brute Esence</th>
+                                        <th>Ecart brute Gazoil</th>
+                                        <th>Ecart Ess avec tolérenc</th>
+                                        <th>Ecart Gaz avec tolérenc</th>-->
+                                        <th>Date</th>
+<!--                                        <th>Actions</th>-->
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="ind : ${indexeListJour}">
+                                        <td th:text="${ind.stations.nom}" class="align-middle">0001</td>
+                                        <td th:text="${ind.createBy}" class="align-middle">0001</td>
+                                        <td th:text="${ind.difPriseEss}" class="align-middle">0001</td>
+                                        <td th:text="${ind.difPriseGaz}" class="align-middle">0001</td>
+                                        <td th:text="${ind.qtiteRestantEssence}" class="align-middle">0001</td>
+                                        <td th:text="${ind.qtiteRestantGasoil}" class="align-middle"></td>
+                                        <td th:text="${ind.dateJour}" class="align-middle">0001</td>
+                                        <!--<td>
+                                            <a th:href="@{'/dg/stat-indexe/jour/' + ${ind.id}}"  class="btn btn-primary" style="color: #ffffff">
+                                            Détails
+                                        </a>-->
+
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+ <div class="modal fade" id="modalIndexe" tabindex="-1" role="dialog"
+         aria-labelledby="exampleModalLabel" aria-hidden="true" >
+        <div class="modal-dialog modal-lg"style="width: 1800px; height: 500px"  role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel" >Fenetre affichant les détails des prises journalières d'indexes par station </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                               <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                    <div class="clearfix mb-3"></div>
+                    <div class="table-responsive">
+                        <table class="table table-striped" id="table-2">
+                            <thead>
+                            <tr>
+                             <!--   <th>Stations</th>
+                                <th>Gérant</th>-->
+                                <th>Essence fin</th>
+                                <th>Gazoil fin</th>
+                                <th>Cuve Essence</th>
+                                <th>Cuve Gazoil</th>
+                                <th>Date</th>
+
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                              <!--  <td th:text="${indexe.stations.nom}" class="align-middle" id="">0001</td>
+                                <td th:text="${indexe.stations.user.username}" class="align-middle">0001</td>-->
+                                <td  class="align-middle"></td>
+                                <td  class="align-middle"></td>
+
+                                <td  class="align-middle"></td>
+                                <td  class="align-middle"></td>
+
+                                <td  class="align-middle"></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                </div>
+
+
+    </div>
+</div>
+</div>
+</div>
+
+<style type="text/css">
+    .scrollable-menu{
+        height: auto;
+        max-height: 200px;
+        overflow-y: hidden;
+    }
+</style>
+</html>

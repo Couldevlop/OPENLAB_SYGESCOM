@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+
+      layout:decorate="~{layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Bon de livraison Corporate Validés</title>
+</head>
+
+<div layout:fragment="page_content" class="main-content">
+    <section class="section">
+        <div class="section-header">
+            <div class="section-header-back">
+                <a th:href="@{/facturation/corporate/directe}" class="btn btn-icon"><i class="fas fa-arrow-left"></i></a>
+            </div>
+            <h1>Bon de livraison Corporate Validés</h1>
+            <div class="section-header-breadcrumb">
+                <div class="breadcrumb-item active"><a th:href="@{/}">Accueil</a></div>
+                <div class="breadcrumb-item"><a th:href="@{/admin/home}">Administration</a></div>
+                <div class="breadcrumb-item">Bon de Livraison Coprorate Directe Validés</div>
+            </div>
+
+        </div>
+        <div class="section-body">
+            <h2 class="section-title">Bon de livraison Corporate Directe Validés</h2>
+            <p class="section-lead">
+                Vous pouvez gérer tous vos Bon de livraison aux Coprorates Direct Validés
+            </p>
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4>Liste des Bons de livraison Corporate Directe Validé</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="clearfix mb-3"></div>
+                            <div class="table-responsive">
+                                <table class="table table-striped" id="table-2" sec:authorize="hasAnyRole('ADMIN','RESPCOM','RAF')">
+                                    <thead>
+                                    <tr>
+                                        <th>N° BL</th>
+                                        <th>Date</th>
+                                        <th>RefEssence</th>
+                                        <th>Qte Essence</th>
+                                        <th>RefGazoil</th>
+                                        <th>Qte Gazoil</th>
+                                        <th>Remise Gazoil</th>
+                                        <th>Remise Essence</th>
+                                        <th>Prestataire</th>
+                                        <th>Chauffeur</th>
+                                        <th>Opération</th>
+
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="b : ${blAccepte}">
+                                        <td th:text="${b.id}" class="align-middle"></td>
+                                        <td th:text="${b.dateBL}" class="align-middle"></td>
+                                        <td  th:text="${b.refEs}" class="align-middle"></td>
+                                        <td  th:text="${b.qteEs}" class="align-middle"></td>
+                                        <td  th:text="${b.refGaz}" class="align-middle"></td>
+                                        <td  th:text="${b.qteGaz}" class="align-middle"></td>
+                                        <td  th:text="${b.corporates.remiseGazoil}" class="align-middle"></td>
+                                        <td  th:text="${b.corporates.remiseEssence}" class="align-middle"></td>
+                                        <td  th:text="${b.prestataire.nom}" class="align-middle"></td>
+                                        <td  th:text="${b.prestataire.nomChauffeur}" class="align-middle"></td>
+
+                                        <td>
+                                            <a th:href="@{'/facturation/blCorporateAccepte/' + ${b.id} + '/imp'}"class="btn btn-success" >IMPRIMERPDF</a>
+
+                                        </td>
+
+                                    </tr>
+                                    </tbody>
+                                </table>
+
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+</html>

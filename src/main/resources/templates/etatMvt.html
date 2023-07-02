@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layout}">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Etat des Mouvements </title>
+    <script type="text/javascript" th:src="@{js/main.js}"
+            src="../static/assets/js/main.js"></script>
+    <script type="text/javascript" th:src="@{js/main.js}"
+            src="../static/assets/js/main.js"></script>
+
+</head>
+
+<div layout:fragment="page_content" class="main-content">
+    <section class="section">
+        <div class="section-header">
+            <div class="section-header-back">
+                <a th:href="@{/superviseur/StatVentes}" class="btn btn-icon"><i class="fas fa-arrow-left"></i></a>
+            </div>
+            <h1>Etat de Mouvement en Station</h1>
+            <div class="section-header-button">
+                <!--<button type="button" class="btn btn-primary"
+                        data-toggle="modal" data-target="#modalKeepself">
+                    Nouveau Client comptant
+                </button>-->
+
+            </div>
+
+
+        </div>
+
+        <div class="section-body">
+            <h2 class="section-title">Etat des Mouvements en Station</h2>
+            <p class="section-lead">
+                Vous pouvez gérer tous les mouvements des stations
+            </p>
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4>Liste des Mouvements</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="clearfix mb-3"></div>
+                            <div class="table-responsive">
+                                <table class="table table-striped" id="table-2">
+                                    <thead>
+                                    <tr>
+                                        <th>Date Dépot</th>
+                                        <th>Station</th>
+                                        <th>Prise Indexe essence </th>
+                                        <th>Sortie Cuivre Essence </th>
+                                        <th>Quantité Restante Cuivre Essence </th>
+                                        <th>Prise Indexe Gasoil </th>
+                                        <th>Sortie Cuivre Gasoil </th>
+                                        <th>Quantité Restante Cuivre Gasoil </th>
+                                    </tr>
+                                    </thead>
+                                    <tr th:each=" s: ${mvt}">
+                                        <td th:text="${s.dateCreation}" class="align-middle"></td>
+                                        <td th:text="${s.stations.nom}" class="align-middle"></td>
+                                        <td th:text="${s.getEssenceIndexeFin()}" class="align-middle"></td>
+                                        <td th:text="${s.getCuveGazoil()}" class="align-middle"></td>
+                                        <td th:text="${s.qtiteRestantEssence}" class="align-middle"></td>
+                                        <td th:text="${s.gazoilIndexeFin}" class="align-middle"></td>
+                                        <td th:text="${s.getCuveGazoil()}" class="align-middle"></td>
+                                        <td th:text="${s.qtiteRestantGasoil}" class="align-middle"></td>
+                                    </tr>
+                                    </imput>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+</div>
+</div>
+
+</div>
+
+<style type="text/css">
+    .scrollable-menu{
+        height: auto;
+        max-height: 200px;
+        overflow-y: hidden;
+    }
+</style>
+</html>
+

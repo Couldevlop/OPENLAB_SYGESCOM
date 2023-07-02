@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Indexes</title>
+</head>
+
+<div layout:fragment="page_content" class="main-content">
+    <section class="section">
+        <div class="section-header">
+            <div class="section-header-back">
+                <a th:href="@{/gerant/indexe}" class="btn btn-icon"><i class="fas fa-arrow-left"></i></a>
+            </div>
+            <h1>Indexe</h1>
+            <div class="section-header-breadcrumb">
+                <div class="breadcrumb-item active"><a th:href="@{/}">Accueil</a></div>
+                <div class="breadcrumb-item"><a th:href="@{/parametrages/home}">Administration</a></div>
+                <div class="breadcrumb-item">Indexe</div>
+            </div>
+        </div>
+
+        <div class="section-body">
+            <h2 class="section-title">Indexes</h2>
+            <p class="section-lead">
+                Sur cette page vous pouvez créer un nouveau indexe.
+            </p>
+
+            <div class="row" >
+                <div class="card" style="margin: auto; width: 40%">
+                        <div class="card-header">
+                            <h4>Enregistrer nouveau indexe</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="alert alert-danger" th:if="${message}" th:text="${message}"></div>
+                            </h6>
+                            <form th:action="@{/gerant/newindexes}"  method="post" th:object="${data}">
+                                <div class="form-row">
+                                    <div class="form-group col-md-12">
+                                        <h6  th:text="${station.nom}" style="margin-left: 40%"></h6>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group col-md-6">
+                                        <label for="inputEmail4">Indexe Essence1</label>
+                                        <input type="text" class="form-control" th:field="*{super1}" id="inputEmail4" placeholder="0.0">
+                                        <h8 class="alert alert-warning"  th:if="${errorS1}"  th:text="${errorS1}"></h8>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label for="inputPassword4">Indexe Essence2</label>
+                                        <input type="text" class="form-control" th:field="*{super2}" id="inputPassword4" placeholder="0.0">
+                                        <h8 class="alert alert-warning"  th:if="${errorS1}"  th:text="${errorS2}"></h8>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group col-md-6">
+                                        <label for="inputEmail4">Indexe Essence3</label>
+                                        <input type="text" class="form-control" th:field="*{super3}" id="inputEmail4" placeholder="0.0">
+                                        <h8 class="alert alert-warning"  th:if="${errorS1}"  th:text="${errorS4}"></h8>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label for="inputPassword4">Indexe Essence4</label>
+                                        <input type="text" class="form-control" th:field="*{super4}"id="inputPassword4" placeholder="0.0">
+                                        <h8 class="alert alert-warning"  th:if="${errorS1}"  th:text="${errorS4}"></h8>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group col-md-6">
+                                        <label for="inputEmail4">Indexe Gazoil1</label>
+                                        <input type="text" class="form-control" th:field="*{gazoil1}" id="inputEmail4" placeholder="0.0">
+                                        <h8 class="alert alert-warning"  th:if="${errorS1}"  th:text="${errorG1}"></h8>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label for="inputPassword4">Indexe Gazoil2</label>
+                                        <input type="text" class="form-control" th:field="*{gazoil2}" id="inputPassword4" placeholder="0.0">
+                                        <h8 class="alert alert-warning"  th:if="${errorS1}"  th:text="${errorG2}"></h8>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group col-md-6">
+                                        <label for="inputEmail4">Indexe Gazoil3</label>
+                                        <input type="text" class="form-control" th:field="*{gazoil3}" id="inputEmail4" placeholder="0.0">
+                                        <h8 class="alert alert-warning"  th:if="${errorG3}"  th:text="${errorG3}"></h8>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label for="inputPassword4">Indexe Gazoil4</label>
+                                        <input type="text" class="form-control" th:field="*{gazoil4}" id="inputPassword4" placeholder="0.0">
+                                        <h8 class="alert alert-warning"  th:if="${errorG4}"  th:text="${errorG4}"></h8>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group col-md-6">
+                                        <label for="inputEmail4" style="color: #bd2130">Jauge Essence</label>
+                                        <input type="text" class="form-control" th:field="*{cuveEssence}"   id="inputEmail4" placeholder="0.0">
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label for="inputPassword4" style="color: #bd2130">Jauge Gazoil</label>
+                                        <input type="text" class="form-control" th:field="*{cuveGazoil}"  id="inputPassword4" placeholder="0.0">
+                                    </div>
+                                </div>
+<!--                                <div class="form-group">-->
+<!--                                    <label for="inputAddress">Indexe Gazoil1</label>-->
+<!--                                    <input type="text" class="form-control" id="inputAddress" placeholder="1234 Main St">-->
+<!--                                </div>-->
+<!--                                <div class="form-group">-->
+<!--                                    <label for="inputAddress2">Indexe Gazoil1</label>-->
+<!--                                    <input type="text" class="form-control" id="inputAddress2" placeholder="Apartment, studio, or floor">-->
+<!--                                </div>-->
+                               <!-- <div class="form-row">
+                                    <div class="form-group col-md-6">
+                                        <label for="inputCity">City</label>
+                                        <input type="text" class="form-control" id="inputCity">
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <label for="inputState">State</label>
+                                        <select id="inputState" class="form-control">
+                                            <option selected>Choose...</option>
+                                            <option>...</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-md-2">
+                                        <label for="inputZip">Zip</label>
+                                        <input type="text" class="form-control" id="inputZip">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="gridCheck">
+                                        <label class="form-check-label" for="gridCheck">
+                                            Check me out
+                                        </label>
+                                    </div>
+                                </div>-->
+                                <div class="form-group row mb-6">
+                                    <div class="col-sm-12 col-md-6" style="margin-left: 40%">
+                                        <button type="submit" class="btn btn-primary">Valider</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+
+            </div>
+        </div>
+    </section>
+</div>
+</html>

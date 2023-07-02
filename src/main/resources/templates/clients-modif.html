@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+
+      layout:decorate="~{layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Clients Corporate</title>
+</head>
+
+<div layout:fragment="page_content" class="main-content">
+    <section class="section">
+        <div class="section-header">
+            <div class="section-header-back">
+                <a th:href="@{/superviseur/clients}" class="btn btn-icon"><i class="fas fa-arrow-left"></i></a>
+            </div>
+            <h1>Modification de  Corporates</h1>
+
+
+            <div class="section-header-breadcrumb">
+                <div class="breadcrumb-item active"><a th:href="@{/}">Accueil</a></div>
+                <div class="breadcrumb-item"><a th:href="@{/admin/home}">Administration</a></div>
+                <div class="breadcrumb-item">Clients</div>
+            </div>
+        </div>
+        <div class="section-body">
+            <h2 class="section-title">Clients</h2>
+            <p class="section-lead" sec:authorize="hasRole('GERANT')">
+                Vous pouvez gérer tous vos nouveaux clients Comptants
+            </p>
+            <p class="section-lead" sec:authorize="hasRole('SUPERVISEUR')">
+                Vous pouvez gérer tous vos nouveaux clients Corporate
+            </p>
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header" sec:authorize="hasRole('GERANT')">
+                            <h4>Liste des nouveaux clients Comptants</h4>
+                        </div>
+                        <div class="card-header" sec:authorize="hasRole('SUPERVISEUR')">
+                            <h4>Liste des nouveaux clients Corporates</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="clearfix mb-3"></div>
+                            <form th:action="@{/superviseur/updateCorporate}" method="post" >
+                                     <input type="hidden" name="idClient" th:value="${cli.id}">
+                                    <div class="row">
+                                        <div class="col-12 col-md-12 col-lg-12 ">
+                                            <div class="card">
+                                                <div class="card-body" style="margin: auto">
+                                                    <div class=" row">
+                                                        <div class=" col-md-4">
+                                                            <div th:if="${error}" class="alert alert-danger" >
+                                                                <p style="margin: auto"><h6 th:text="${error}"></h6></p>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label>Nom</label>
+                                                                <input type="text" for="id" name="nom" required
+                                                                       class="form-control"
+                                                                       autocomplete="off" th:placeholder="${cli.nom}" th:value="${cli.nom}">
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label>Email</label>
+                                                                <input type="text" for="id" name="email"
+                                                                       class="form-control"
+                                                                       autocomplete="off"  id="email" required th:placeholder="${cli.email}" th:value="${cli.email}">
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label>Remise essence</label>
+                                                                <input type="number"  name="remiseEssence"
+                                                                       class="form-control"
+                                                                       autocomplete="off" id="remiseEssence" required  th:placeholder="${cli.remiseEssence}" th:value="${cli.remiseEssence}">
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label>Plafond essence</label>
+                                                                <input type="number"  name="plafonageEssence"
+                                                                       class="form-control"
+                                                                       autocomplete="off" id="plafonageEssence" required  th:placeholder="${cli.plafonageEssence}" th:value="${cli.plafonageEssence}">
+                                                            </div>
+
+
+                                                        </div>
+                                                        <div class=" col-md-4">
+                                                            <div class="form-group">
+                                                                <label>DFE</label>
+                                                                <input type="text" for="id" name="num_doc" id="num_doc"
+                                                                       class="form-control"
+                                                                       autocomplete="off"  required th:placeholder="${cli.numDoc}" th:value="${cli.numDoc}">
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label>Localisation</label>
+                                                                <input type="text" for="id" name="localisation"
+                                                                       class="form-control"
+                                                                       autocomplete="off"  id="localisation"
+                                                                       th:placeholder="${cli.localisation}" th:value="${cli.localisation}">
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label>Remise gasoil</label>
+                                                                <input type="text"  name="remiseGazoil"
+                                                                       class="form-control"
+                                                                       autocomplete="off" id="remiseGazoil" required  th:placeholder="${cli.remiseGazoil}" th:value="${cli.remiseGazoil}">
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label>Palond gazoil</label>
+                                                                <input type="text"  name="plafonageGazoil"
+                                                                       class="form-control"
+                                                                       autocomplete="off" id="plafonageGazoil" required  th:placeholder="${cli.plafonageGazoil}" th:value="${cli.plafonageGazoil}">
+                                                            </div>
+                                                        </div>
+                                                        <div class=" col-md-4">
+                                                            <div class="form-group">
+                                                                <label>Contact</label>
+                                                                <input type="text"  name="contact1"
+                                                                       class="form-control"
+                                                                       autocomplete="off" id="contact1" required  th:placeholder="${cli.contact1}" th:value="${cli.contact1}">
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label>Nbr Bénéficiaires</label>
+                                                                <input type="number"  name="nbre_beneficiaire"
+                                                                       class="form-control"
+                                                                       autocomplete="off" id="nbre_beneficiaire" required  th:placeholder="${cli.nbre_beneficiaire}" th:value="${cli.nbre_beneficiaire}">
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label>Interlocuteur</label>
+                                                                <input type="text"  name="interlocuteur"
+                                                                       class="form-control"
+                                                                       autocomplete="off" id="interlocuteur" required  th:placeholder="${cli.interlocuteur}" th:value="${cli.interlocuteur}">
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label class="col-form-label text-md-right col-12 col-md-2 col-lg-4">Stations</label></br>
+                                                            <select name="stations" class="select2" th:placeholder="${cli.stations}" >
+                                                                <option th:each="st : ${stations}"
+                                                                        th:value="${st.id}"
+                                                                        th:text="${st.nom}">
+                                                                </option>
+                                                            </select>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="modal-footer" style="margin: auto">
+                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                                                            <button type="submit" class="btn btn-primary">Valider</button>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                    </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+</html>

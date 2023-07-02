@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layout}">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Etat de Stock </title>
+    <script type="text/javascript" th:src="@{js/main.js}"
+            src="../static/assets/js/main.js"></script>
+    <script type="text/javascript" th:src="@{js/main.js}"
+            src="../static/assets/js/main.js"></script>
+
+</head>
+
+<div layout:fragment="page_content" class="main-content">
+    <section class="section">
+        <div class="section-header">
+            <div class="section-header-back">
+                <a th:href="@{/home}" class="btn btn-icon"><i class="fas fa-arrow-left"></i></a>
+            </div>
+            <h1>Etat de Stock en Station</h1>
+            <div class="section-header-button">
+
+            </div>
+
+
+        </div>
+
+        <div class="section-body">
+            <h2 class="section-title">Etat des Stocks en Station</h2>
+            <p class="section-lead">
+                Vous pouvez gérer tous vos états des stations
+            </p>
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4>Liste des stocks</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="clearfix mb-3"></div>
+                            <div class="table-responsive">
+                                <table class="table table-striped" id="table-2">
+                                    <thead>
+                                    <tr>
+                                        <th>Date Dépot</th>
+                                        <th>Station</th>
+                                        <th>Qte Globale Essence </th>
+                                        <th>Qte Globale Gazoil </th>
+                                        <th>Qte Essenec Deposé </th>
+                                        <th>Qte Gazoil Deposé </th>
+                                        <th>Qte Ecart Essence </th>
+                                        <th>Qte Ecart Gazoil </th>
+                                    </tr>
+                                    </thead>
+                                    <tr th:each=" s: ${stockstation}">
+                                        <td th:text="${s.dateDepot}" class="align-middle"></td>
+                                        <td th:text="${s.stations.nom}" class="align-middle"></td>
+                                        <td th:text="${s.qteGlobaleEssence}" class="align-middle"></td>
+                                        <td th:text="${s.qteGlobaleGazoile}" class="align-middle"></td>
+                                        <td th:text="${s.essenceDepot}" class="align-middle"></td>
+                                        <td th:text="${s.gazoilDepot}" class="align-middle"></td>
+                                        <td th:text="${s.ecartEssence}" class="align-middle"></td>
+                                        <td th:text="${s.ecartGazoil}" class="align-middle"></td>
+                                    </tr>
+                                    </imput>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+</div>
+</div>
+
+</div>
+
+<style type="text/css">
+    .scrollable-menu{
+        height: auto;
+        max-height: 200px;
+        overflow-y: hidden;
+    }
+</style>
+</html>
+

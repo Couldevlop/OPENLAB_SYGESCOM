@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+
+      layout:decorate="~{layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Bon de Commande</title>
+</head>
+
+<div layout:fragment="page_content" class="main-content">
+    <section class="section">
+        <div class="section-header">
+            <div class="section-header-back">
+                <a th:href="@{/home}" class="btn btn-icon"><i class="fas fa-arrow-left"></i></a>
+            </div>
+            <h1>Bon de commande</h1>
+            <div class="section-header-button"  sec:authorize="hasAnyRole('ASSISTANTE','SUPERVISEUR')" >
+                <button  type="button" class="btn btn-primary"
+                         data-toggle="modal" data-target="#modalbl">
+                    Nouveau
+                </button>
+
+
+            </div>
+            <div  class="section-header-button"  sec:authorize="hasRole('GERANT')" >
+                <a th:href="@{/superviseur/aValider}" class="btn btn-primary">BL Validé</a>
+            </div>
+            <div class="section-header-breadcrumb">
+                <div class="breadcrumb-item active"><a th:href="@{/}">Accueil</a></div>
+                <div class="breadcrumb-item"><a th:href="@{/admin/home}">Administration</a></div>
+                <div class="breadcrumb-item">Utilisateurs</div>
+            </div>
+
+        </div>
+        <div class="section-body">
+            <h2 class="section-title">Bon de commande</h2>
+            <p class="section-lead">
+                Vous pouvez gérer tous vos Bon de Commande
+            </p>
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4>Liste des Bons de livraison</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="clearfix mb-3"></div>
+                            <div class="table-responsive">
+                                <table class="table table-striped" id="table-2" sec:authorize="hasAnyRole('ADMIN','DG')">
+                                    <thead>
+                                    <tr>
+                                        <th>N° BC</th>
+                                        <th>Date</th>
+                                        <th>RefEssence</th>
+                                        <th>Qte Essence</th>
+                                        <th>RefGazoil</th>
+                                        <th>Qte Gazoil</th>
+                                        <th>Vendeur</th>
+                                        <th>Action</th>
+
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="c : ${bc}">
+                                        <td th:text="${c.numBC}" class="align-middle"></td>
+                                        <td th:text="${c.dateBC}" class="align-middle"></td>
+                                        <td  th:text="${c.refEs}" class="align-middle"></td>
+                                        <td  th:text="${c.qteEs}" class="align-middle"></td>
+                                        <td  th:text="${c.refGaz}" class="align-middle"></td>
+                                        <td  th:text="${c.qteGaz}" class="align-middle"></td>
+                                        <td  th:text="${c.vendeur}" class="align-middle"></td>
+                                        <td>
+                                            <a th:if="${c.aaccepte}"
+                                               class="btn btn-info">BC Validé
+                                            </a>
+                                            <a th:if="${!c.aaccepte}"
+                                               class="btn btn-danger">BC non validé
+                                            </a>
+                                        </td>
+
+                                    </tr>
+                                    </tbody>
+                                </table>
+
+                                <table sec:authorize="hasAnyRole('SUPERVISEUR','ASSISTANTE')" class="table table-striped" id="table-2">
+                                    <thead>
+                                    <tr>
+                                        <th>N° BC</th>
+                                        <th>Date</th>
+                                        <th>RefEssence</th>
+                                        <th>Qte Essence</th>
+                                        <th>RefGazoil</th>
+                                        <th>Qte Gazoil</th>
+                                        <th>Vendeur</th>
+                                        <th>Fichier</th>
+                                        <th>Action</th>
+
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="c : ${bc}">
+                                        <td th:text="${c.numBC}" class="align-middle"></td>
+                                        <td th:text="${c.dateBC}" class="align-middle"></td>
+                                        <td  th:text="${c.refEs}" class="align-middle"></td>
+                                        <td  th:text="${c.qteEs}" class="align-middle"></td>
+                                        <td  th:text="${c.refGaz}" class="align-middle"></td>
+                                        <td  th:text="${c.qteGaz}" class="align-middle"></td>
+                                        <td  th:text="${c.vendeur}" class="align-middle"></td>
+                                        <td th:if="${c.doc.id}"><a th:href="@{'/superviseur/downloadFile/'+${c.doc.id}}" class="badge badge-primary" style="margin: auto">Download</a></td>
+                                        <td th:if="${c.doc.id}==null"><a href="#" class="badge badge-primary" style="margin: auto">Aucun</a></td>
+                                        <td>
+                                            <a th:href="@{'/assistante/bc-modifier/' + ${c.id}}"
+                                               class="btn btn-info" onclick="return confirm('Etes-vous sur de vouloir modifier?');">Modifier
+                                            </a>
+                                            <!-- 24/12/2022 -->
+                                            <a th:href="@{'/assistante/bc/' + ${c.id} + '/imp'}"
+                                               class="btn btn-danger">Imprimer
+                                            </a>
+                                            <a th:if="${c.aaccepte == true}" href="#"
+                                               class="btn btn-success">Validé
+                                            </a>
+                                            <a th:if="${c.aaccepte == false}" href="#"
+                                               class="btn btn-primary">Non validé
+                                            </a>
+                                        </td>
+
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="modal fade"  id="modalbl" tabindex="-1" role="dialog"
+         aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg"style="width: 1300px; height: 500px" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel" style="margin-left: 20%">Fenêtre d'enrégistrement d'un bon de commande</h5>
+
+                </div>
+                <div class="myForm">
+                    <form th:action="@{/assistante/saveBc}" method="post" enctype="multipart/form-data" id="fileUploadForm"  th:object="${BonDeCommande}">
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-12 col-md-12 col-lg-12 ">
+                                    <div class="card">
+                                        <div class="card-body" style="margin: auto">
+                                            <div class=" row">
+                                                <div class=" col-md-4">
+                                                    <div class="form-group">
+                                                        <label>Numéro BC</label>
+                                                        <input type="text" for="id" name="numBl"
+                                                               class="form-control"
+                                                               autocomplete="off" value="" id="numBl" required th:field="*{numBC}">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label>Vendeur</label>
+                                                        <select name="stations"  class="form-control selectric dropdown scrollable-menu"
+                                                                id="vendeur" required th:field="*{vendeur}">
+                                                            <option value="SOCIETE IVOIRIENNE DE RAFINAGE"> SIR</option>
+                                                            <option value="NPCI LIMITED"> NPCI LIMITED</option>
+                                                            <option value="PETRO IVOIREN"> PETRO IVOIREN</option>
+                                                            <option value="VINKO PETROLEUM"> VINKO PETROLEUM</option>
+
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+                                                <div class=" col-md-4">
+                                                    <div class="form-group">
+                                                        <label>Reference Gasoil</label>
+                                                        <input type="text" for="id" name="refGaz"
+                                                               class="form-control"
+                                                               autocomplete="off" value="" id="referenceGaz" required th:field="*{refGaz}">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label>Designation Gazoil</label>
+                                                        <input type="text" for="id" name="designationGaz"
+                                                               class="form-control"
+                                                               autocomplete="off" value="" id="refernceGAZ" required th:field="*{designationGaz}">
+                                                    </div>
+
+                                                </div>
+
+                                                <div class=" col-md-4">
+                                                    <div class="form-group">
+                                                        <label>Reference Essence</label>
+                                                        <input type="text" for="id" name="refEs"
+                                                               class="form-control"
+                                                               autocomplete="off" value="" id="referenceEs" required th:field="*{refEs}">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label>Designation Essence</label>
+                                                        <input type="text" for="id" name="designationGaz"
+                                                               class="form-control"
+                                                               autocomplete="off" value="" id="designationGaz" required th:field="*{designationEs}">
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                            <div class=" row">
+                                                <div class=" col-md-4">
+                                                    <div class="form-group">
+                                                        <label>Contact vendeur</label>
+                                                        <input type="text" for="id" name="puEs"
+                                                               class="form-control"
+                                                               autocomplete="off"  id="contactVendeur" required th:field="*{contactVendeur}">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label>Pu Gazoil</label>
+                                                        <input type="text" for="id" name="puGaz"
+                                                               class="form-control"
+                                                               autocomplete="off" value="" id="puGaz" required th:field="*{puGaz}">
+                                                    </div>
+
+                                                </div>
+
+                                                <div class=" col-md-4">
+                                                    <div class="form-group">
+                                                        <label>Conditionnement Essence</label>
+                                                        <input type="text" for="id" name="qte"
+                                                               class="form-control"
+                                                               autocomplete="off" value="" id="condEs" required th:field="*{condEs}">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label>Quantite Gasoil</label>
+                                                        <input type="text" for="id" name="qte"
+                                                               class="form-control"
+                                                               autocomplete="off" value="" id="qteGaz" required th:field="*{qteGaz}">
+                                                    </div>
+
+                                                </div>
+
+                                                <div class=" col-md-4">
+                                                    <div class="form-group">
+                                                        <label>Conditionnement Gaz</label>
+                                                        <input type="text" for="id" name="qte"
+                                                               class="form-control"
+                                                               autocomplete="off" value="" id="condGaz" required th:field="*{condGaz}">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label>Quantite Essence</label>
+                                                        <input type="text" for="id" name="qteEs"
+                                                               class="form-control"
+                                                               autocomplete="off" value="" id="qteEs" required th:field="*{qteEs}">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class=" row">
+                                                <div class=" col-md-4">
+                                                    <div class="form-group">
+                                                        <label>Pu Essence</label>
+                                                        <input type="text" for="id" name="puEs"
+                                                               class="form-control"
+                                                               autocomplete="off" value="" id="puEs" required th:field="*{puEs}">
+                                                    </div>
+                                                </div>
+
+                                                <div class=" col-md-8">
+                                                    <div class="form-group">
+                                                        <label>Pièces Jointes</label>
+                                                        <input name="files" type="file" multiple class="form-control" required>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- <div class=" col-md-4">
+                                                 <div class="form-group">
+                                                     <label>Montant TTC Gaz</label>
+                                                     <input type="text" for="id" name="qte"
+                                                            class="form-control"
+                                                            autocomplete="off" value="" id="mtnGaz" required th:field="*{mtnGaz}">
+                                                 </div>
+                                             </div>-->
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer" style="margin-right: 40%">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                                <button type="submit" class="btn btn-primary">Valider</button>
+                            </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+</html>

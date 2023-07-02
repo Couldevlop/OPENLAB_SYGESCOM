@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+
+      layout:decorate="~{layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Clients Corporate</title>
+</head>
+
+<div layout:fragment="page_content" class="main-content">
+    <section class="section">
+        <div class="section-header">
+            <div class="section-header-back">
+                <a th:href="@{/superviseur/clients}" class="btn btn-icon"><i class="fas fa-arrow-left"></i></a>
+            </div>
+            <h1>Béneficiaires Corporates</h1>&nbsp;
+            <button type="button" class="btn btn-primary"
+                    data-toggle="modal" data-target="#modalKeepself">
+                Nouveau
+            </button>
+
+            <div class="section-header-breadcrumb">
+                <div class="breadcrumb-item active"><a th:href="@{/}">Accueil</a></div>
+                <div class="breadcrumb-item"><a th:href="@{/admin/home}">Administration</a></div>
+                <div class="breadcrumb-item">Bénéficiaire Corporates</div>
+            </div>
+        </div>
+        <div class="section-body">
+            <h2 class="section-title">Bénéficiaire Corporates</h2>
+            <p class="section-lead">
+                Vous pouvez ajouter un nouveau clients Bénéficiaire
+            </p>
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card">
+
+                        <div class="card-header" >
+                            <h4>Liste des nouveaux bénéficiaires Corporates</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="clearfix mb-3"></div>
+                            <div class="table-responsive" >
+                                <table class="table table-striped" id="table-2">
+                                    <thead>
+                                    <tr>
+                                        <th>Société </th>
+                                        <th>Nom </th>
+                                        <th>Email</th>
+                                        <th>Contacts</th>
+                                        <th>Plafond Es</th>
+                                        <th>Plafond Gaz</th>
+                                        <th>Identifiant</th>
+                                        <th>Action</th>
+
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="b : ${beneficiaires}">
+                                        <td th:text="${b.clientsCorporates.getNom()}" class="align-middle"></td>
+                                        <td th:text="${b.nom}" class="align-middle"></td>
+                                        <td th:text="${b.prenom}" class="align-middle"></td>
+                                        <td th:text="${b.contact}" class="align-middle"></td>
+                                        <td  th:text="${b.plafonageEssence}" class="align-middle"></td>
+                                        <td  th:text="${b.plafonageGazoil}" class="align-middle"></td>
+                                        <td  th:text="${b.identification}" class="align-middle"></td>
+                                        <td>
+                                            <a th:href="@{'/admin/user/' + ${b.id}}"
+                                               class="btn btn-info" onclick="return confirm('Etes-vous sur de vouloir modifier?');">Modifier
+                                            </a>
+                                            <a th:href="@{'/admin/user/' + ${b.id} + '/delete'}"
+                                               class="btn btn-danger" onclick="return confirm('Etes-vous sur de vouloir supprimer?');">Supprimer
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <div class="modal fade"  id="modalKeepself" tabindex="-1" role="dialog"
+         aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg"style="width: 1300px; height: 500px" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" style="margin: auto" id="exampleModalLabel">Fenètre d'enégistrement d'un Béneficiaire corporate</h5>
+                </div>
+                <div class="myForm">
+                    <form th:action="@{/superviseur/newBeneficiaire}" th:object="${benef}" method="post">
+                        <input type="hidden" th:value="${cli.id}" name="id">
+                        <div class="form-group row mb-4" type="">
+                            <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Société</label>
+                            <div class="col-sm-12 col-md-7">
+                                <input type="text" class="form-control" name="nom" autocomplete="off" th:placeholder="${cli.nom}">
+                            </div>
+                        </div>
+                        <div class="form-group row mb-4">
+                            <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Nom</label>
+                            <div class="col-sm-12 col-md-7">
+                                <input type="text" class="form-control" th:field="*{nom}" autocomplete="off">
+                            </div>
+                        </div>
+                        <div class="form-group row mb-4">
+                            <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Prénom</label>
+                            <div class="col-sm-12 col-md-7">
+                                <input  type="text" class="form-control" th:field="*{prenom}" autocomplete="off">
+                            </div>
+                        </div>
+                        <div class="form-group row mb-4">
+                            <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Contact</label>
+                            <div class="col-sm-12 col-md-7">
+                                <input type="text"  class="form-control" th:field="*{contact}">
+                            </div>
+                        </div>
+
+                        <div class="form-group row mb-4">
+                            <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Plafond Es</label>
+                            <div class="col-sm-12 col-md-7">
+                                <input type="text"  class="form-control" th:field="*{plafonageEssence}">
+                            </div>
+                        </div>
+                        <div class="form-group row mb-4">
+                            <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Plafond Gaz</label>
+                            <div class="col-sm-12 col-md-7">
+                                <input type="text"  class="form-control" th:field="*{plafonageGazoil}">
+                            </div>
+                        </div>
+
+                        <div class="form-group row mb-4">
+                            <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Identification</label>
+                            <div class="col-sm-12 col-md-7">
+                                <input type="text" name="contact" class="form-control" th:field="*{identification}">
+                            </div>
+                        </div>
+
+                        <div class="form-group row mb-4" >
+                            <div class="modal-footer" style="margin: auto">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                                <button type="submit" class="btn btn-primary">Valider</button>
+                            </div>
+                        </div>
+                    </form>
+
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+</div>
+</div>
+</html>

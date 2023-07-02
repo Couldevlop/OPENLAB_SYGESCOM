@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+
+      layout:decorate="~{layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Utilisateurs</title>
+</head>
+
+<div layout:fragment="page_content" class="main-content">
+    <section class="section">
+        <div class="section-header">
+            <div class="section-header-back">
+                <a th:href="@{/home}" class="btn btn-icon"><i class="fas fa-arrow-left"></i></a>
+            </div>
+            <h1>Utilisateurs</h1>
+            <div class="section-header-button">
+                <a th:href="@{/admin/newuser}" class="btn btn-primary">Nouveau</a>
+            </div>
+            <div class="section-header-breadcrumb">
+                <div class="breadcrumb-item active"><a th:href="@{/}">Accueil</a></div>
+                <div class="breadcrumb-item"><a th:href="@{/admin/home}">Administration</a></div>
+                <div class="breadcrumb-item">Utilisateurs</div>
+            </div>
+
+        </div>
+        <div class="section-body">
+            <h2 class="section-title">Utilisateurs</h2>
+            <p class="section-lead">
+                Vous pouvez gérer tous vos utilisateurs
+            </p>
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4>Liste des utilisateurs</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="alert alert-danger" th:if="${succesMessage}" th:text="${succesMessage}"></div>
+                            <div class="clearfix mb-3"></div>
+                            <div class="table-responsive">
+                                <table class="table table-striped" id="table-2">
+                                    <thead>
+                                    <tr>
+                                        <th>Nom Utilisateur</th>
+                                        <th>Nom Complet</th>
+                                        <th>Station</th>
+                                        <th>Role</th>
+                                        <th>Statut</th>
+                                        <th>Action</th>
+
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="user : ${users}">
+                                        <td th:text="${user.login}" class="align-middle">Mohamed Traore</td>
+                                        <td th:text="${user.username}" class="align-middle"></td>
+                                        <td  th:text="${user.stations.getNom()}" class="align-middle"></td>
+                                        <td>
+                                            <span class="badge badge-secondary align-middle"
+                                                  th:each="userRole : ${user.roles}"
+                                                  th:text="${userRole.name.replace('ROLE_', '') + ' '}">
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span class="badge badge-primary align-middle"
+                                                  th:text="${user.statut}">
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <a th:href="@{'/admin/user/' + ${user.id}}"
+                                               class="btn btn-info" onclick="return confirm('Etes-vous sur de vouloir modifier?');">Modifier
+                                            </a>
+                                            <a th:if="${user.stations.nom != 'APPLICATION'}"  th:href="@{'/admin/user/' + ${user.id} + '/reset-password'}"
+                                               class="btn btn-dark" onclick="return confirm('Etes-vous sur de vouloir renitialiser?');">Renitialiser
+                                            </a>
+                                            <a th:if="${user.stations.nom != 'APPLICATION'}" sec:authorize="hasRole('ADMIN')" th:href="@{'/admin/user/' + ${user.id} + '/delete'}"
+                                               class="btn btn-danger" onclick="return confirm('Etes-vous sur de vouloir supprimer?');">Supprimer
+                                            </a>
+                                        </td>
+
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</div>
+
+</html>

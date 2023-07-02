@@ -1,0 +1,165 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layout}">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
+    <title>Accueil</title>
+    <meta content="Responsive admin theme build on top of Bootstrap 4" name="description" />
+    <meta content="Themesdesign" name="author" />
+    <link rel="shortcut icon" href="assets/img/favicon.ico">
+
+    <link th:href="@{/assets/css/bootstrap.min.css}" rel="stylesheet" type="text/css">
+    <link th:href="@{/assets/css/metismenu.min.css}" rel="stylesheet" type="text/css">
+    <link th:href="@{/assets/css/icons.css}" rel="stylesheet" type="text/css">
+    <link th:href="@{/assets/css/style.css}" rel="stylesheet" type="text/css">
+
+</head>
+<body>
+<div layout:fragment="page_content" class="main-content">
+    <section class="section">
+        <div class="section-header">
+            <h1>
+                <a sec:authorize="hasAnyRole('ADMIN','CHEFCOM','COMPTABLE', 'SUPERVISEUR','DG')" th:href="@{/recherche}">TABLEAU DE BORD DU SUIVI DES ACTIVITES DE DOCI </a>
+                <a sec:authorize="hasAnyRole('GERANT')" th:href="@{/recherche}">TABLEAU DE BORD DU SUIVI DES ACTIVITES DE DOCI <b th:text="${station}"></b> </a>
+                <a sec:authorize="hasRole('SUPERADMIN')" th:href="@{/recherche}">TABLEAU DE BORD DE L'ADMINISTRATION DE SYGESCOM </a>
+
+            </h1>
+        </div>
+
+        <div  sec:authorize="hasRole('GERANT')" class="row">
+            <div class="col-lg-3 col-md-6 col-sm-6 col-12">
+                <div class="card card-statistic-1">
+                    <div class="card-icon bg-primary">
+                        <a th:href="@{/admin/suivi-courrier}">
+                            <i class="far fa-user"></i>
+                        </a>
+                    </div>
+                    <div class="card-wrap">
+                        <div class="card-header" style="font-size: 14px">
+                            <h8>Stock: Essence -Gazoil</h8>
+                        </div>
+                        <div  class="card-body" style="font-size: 14px; font-weight: bold; color: #a92222">
+                                        E: <span th:text="${Essence}"> </span>&nbsp;||&nbsp;
+                                        G: <span th:text="${Gazoil}"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-6 col-12">
+                <div class="card card-statistic-1">
+                    <div class="card-icon bg-danger">
+                        <a href="#">
+                            <i class="far fa-newspaper"></i>
+                        </a>
+                    </div>
+                    <div class="card-wrap">
+                        <div class="card-header">
+                            <h4>Total litre crédit jour</h4>
+                        </div>
+                        <div class="card-body">
+                            00
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-6 col-12">
+                <div class="card card-statistic-1">
+                    <div class="card-icon bg-warning">
+                        <a href="#">
+                            <i class="far fa-file"></i>
+                        </a>
+                    </div>
+                    <div class="card-wrap">
+                        <div class="card-header">
+                            <h4>Litrage vente comptant</h4>
+                        </div>
+                        <div  class="card-body">
+                            00
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-6 col-12">
+                <div class="card card-statistic-1">
+                    <div class="card-icon bg-danger">
+                        <a th:href="@{/admin/keepself-rejetes}">
+                            <i class="fas fa-circle"></i>
+                        </a>
+                    </div>
+                    <div class="card-wrap">
+                        <div class="card-header">
+                            <h4>Mont vendu</h4>
+                        </div>
+                        <div class="card-body">
+                            00
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--<div class="section-body">
+            <h2 class="section-title">Electeurs</h2>
+            <p class="section-lead">
+
+            </p>
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4>Liste des Electeurs</h4>
+                        </div>
+                        <div class="card-body">
+                            <form th:action="@{/custom-search}" method="post">
+                                <div class="form-group row mb-4">
+                                    <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">
+                                        Critere de recherche
+                                    </label>
+                                    <div class="col-sm-12 col-md-7">
+                                        <select name="select" class="form-control selectric">
+                                            <option value="">Selectionnez votre critère</option>
+                                            <option value="1">Nom Electeur</option>
+                                            <option value="2">Numero Electeur</option>
+                                            <option value="3">Addresse Physique</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group row mb-4">
+                                    <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">
+                                        Recherche
+                                    </label>
+                                    <div class="col-sm-12 col-md-7">
+                                        <input type="text" name="search" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-group row mb-4">
+                                    <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3"></label>
+                                    <div class="col-sm-12 col-md-7">
+                                        <button sec:authorize="hasAnyRole('ADMIN', 'COLLECTOR')" type="submit" class="btn btn-primary">Valider</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>-->
+    </section>
+    <img  class="img-fluid" th:src="@{/img/doci_station.jpg}" style=" height: 50%; width: 90%; margin-left: 5%"/>
+
+</div>
+
+<div class="envelope">
+
+    <div th:if="${message}" style="margin-left: 30%">
+        <span class="alert-danger font-weight-bolder" th:text="${message}"></span>
+    </div>
+</div>
+</body>
+</html>
+
+

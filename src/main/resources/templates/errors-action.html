@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" name="viewport">
+    <title>Page &mdash; d'erreur Intene </title>
+
+    <!-- General CSS Files -->
+    <link rel="stylesheet" th:href="@{/assets/css/bootstrap.min.css}" crossorigin="anonymous">
+    <link rel="stylesheet" th:href="@{/assets/css/all.css}" crossorigin="anonymous">
+
+    <!-- CSS Libraries -->
+
+    <!-- Template CSS -->
+    <link rel="stylesheet" th:href="@{/assets/css/style.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/components.css}">
+</head>
+
+<body>
+<div id="app">
+    <section class="section">
+        <div class="container mt-5">
+            <div class="page-error">
+                <div class="page-inner">
+                    <h1 th:if="${message}">ERREUR INTERNE</h1>
+
+                    <div  class="page-description">
+
+
+                        <div class="alert alert-danger" role="alert" th:text="${message}" th:if="${message}"></div>
+
+                    </div>
+                    <div class="page-search">
+                        <div class="mt-3">
+                            <a th:href="@{/home}">Retourner dans l'application</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="simple-footer mt-5">
+                Copyright &copy; DOCI 2022
+            </div>
+        </div>
+    </section>
+</div>
+
+<!-- General JS Scripts -->
+<script th:src="@{/assets/js/jquery.min.js}" crossorigin="anonymous"></script>
+<script th:src="@{/assets/js/popper.min.js}" crossorigin="anonymous"></script>
+<script th:src="@{/assets/js/bootstrap.min.js}" crossorigin="anonymous"></script>
+<script th:src="@{/assets/js/jquery.nicescroll.min.js}"></script>
+<script th:src="@{/assets/js/moment.min.js}"></script>
+<script th:src="@{/assets/js/stisla.js}"></script>
+
+<!-- JS Libraies -->
+
+<!-- Template JS File -->
+<script th:src="@{/assets/js/scripts.js}"></script>
+<script th:src="@{/assets/js/custom.js}"></script>
+
+<!-- Page Specific JS File -->
+</body>
+</html>

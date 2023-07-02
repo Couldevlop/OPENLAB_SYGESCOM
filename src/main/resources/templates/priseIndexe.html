@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layout}">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Prise d'indexes</title>
+    <script type="text/javascript" th:src="@{js/main.js}"
+            src="../static/assets/js/main.js"></script>
+    <script type="text/javascript" th:src="@{js/main.js}"
+            src="../static/assets/js/main.js"></script>
+
+</head>
+
+<div layout:fragment="page_content" class="main-content">
+    <section class="section">
+        <div class="section-header">
+            <div class="section-header-back">
+                <a th:href="@{/superviseur/StatVentes}" class="btn btn-icon"><i class="fas fa-arrow-left"></i></a>
+            </div>
+            <h1>Prise d'indexe</h1>
+            <div class="section-header-button">
+                <!--<button type="button" class="btn btn-primary"
+                        data-toggle="modal" data-target="#modalKeepself">
+                    Nouveau Client comptant
+                </button>-->
+            </div>
+        </div>
+        <div class="section-body">
+            <h2 class="section-title">Prise indexe</h2>
+            <p class="section-lead">
+                Vous pouvez gérer tous vos prises d'indexes des stations
+            </p>
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4>Liste des prises d'indexe par station</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="clearfix mb-3"></div>
+                            <div class="table-responsive">
+                                <table class="table table-striped" id="table-2">
+                                    <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Station</th>
+                                        <th>Nombre prise </th>
+                                        <th>Actions</th>
+                                    </tr>
+                                    </thead>
+                                    <tr th:each=" c, iStat: ${indexes}">
+                                        <td th:text="${c.dateCreation}" class="align-middle"></td>
+                                        <td th:text="${c.stations.nom}" class="align-middle"></td>
+                                        <td th:text="${iStat.count}" class="align-middle"></td>x
+                                        <td>
+                                            <a th:href="@{'/superviseur/priseIndexe/'}" class="btn btn-success" data-toggle="modal" data-target="#modalKeepself">Détails
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+    <div class="modal fade"  id="modalKeepself" tabindex="-1" role="dialog"
+         aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg"style="width: 1300px; height: 500px" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" style="margin: auto" id="exampleModalLabel">Fenètre des details de prises d'indexes</h5>
+
+                </div>
+                <div class="myForm" style="margin:1%">
+                    <div class="table-responsive">
+                        <table class="table table-striped" id="table-3">
+                            <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Station</th>
+                                <th>Ind Essence Prise </th>
+                                <th>Ind Gazoil Prise </th>
+                                <th>Essence Cuve Prise </th>
+                                <th>Gazoil Cuve Prise </th>
+                            </tr>
+                            </thead>
+                            <tr th:each=" c: ${indexes}">
+                                <td th:text="${c.dateCreation}" class="align-middle"></td>
+                                <td th:text="${c.stations.nom}" class="align-middle"></td>
+                                <td th:text="${c.essenceIndexeFin}" class="align-middle"></td>
+                                <td th:text="${c.gazoilIndexeFin}" class="align-middle"></td>
+                                <td th:text="${c.cuveEssence}" class="align-middle"></td>
+                                <td th:text="${c.cuveGazoil}" class="align-middle"></td>
+                            </tr>
+                            </imput>
+                            </tbody>
+                        </table>
+                        <div class="form-group row mb-4">
+                            <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3"></label>
+                            <div class="col-sm-12 col-md-7" style="margin: auto">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Quitter</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<style type="text/css">
+    .scrollable-menu{
+        height: auto;
+        max-height: 200px;
+        overflow-y: hidden;
+    }
+</style>
+</html>
+

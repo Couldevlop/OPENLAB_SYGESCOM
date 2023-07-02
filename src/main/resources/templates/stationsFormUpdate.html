@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layout}">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Station</title>
+    <script type="text/javascript" th:src="@{js/main.js}"
+            src="../static/assets/js/main.js"></script>
+    <script type="text/javascript">
+        function yesnoCheck(that) {
+            if (that.value ==12 || that.value ==13 || that.value ==14 || that.value ==15 || that.value ==16 || that.value ==17 || that.value ==18) {
+                //alert("check");
+                document.getElementById("cache").style.display = "block";
+            } else {
+                document.getElementById("cache").style.display = "none";
+            }
+        }
+    </script>
+</head>
+
+<div layout:fragment="page_content" class="main-content">
+    <section class="section">
+        <div class="section-header">
+            <h1>Station</h1>
+            <div class="section-header-button">
+                <!--                <a th:href="@{/admin/newcaisse}" class="btn btn-primary"  data-toggle="modal" data-target="#modalCourrier">Nouveau</a>-->
+                <button type="button" class="btn btn-primary"
+                        data-toggle="modal" data-target="#modalCourrier">
+                    Nouveau
+                </button>
+            </div>
+            <div class="section-header-breadcrumb">
+                <div class="breadcrumb-item active"><a th:href="@{/}">Accueil</a></div>
+                <div class="breadcrumb-item"><a th:href="@{/admin/home}">Administration</a></div>
+                <div class="breadcrumb-item">Station</div>
+            </div>
+
+        </div>
+
+        <div class="section-body">
+            <h2 class="section-title">Station</h2>
+            <p class="section-lead">
+                Vous pouvez gérer tous vos courriers
+            </p>
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4>Liste des Stations</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="clearfix mb-3"></div>
+
+                            <div class="myForm" style="border-radius: 10px 10px 10px 10px; box-shadow: #999999">
+                                <form th:action="@{/admin/updateStation}" method="post"}>
+                                    <div class="modal-body">
+                                        <div class="row">
+                                            <div class="col-12 col-md-12 col-lg-12 ">
+                                                <div class="card">
+                                                <input th:if="${station}" type="hidden" th:value="${station.id}" name="id">
+                                                    <div class=" row">
+                                                        <div class=" col-md-6">
+                                                            <div class="form-group">
+                                                                <label>Localisation</label>
+                                                                <div class="form-group">
+                                                                    <div class="form-group">
+                                                                        <select name="zone" class="form-control selectric" id="zone" th:field="*{station.zone}"  th:placeholder="${station.zone}" required>
+                                                                            <option selected th:each="z:${zone}"
+                                                                                    th:value="${z.id}"
+                                                                                    th:text="${z.nom}">
+
+                                                                            </option>
+
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+
+                                                                <div class="custom-checkbox custom-control" style="margin: inherit">
+
+                                                                    <label class="btn btn-success active" >
+                                                                        <input type="checkbox"  name="active" id="option1" th:field="*{station.essence}"  value="Essence"> Essence
+                                                                    </label>
+                                                                    <label class="btn btn-warning">
+                                                                        <input type="checkbox" name="active" id="option2"  th:field="*{station.gasoil}" value="Gasoil"> Gazoil
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class=" col-md-6">
+                                                            <div class="form-group">
+                                                                <label>Nom Station</label>
+                                                                <input type="text" for="id" name="nomstation" class="form-control"
+                                                                       autocomplete="off" value="" id="nomstation" th:field="*{station.nom}" th:placeholder="${station.nom}" >
+                                                            </div>
+                                                            <label>Nombre de pompe</label>
+                                                            <div class="form-group">
+
+                                                                <select  class="form-control selected selectric" id="numPompe" name="numPompe" th:field="*{station.numPompe}"  required>
+                                                                    <option value="1">1</option>
+                                                                    <option value="2"> 2</option>
+                                                                    <option value="3">3</option>
+                                                                    <option value="4">4</option>
+                                                                </select>
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class=" row">
+                                                        <div class=" col-md-6">
+                                                            <div class="form-group">
+                                                                <label>Nombre employé</label>
+                                                                <input type="number"  class="form-control"
+                                                                       autocomplete="off" name="numEmploye" id="numEmploye" th:field="*{station.numEmploye}"  th:placeholder="${station.numEmploye}" required/>
+                                                            </div>
+
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label>&nbsp;</label>
+                                                            <div class="custom-checkbox custom-control">
+
+                                                                <label class="btn btn-success active" >
+                                                                    <input type="radio" name="active" checked id="option1" th:field="*{station.statut}"  value="on"> Active
+                                                                </label>
+                                                                <label class="btn btn-danger">
+                                                                    <input type="radio" name="active" id="option2"  th:field="*{station.statut}" value="off"> Desactive
+                                                                </label>
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class=" row">
+                                                        <div class=" col-md-6">
+                                                            <div class="form-group">
+                                                                <label>Nombre Pompe Essence</label>
+                                                                <input type="number"  class="form-control"
+                                                                       autocomplete="off" name="nbrPompeEssence" id="nbrPompeEssence" th:field="*{station.nbrPompeEssence}"  th:placeholder="${station.nbrPompeEssence}" required/>
+                                                            </div>
+
+                                                        </div>
+                                                        <div class=" col-md-6">
+                                                            <div class="form-group">
+                                                                <label>Nombre Pompe Gazoile</label>
+                                                                <input type="number"  class="form-control"
+                                                                       autocomplete="off" name="nbrPompeGazoil" id="nbrPompeGazoil" th:field="*{station.nbrPompeGazoil}"  th:placeholder="${station.nbrPompeGazoil}" required/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class=" row">
+                                                        <div class=" col-md-6">
+                                                            <div class="form-group">
+                                                                <label>Stock alerte Essence</label>
+                                                                <input type="number"  class="form-control"
+                                                                       autocomplete="off" name="stockAlerteEssence" id="stockAlerteEssence" th:field="*{station.stockAlerteEssence}" th:placeholder="${station.stockAlerteEssence}"  required/>
+                                                            </div>
+
+                                                        </div>
+                                                        <div class=" col-md-6">
+                                                            <div class="form-group">
+                                                                <label>Stock alerte Gazoil</label>
+                                                                <input type="number"  class="form-control"
+                                                                       autocomplete="off" name="stockAlerteGazoil" id="stockAlerteGazoil" th:field="*{station.stockAlerteGazoil}" th:placeholder="${station.stockAlerteGazoil}" required/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+
+                                                    <div class=" row">
+                                                        <div class=" col-md-6">
+                                                            <div class="form-group">
+                                                                <label>Stock critique essence</label>
+                                                                <input type="number"  class="form-control"
+                                                                       autocomplete="off" name="stockCritiqueEssence" id="stockCritiqueEssence" th:field="*{station.stockCritiqueEssence}" th:placeholder="${station.stockCritiqueEssence}" required/>
+                                                            </div>
+
+                                                        </div>
+                                                        <div class=" col-md-6">
+                                                            <div class="form-group">
+                                                                <label>stock critique Gazoil</label>
+                                                                <input type="number"  class="form-control"
+                                                                       autocomplete="off" name="stockCritiqueGazoil" id="stockCritiqueGazoil" th:field="*{station.stockCritiqueGazoil}" th:placeholder="${station.stockCritiqueGazoil}" required/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="modal-footer" style="margin-right: 45%">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                                        <button type="submit" class="btn btn-primary">Valider</button>
+                                    </div>
+
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+</div>
+
+
+</div>
+</div>
+
+</div>
+<style type="text/css">
+    .scrollable-menu{
+        height: auto;
+        max-height: 200px;
+        overflow-y: hidden;
+    }
+</style>
+</html>
+

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Indexes</title>
+</head>
+
+<div layout:fragment="page_content" class="main-content">
+    <section class="section">
+        <div class="section-header">
+            <div class="section-header-back">
+                <a th:href="@{/admin/newindexes}" class="btn btn-icon"><i class="fas fa-arrow-left"></i></a>
+            </div>
+            <h1>Enregistrer indexe du jour</h1>
+            <div class="section-header-breadcrumb">
+                <div class="breadcrumb-item active"><a th:href="@{/}">Accueil</a></div>
+                <div class="breadcrumb-item"><a th:href="@{/admin/home}">Administration</a></div>
+                <div class="breadcrumb-item">Indexe</div>
+            </div>
+        </div>
+
+        <div class="section-body">
+            <h2 class="section-title">Enregistrer indexe du jour</h2>
+            <p class="section-lead">
+                Sur cette page vous pouvez Enregistrer indexe du jour.
+            </p>
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4>Enregistrer indexe du jour</h4>
+                        </div>
+                        <div class="card-body">
+                            <form th:action="@{/admin/newindexesjour}" method="post">
+                                <input type="hidden" name="id" th:value="${stations.id}">
+                                <div class="form-group row mb-4">
+                                    <h4  th:text="${stations.nom}" style="margin: auto">
+                                    </h4>
+
+                                </div>
+
+                                <div class="form-group row mb-4">
+                                    <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Pompes</label>
+                                    <div class="col-sm-12 col-md-7">
+                                        <h4  th:text="${stations.numPompe}" style="margin: auto"></h4>
+                                    </div>m
+                                </div>
+
+                                <div class="form-group row mb-4">
+                                    <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Indexe Essence debut</label>
+                                    <div class="col-sm-12 col-md-7">
+                                        <input name="debutEssence" class="form-control" type="test" id="text-input-debut-essence"  autocomplete="off">
+                                    </div>
+                                </div>
+                                <div class="form-group row mb-4">
+                                    <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Indexe Essece fin</label>
+                                    <div class="col-sm-12 col-md-7">
+                                        <input name="finEssence" class="form-control" type="test" id="text-input-fin-essence"  autocomplete="off">
+                                    </div>
+                                </div>
+
+                                <div class="form-group row mb-4">
+                                    <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Indexe Gasoil debut</label>
+                                    <div class="col-sm-12 col-md-7">
+                                        <input name="debutGasoil" class="form-control" type="text" id="text-input-debut-gazoil"  autocomplete="off">
+                                    </div>
+                                </div>
+                                <div class="form-group row mb-4">
+                                    <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Indexe Gasoil fin</label>
+                                    <div class="col-sm-12 col-md-7">
+                                        <input name="finGasoil" class="form-control" type="text" id="text-input-fin-gazoil"  autocomplete="off">
+                                    </div>
+                                </div>
+                                <div class="form-group row mb-4">
+                                    <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3"></label>
+                                    <div class="col-sm-12 col-md-7">
+                                        <button type="submit" class="btn btn-primary">Valider</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+</html>

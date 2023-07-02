@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+
+      layout:decorate="~{layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Clients Corporate</title>
+</head>
+
+<div layout:fragment="page_content" class="main-content">
+    <section class="section">
+        <div class="section-header">
+            <div class="section-header-back">
+                <a th:href="@{/home}" class="btn btn-icon"><i class="fas fa-arrow-left"></i></a>
+            </div>
+            <h1>Clients Corporates</h1>
+            <div class="section-header-button" sec:authorize="hasRole('GERANT')">
+                <a th:href="@{/gerant/newclient}" class="btn btn-primary">Nouveau</a>
+            </div>
+
+           <!-- <div class="section-header-button" sec:authorize="hasRole('SUPERVISEUR')">
+                <a th:href="@{/gerant/newclient}" class="btn btn-primary">Liste des Béneficiaires</a>
+            </div>-->
+            <div class="section-header-button" sec:authorize="hasRole('SUPERVISEUR')">
+                <button type="button" class="btn btn-primary"
+                        data-toggle="modal" data-target="#modalKeepself">
+                    Nouveau Client Corporate
+                </button>
+
+            </div>
+
+            <div class="section-header-breadcrumb">
+                <div class="breadcrumb-item active"><a th:href="@{/}">Accueil</a></div>
+                <div class="breadcrumb-item"><a th:href="@{/admin/home}">Administration</a></div>
+                <div class="breadcrumb-item">Clients</div>
+            </div>
+        </div>
+        <div class="section-body">
+            <h2 class="section-title">Clients</h2>
+            <p class="section-lead" sec:authorize="hasRole('GERANT')">
+                Vous pouvez gérer tous vos nouveaux clients Comptants
+            </p>
+            <p class="section-lead" sec:authorize="hasRole('SUPERVISEUR')">
+                Vous pouvez gérer tous vos nouveaux clients Corporate
+            </p>
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header" sec:authorize="hasRole('GERANT')">
+                            <h4>Liste des nouveaux clients Comptants</h4>
+                        </div>
+                        <div class="card-header" sec:authorize="hasRole('SUPERVISEUR')">
+                            <h4>Liste des nouveaux clients Corporates</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="clearfix mb-3"></div>
+                            <div class="table-responsive" sec:authorize="hasRole('GERANT')">
+                                <table class="table table-striped" id="table-2">
+                                    <thead>
+                                    <tr>
+                                        <th>Nom </th>
+                                        <th>Email</th>
+                                        <th>Contacts</th>
+                                        <th>N° Pieces</th>
+                                        <th>Action</th>
+
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="cli : ${client}">
+                                        <td th:text="${cli.nom}" class="align-middle"></td>
+                                        <td th:text="${cli.email}" class="align-middle"></td>
+                                        <td>
+                                            <span
+                                                    th:text="${cli.contact1}">
+                                            </span>
+
+                                        </td>
+                                        <td  th:text="${cli.numPiece}" class="align-middle"></td>
+                                        <td>
+                                            <a th:href="@{'/admin/user/' + ${cli.id}}"
+                                               class="btn btn-info" onclick="return confirm('Etes-vous sur de vouloir modifier?');">Modifier
+                                            </a>
+                                            <a th:href="@{'/admin/user/' + ${cli.id} + '/delete'}"
+                                               class="btn btn-danger" onclick="return confirm('Etes-vous sur de vouloir supprimer?');">Supprimer
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="table-responsive" sec:authorize="hasRole('SUPERVISEUR')">
+                                <table class="table table-striped" id="table-2">
+                                    <thead>
+                                    <tr>
+                                        <th>Nom </th>
+                                        <th>Email</th>
+                                        <th>Contacts</th>
+                                        <th>Localisation</th>
+                                        <th>Rémise Essence</th>
+                                        <th>Rémise Gazoil</th>
+                                        <th>Plafond Es</th>
+                                        <th>Plafond Gaz</th>
+                                        <th>Action</th>
+
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:if="clientCorpList" th:each="cli : ${clientCorpList}">
+                                        <td th:text="${cli.nom}" class="align-middle"></td>
+                                        <td th:text="${cli.email}" class="align-middle"></td>
+                                        <td>
+                                            <span
+                                                    th:text="${cli.contact1}">
+                                            </span>
+
+                                        </td>
+                                        <td  th:text="${cli.localisation}" class="align-middle"></td>
+                                        <td  th:text="${cli.remiseEssence}" class="align-middle"></td>
+                                        <td  th:text="${cli.remiseGazoil}" class="align-middle"></td>
+                                        <td  th:text="${cli.plafonageEssence}" class="align-middle"></td>
+                                        <td  th:text="${cli.plafonageGazoil}" class="align-middle"></td>
+                                        <td>
+                                            <a th:href="@{'/superviseur/clients/corporate/' + ${cli.id}}" class="btn btn-success" >Beneficiaires
+                                            </a>
+                                           <!-- <a th:href="@{'/gerant/ventes/operation/' + ${cli.id}}" class="btn btn-success" >Operations
+                                            </a>-->
+                                            <a th:href="@{'/superviseur/clients/corporate/' + ${cli.id} + '/update'}"
+                                               class="btn btn-info" onclick="return confirm('Etes-vous sur de vouloir modifier ce Corporate?');">Modifier
+                                            </a>
+                                          <!--  <a th:href="@{'/admin/user/' + ${cli.id} + '/delete'}"
+                                               class="btn btn-danger" onclick="return confirm('Etes-vous sur de vouloir supprimer?');">Supprimer
+                                            </a>-->
+                                        </td>
+
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <div class="modal fade"  id="modalKeepself" tabindex="-1" role="dialog"
+         aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg"style="width: 1300px; height: 500px" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" style="margin: auto" id="exampleModalLabel">Fenètre d'enégistrement d'un client corporate</h5>
+
+                </div>
+                <div class="myForm">
+                    <form th:action="@{/superviseur/addNewCorporate}" method="post" th:object="${cp}">
+                        <div class="modal-body">
+                            <!--                          <input type="hidden" name="idClient" th:value="${clientCpt.id}">-->
+                            <div class="row">
+                                <div class="col-12 col-md-12 col-lg-12 ">
+                                    <div class="card">
+                                        <div class="card-body" style="margin: auto">
+                                            <div class=" row">
+                                                <div class=" col-md-4">
+                                                    <div class="form-group">
+                                                        <label>Nom</label>
+                                                        <input type="text" for="id" name="nom" required
+                                                               class="form-control"
+                                                               autocomplete="off" th:field="*{nom}">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label>Email</label>
+                                                        <input type="text" for="id" name="email"
+                                                               class="form-control"
+                                                               autocomplete="off"  id="email" required th:field="*{email}">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label>Remise essence</label>
+                                                        <input type="text"  name="remiseEssence"
+                                                               class="form-control"
+                                                               autocomplete="off" id="remiseEssence" required  th:field="*{remiseEssence}">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label>Plafond essence</label>
+                                                        <input type="text"  name="remiseEssence"
+                                                               class="form-control"
+                                                               autocomplete="off" id="plafondEssence" required  th:field="*{plafonageEssence}">
+                                                    </div>
+
+
+                                                </div>
+                                                <div class=" col-md-4">
+                                                    <div class="form-group">
+                                                        <label>DFE</label>
+                                                        <input type="text" for="id" name="num_doc" id="num_doc"
+                                                               class="form-control"
+                                                               autocomplete="off"  required th:field="*{numDoc}" >
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label>Localisation</label>
+                                                        <input type="text" for="id" name="localisation"
+                                                               class="form-control"
+                                                               autocomplete="off"  id="localisation"
+                                                                th:field="*{localisation}">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label>Remise gasoil</label>
+                                                        <input type="text"  name="remiseGazoil"
+                                                               class="form-control"
+                                                               autocomplete="off" id="remiseGazoil" required  th:field="*{remiseGazoil}">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label>Palond gazoil</label>
+                                                        <input type="text"  name="remiseEssence"
+                                                               class="form-control"
+                                                               autocomplete="off" id="plafondGazoil" required  th:field="*{plafonageGazoil}">
+                                                    </div>
+                                                </div>
+                                                <div class=" col-md-4">
+                                                    <div class="form-group">
+                                                        <label>Contact</label>
+                                                        <input type="text"  name="contact1"
+                                                               class="form-control"
+                                                               autocomplete="off" id="contact1" required  th:field="*{contact1}">
+                                                    </div>
+                                                    <div class="form-group">
+                                                            <label>Nbr Bénéficiaires</label>
+                                                            <input type="number"  name="plafonage"
+                                                                   class="form-control"
+                                                                   autocomplete="off" id="plafonage" required  th:field="*{nbre_beneficiaire}">
+                                                        </div>
+                                                    <div class="form-group">
+                                                        <label>Interlocuteur</label>
+                                                        <input type="text"  name="remiseEssence"
+                                                               class="form-control"
+                                                               autocomplete="off" id="interlocuteur" required  th:field="*{interlocuteur}">
+                                                    </div>
+                                                    <label>Type Client</label>
+                                                    <select name="typeClient" class="select2" th:field="*{typeClient}">
+                                                        <option value="DIRECTE">CORPORATE DIRECTE</option>
+                                                        <option value="SIMPLE">CORPORATE SIMPLE</option>
+                                                    </select>
+                                                </div>
+
+                                                <div class="modal-footer" style="margin: auto">
+                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                                                    <button type="submit" class="btn btn-primary">Valider</button>
+                                                </div>
+                                                </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+</html>

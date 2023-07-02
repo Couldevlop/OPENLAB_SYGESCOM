@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Indexes</title>
+</head>
+
+<div layout:fragment="page_content" class="main-content">
+    <section class="section">
+        <div class="section-header">
+            <h1>Indexe</h1>
+            <div class="section-header-button">
+                <a th:href="@{/admin/newindexesJourStation}" class="btn btn-primary">Nouveau</a>
+            </div>
+            <div class="section-header-breadcrumb">
+                <div class="breadcrumb-item active"><a th:href="@{/}">Accueil</a></div>
+                <div class="breadcrumb-item"><a th:href="@{/admin/home}">Administration</a></div>
+                <div class="breadcrumb-item">Indexe du Jour</div>
+            </div>
+
+        </div>
+        <div class="section-body">
+            <h2 class="section-title">Indexes</h2>
+            <p class="section-lead">
+                Vous pouvez gérer toutes vos indexes journaliers
+            </p>
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4>Liste des indexes</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="clearfix mb-3"></div>
+                            <div class="table-responsive">
+                                <table class="table table-striped" id="table-2">
+                                    <thead>
+                                    <tr>
+                                        <th>Nom Station</th>
+                                        <th>Cuve Enssence </th>
+                                        <th>Cuve Gazoil</th>
+                                        <th>Essence Restant</th>
+                                        <th>Gazoil Restant</th>
+                                        <th>Cuve Es Restant</th>
+                                        <th>Cuve Gaz Restant</th>
+                                        <th>Action</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="it :${indexeList}" >
+                                        <td th:text="${it.stations.nom}"  class="align-middle">0001</td>
+                                        <td th:text="${it.cuveEssence}" class="align-middle"></td>
+                                        <td th:text="${it.cuveGazoil}" class="align-middle"></td>
+                                        <td th:text="${it.qtiteRestantEssence}" class="align-middle"></td>
+                                        <td th:text="${it.qtiteRestantGasoil}" class="align-middle"></td>
+                                        <td th:text="${it.stockCuveEssence}" class="align-middle"></td>
+                                        <td th:text="${it.stockCuveGazoil}" class="align-middle"></td>
+
+                                        <td>
+                                            <a th:href="@{'/admin/indexeJour/' + ${it.id}}"
+                                               class="btn btn-info" onclick="return confirm('Etes-vous sur de vouloir modifier ?');">Voir
+                                            </a>
+                                            <a th:href="@{'/admin/indexe/' + ${it.id} + '/delete'}"
+                                               class="btn btn-danger" onclick="return confirm('Etes-vous sur de vouloir supprimer?');">Supprimer
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</div>
+
+</html>

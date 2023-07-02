@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+
+      layout:decorate="~{layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Validation de la commande</title>
+</head>
+
+<div layout:fragment="page_content" class="main-content">
+    <section class="section">
+        <div class="section-header">
+            <h1>Validation commande</h1>
+
+            <div class="section-header-breadcrumb">
+                <div class="breadcrumb-item active"><a th:href="@{/}">Accueil</a></div>
+                <div class="breadcrumb-item"><a th:href="@{/admin/home}">Administration</a></div>
+                <div class="breadcrumb-item">Validation </div>
+            </div>
+
+        </div>
+        <div class="section-body">
+            <h2 class="section-title">Bon de commande</h2>
+            <p class="section-lead">
+                Vous pouvez gérer toutes vos validations de commandes
+            </p>
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4>Liste des validations</h4>
+                        </div>
+                        <div class="card-body">
+
+                            <div th:if="${messageOk}" style="margin-left:40%;font-size: 15px;font-family: 'Arial Black';color: #cc4400">
+                                <span class="alert-danger" th:text="${messageOk}"></span>
+                            </div></br>
+                            <form th:action="@{/assistante/checkBC}" method="post" >
+                                <div class="form-group row mb-4">
+                                    <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">
+                                        Recherche
+                                    </label>
+                                    <div class="col-sm-12 col-md-7">
+                                        <input type="text" name="numBC" class="form-control" autocomplete="none">
+                                    </div><br/>
+                                    <div th:if="${message}" style="margin: auto">
+                                        <span class="alert-danger" th:text="${message}"></span>
+                                    </div>
+
+
+
+                                </div>
+                                <div class="form-group row mb-4">
+                                    <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3"></label>
+                                    <div class="col-sm-12 col-md-7">
+                                        <!-- <button sec:authorize="hasAnyRole('ADMIN', 'CAISSIER')" type="submit" class="btn btn-primary">Valider</button>-->
+                                        <button type="submit" class="btn btn-primary" style="margin-left: 40%">Rechercher</button>
+                                    </div>
+                                </div>
+                            </form>
+
+                            <div class="clearfix mb-3"></div>
+                            <div th:if="${bc}" class="table-responsive">
+                                <table  class="table table-striped" id="table-2">
+                                    <thead>
+                                    <tr>
+                                        <th>NÂ° BC</th>
+                                        <th>Date</th>
+                                        <th>RefEssence</th>
+                                        <th>Qte Essence</th>
+                                        <th>RefGazoil</th>
+                                        <th>Qte Gazoil</th>
+                                        <th>Vendeur</th>
+                                        <th>Action</th>
+
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td th:text="${bc.numBC}" class="align-middle">Mohamed Traore</td>
+                                        <td th:text="${bc.dateBC}" class="align-middle"></td>
+                                        <td  th:text="${bc.refEs}" class="align-middle"></td>
+                                        <td  th:text="${bc.qteEs}" class="align-middle"></td>
+                                        <td  th:text="${bc.refGaz}" class="align-middle"></td>
+                                        <td  th:text="${bc.qteGaz}" class="align-middle"></td>
+                                        <td  th:text="${bc.vendeur}" class="align-middle"></td>
+
+
+                                        <td>
+                                            <!-- <a th:href="@{'/superviseur/bl/' + ${bc.id}}"
+                                                class="btn btn-info" onclick="return confirm('Etes-vous sur de vouloir modifier?');">Voir
+                                             </a>-->
+                                            <a th:href="@{'/assistante/bc/' + ${bc.id} + '/blsir'}"  class="btn btn-info" onclick="return confirm('Etes-vous sur de vouloir valider?');">Joindre le BL </a>
+                                        </td>
+
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modal -->
+    <!-- <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+         <form th:action="@{/superviseur/validationOk}" method="post">
+           <input name="id" type="hidden" th:value="${bc.id}">
+         <div class="modal-dialog" role="document">
+             <div class="modal-content">
+                 <div class="modal-header">
+                     <h5 class="modal-title" id="exampleModalLabel" style="margin-left: 20%">Commande validÃ©e par la SIR</h5>
+                     &lt;!&ndash;<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                         <span aria-hidden="true">&times;</span>
+                     </button>&ndash;&gt;
+                 </div>
+                 <div class="modal-body">
+                      <p>
+                         <h6> Si vous etes sur cette page c'est par ce que le bon de commande NÂ°: <strong th:if="${bc != null}" th:text="${bc.numBC}"></strong>
+                          a Ã©tÃ© validÃ©e par la SIR.</h6>
+                      </p>
+                 </div>
+                 <div class="modal-footer">
+                     <button type="button" class="btn btn-primary" >Bien notÃ©</button>
+                     <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
+
+                 </div>
+             </div>
+         </div>
+     </div>
+     </form>-->
+</div>
+
+</html>

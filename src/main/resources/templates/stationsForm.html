@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layout}">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Station</title>
+    <script type="text/javascript" th:src="@{js/main.js}"
+            src="../static/assets/js/main.js"></script>
+    <script type="text/javascript">
+        function yesnoCheck(that) {
+            if (that.value ==12 || that.value ==13 || that.value ==14 || that.value ==15 || that.value ==16 || that.value ==17 || that.value ==18) {
+                //alert("check");
+                document.getElementById("cache").style.display = "block";
+            } else {
+                document.getElementById("cache").style.display = "none";
+            }
+        }
+    </script>
+</head>
+
+<div layout:fragment="page_content" class="main-content">
+    <section class="section">
+        <div class="section-header">
+            <h1>Station</h1>
+            <div class="section-header-button">
+                <!--                <a th:href="@{/admin/newcaisse}" class="btn btn-primary"  data-toggle="modal" data-target="#modalCourrier">Nouveau</a>-->
+                <button type="button" class="btn btn-primary"
+                        data-toggle="modal" data-target="#modalCourrier">
+                    Nouveau
+                </button>
+            </div>
+            <div class="section-header-breadcrumb">
+                <div class="breadcrumb-item active"><a th:href="@{/}">Accueil</a></div>
+                <div class="breadcrumb-item"><a th:href="@{/admin/home}">Administration</a></div>
+                <div class="breadcrumb-item">Station</div>
+            </div>
+
+        </div>
+
+        <div class="section-body">
+            <h2 class="section-title">Station</h2>
+            <p class="section-lead">
+                Vous pouvez gérer tous vos courriers
+            </p>
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4>Liste des Stations</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="clearfix mb-3"></div>
+                            <div class="table-responsive">
+                                <table class="table table-striped" id="table-2">
+                                    <thead>
+                                    <tr>
+                                        <th>Nom station</th>
+                                        <th>Localisation</th>
+                                        <th>Energie</th>
+                                        <th>Nombre de pompes</th>
+                                        <th>Statut</th>
+                                        <th>Actions</th>
+                                        <!--                                        <th>Action</th>-->
+                                    </tr>
+                                    </thead>
+                                    <tr th:each="st : ${stations}">
+                                        <td  th:text="${st.nom}" class="align-middle"></td>
+                                        <td  th:text="${st.zone.nom}" class="align-middle"></td>
+                                        <td>
+                                            <span  th:text="${st.gasoil}" class="align-middle">Aucune</span>
+                                            <span  th:text="${st.essence}"  class="align-middle"></span>
+                                        </td>
+                                        <td  th:text="${st.numPompe}" class="align-middle"></td>
+                                        <td th:text="${st.statut}" class="badge badge-success" style="margin: auto"></td>
+                                        <td>
+                                            <a  th:href="@{'/admin/station/' + ${st.id}}" class="btn btn-info" onclick="return confirm('Etes-vous sur de vouloir modifier?');">Modifier</a>
+                                            <a  th:href="@{'/admin/station/' + ${st.id} '/delete'} "  class="btn btn-danger" >Supprimer</a>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+
+    <div class="modal fade" id="modalCourrier" tabindex="-1" role="dialog"
+         aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg"style="width: 1000px; height: 600px"  role="document">
+            <div class="modal-content">
+                <div class="modal-header" >
+                    <h5 class="modal-title" id="exampleModalLabel" >Fenetre d'enregistrement d'une station</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <!--                        <span aria-hidden="true">&times;</span>-->
+                    </button>
+                </div>
+                <div class="myForm">
+                    <form th:action="@{/admin/save}" method="post" th:object="${station}">
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-12 col-md-12 col-lg-12 ">
+                                    <div class="card">
+
+                                            <div class=" row">
+                                                <div class=" col-md-6">
+                                                    <div class="form-group">
+                                                        <label>Localisation</label>
+                                                        <div class="form-group">
+                                                            <div class="form-group">
+                                                                <select name="zone" class="form-control selectric" id="zone" th:field="*{zone}" required>
+                                                                    <option th:each="z:${zone}"
+                                                                            th:value="${z.id}"
+                                                                            th:text="${z.nom}">
+
+                                                                    </option>
+
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+
+                                                        <div class="custom-checkbox custom-control" style="margin: inherit">
+
+                                                            <label class="btn btn-success active" >
+                                                                <input type="checkbox" name="active" id="option1" th:field="*{essence}"  value="Essence"> Essence
+                                                            </label>
+                                                            <label class="btn btn-warning">
+                                                                <input type="checkbox" name="active" id="option2"  th:field="*{gasoil}" value="Gasoil"> Gazoil
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class=" col-md-6">
+                                                    <div class="form-group">
+                                                        <label>Nom Station</label>
+                                                        <input type="text" for="id" name="nomstation" class="form-control"
+                                                               autocomplete="off" value="" id="nomstation" th:field="*{nom}" >
+                                                    </div>
+                                                    <label>Nombre de pompe</label>
+                                                    <div class="form-group">
+
+                                                            <select  class="form-control selectric" id="numPompe" name="numPompe" th:field="*{numPompe}" required>
+                                                                <option value="1">1</option>
+                                                                <option value="2"> 2</option>
+                                                                <option value="3">3</option>
+                                                                <option value="4">4</option>
+                                                            </select>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class=" row">
+                                                <div class=" col-md-6">
+                                                    <div class="form-group">
+                                                        <label>Nombre employé</label>
+                                                        <input type="number"  class="form-control"
+                                                               autocomplete="off" name="numEmploye" id="numEmploye" th:field="*{numEmploye}"  required/>
+                                                    </div>
+
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>&nbsp;</label>
+                                                    <div class="custom-checkbox custom-control">
+
+                                                        <label class="btn btn-success active" >
+                                                            <input type="radio" name="active" checked id="option1" th:field="*{statut}"  value="on"> Active
+                                                        </label>
+                                                        <label class="btn btn-danger">
+                                                            <input type="radio" name="active" id="option2"  th:field="*{statut}" value="off"> Desactive
+                                                        </label>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class=" row">
+                                                <div class=" col-md-6">
+                                                    <div class="form-group">
+                                                        <label>Nombre Pompe Essence</label>
+                                                        <input type="number"  class="form-control"
+                                                               autocomplete="off" name="nbrPompeEssence" id="nbrPompeEssence" th:field="*{nbrPompeEssence}"  required/>
+                                                    </div>
+
+                                                </div>
+                                                <div class=" col-md-6">
+                                                <div class="form-group">
+                                                    <label>Nombre Pompe Gazoile</label>
+                                                    <input type="number"  class="form-control"
+                                                           autocomplete="off" name="nbrPompeGazoil" id="nbrPompeGazoil" th:field="*{nbrPompeGazoil}"  required/>
+                                                </div>
+                                            </div>
+                                            </div>
+
+                                            <div class=" row">
+                                                <div class=" col-md-6">
+                                                    <div class="form-group">
+                                                        <label>Stock alerte Essence</label>
+                                                        <input type="number"  class="form-control"
+                                                               autocomplete="off" name="stockAlerteEssence" id="stockAlerteEssence" th:field="*{stockAlerteEssence}"  required/>
+                                                    </div>
+
+                                                </div>
+                                                <div class=" col-md-6">
+                                                <div class="form-group">
+                                                    <label>Stock alerte Gazoil</label>
+                                                    <input type="number"  class="form-control"
+                                                           autocomplete="off" name="stockAlerteGazoil" id="stockAlerteGazoil" th:field="*{stockAlerteGazoil}"  required/>
+                                                </div>
+                                                </div>
+                                            </div>
+
+
+                                        <div class=" row">
+                                            <div class=" col-md-6">
+                                                <div class="form-group">
+                                                    <label>Stock critique essence</label>
+                                                    <input type="number"  class="form-control"
+                                                           autocomplete="off" name="stockCritiqueEssence" id="stockCritiqueEssence" th:field="*{stockCritiqueEssence}"  required/>
+                                                </div>
+
+                                            </div>
+                                            <div class=" col-md-6">
+                                            <div class="form-group">
+                                                <label>stock critique Gazoil</label>
+                                                <input type="number"  class="form-control"
+                                                       autocomplete="off" name="stockCritiqueGazoil" id="stockCritiqueGazoil" th:field="*{stockCritiqueGazoil}"  required/>
+                                            </div>
+                                        </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="modal-footer" style="margin-right: 45%">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                            <button type="submit" class="btn btn-primary">Valider</button>
+                        </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- <div class="modal fade" id="modalAlertAdmin" tabindex="-1" role="dialog"
+      aria-labelledby="exampleModalLabel" aria-hidden="true">
+     <div class="modal-dialog" role="document">
+         <div class="modal-content">
+             <div class="modal-header" >
+                 <h5 class="modal-title" id="exampleModalLabel" >Fenetre de demande de modification </h5>
+                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                     &lt;!&ndash;                        <span aria-hidden="true">&times;</span>&ndash;&gt;
+                 </button>
+             </div>
+             <div class="myForm">
+                 <form th:action="@{/admin/contacteAdmin}" method="post">
+                     <div class="modal-body">
+                         <div class="row">
+                             <div class="col-12 col-md-12 col-lg-12 ">
+                                 <div class="card">
+                                     <div class="card-body">
+                                         <p class="alert alert-danger">
+                                         <h6><i>Pour modifier votre Saisie, vous devez obligatoirement contacter l'administrateur</i></h6>
+                                         </p>
+                                     </div>
+                                 </div>
+                             </div>
+                         </div>
+                     </div>
+                     <div class="modal-footer">
+                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                         <button type="submit" class="btn btn-primary">Contacter l'administrateur</button>
+                     </div>
+                 </form>
+             </div>
+         </div>
+     </div>
+ </div>
+
+ <div class="modal fade" id="modalCourrierDetails" tabindex="-1" role="dialog"
+      aria-labelledby="exampleModalLabel" aria-hidden="true">
+     <div class="modal-dialog" role="document">
+         <div class="modal-content">
+             <div class="modal-header" >
+                 <h5 class="modal-title" id="exampleModalLabel" >Fenetre d'enregistrement de courrier internes</h5>
+                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                     &lt;!&ndash;                        <span aria-hidden="true">&times;</span>&ndash;&gt;
+                 </button>
+             </div>
+             <div class="myForm">
+                 <form th:action="@{/save}" method="post">
+                     <div class="modal-body">
+                         <div class="row">
+                             <div class="col-12 col-md-12 col-lg-12 ">
+                                 <div class="card">
+                                     <div class="card-body" style="margin: auto">
+                                         <div class=" row">
+                                             <div class=" col-md-6">
+                                                 <div class="form-group">
+
+                                                     <label>Agence Emetrice</label>
+                                                     <div class="form-group">
+                                                         <select name="agenceEmetrice" class="form-control selectric" id="agenceEmetrice">
+                                                             <option th:each="agences:${agence}"
+                                                                     th:value="${agences.id}"
+                                                                     th:text="${agences.nomAgence}"></option>
+
+                                                         </select>
+                                                     </div>
+                                                 </div>
+                                                 <div class=" col-md-6">
+                                                     <div class="form-group">
+                                                         <label>NumÃ©ro d'ordre</label>
+                                                         <input type="text" for="id" name="numeroOrdre" class="form-control"
+                                                                autocomplete="off" value="" id="numeroOrdre">
+                                                     </div>
+                                                     <label>Agence Receptrice</label>
+                                                     <div class="form-group">
+                                                         <select name="agencesReceptrice" class="form-control selectric" id="agencesReceptrice">
+                                                             <option th:each="agences:${agence}"
+                                                                     th:value="${agences.id}"
+                                                                     th:text="${agences.nomAgence}"></option>
+                                                         </select>
+                                                     </div>
+                                                     <div class=" col-md-12">
+                                                         <div class=" row" id="cache" name="autreAgence" style="display: none" >
+                                                             <div class=" col-md-12">
+                                                                 <div class="form-group">
+                                                                     &lt;!&ndash;<input type="text" class="form-control"
+                                                                            autocomplete="off" name="autreAgence"
+                                                                            required placeholder="Precisez le nom de agence"/>
+                                                                 </div>&ndash;&gt;
+                                                                     <label>Agence Destinatrice Finale</label>
+
+                                                                     <select name="autreAgence"  class="form-control selectric dropdown scrollable-menu"
+                                                                             id="autreAgence" required>
+                                                                         <option th:each="agences:${agence}"
+                                                                                 th:value="${agences.id}"
+                                                                                 th:text="${agences.nomAgence}"></option>
+
+                                                                     </select>
+
+                                                                 </div>
+
+                                                             </div>
+
+                                                         </div>
+                                                     </div>
+                                                 </div>
+                                             </div>
+                                             <div class="form-group">
+                                                 <label>Objet du courrier</label>
+                                                 <textarea type="text"  class="form-control" cols="50" rows="50" value=" " name="Objectifs" id="Objectifs"></textarea>
+                                             </div>
+
+                                             <div class=" row">
+                                                 <div class=" col-md-6">
+                                                     <label>SociÃ©tÃ© coursiÃ¨re</label>
+                                                     <div class="form-group">
+                                                         <select  class="form-control selectric" id="societeCoursiere" name="societeCoursiere">
+                                                             <option value="">Agence</option>
+                                                             <option value="CODITRANS"> CODITRANS</option>
+                                                             <option value="POSTE"> LA POSTE</option>
+                                                         </select>
+                                                     </div>
+                                                     <div class="form-group">
+                                                         <label>Nom coursier</label>
+                                                         <input type="text"  class="form-control"
+                                                                autocomplete="off" name="nomCousier" id="nomCoursier"/>
+                                                     </div>
+                                                 </div>
+                                                 <div class=" col-md-6">
+
+                                                     <div class="form-group">
+                                                         <label>Contact du coursier</label>
+                                                         <input type="text" class="form-control"
+                                                                autocomplete="off" id="telCoursier" name="telCoursier">
+                                                     </div>
+                                                 </div>
+                                             </div>
+
+
+                                         </div>
+                                     </div>
+                                 </div>
+                             </div>
+                         </div>
+                         <div class="modal-footer">
+                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                             <button type="submit" class="btn btn-primary">Valider</button>
+                         </div>
+                 </form>
+             </div>
+         </div>
+     </div>
+ </div>-->
+
+</div>
+</div>
+
+</div>
+<style type="text/css">
+    .scrollable-menu{
+        height: auto;
+        max-height: 200px;
+        overflow-y: hidden;
+    }
+</style>
+</html>
+

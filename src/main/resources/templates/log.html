@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Trace-Log</title>
+</head>
+
+<div layout:fragment="page_content" class="main-content">
+    <section class="section">
+        <div class="section-header">
+            <h1>Logs</h1>
+            <div class="section-header-button">
+                <a th:href="@{/admin/log/logs-jour}" class="btn btn-primary">Jour</a>
+                <a th:href="@{/admin/log/logs-semaine}" class="btn btn-primary">Semaine</a>
+                <a th:href="@{/admin/log/logs-mois}" class="btn btn-primary">Mois</a>
+            </div>
+            <div class="section-header-breadcrumb">
+                <div class="breadcrumb-item active"><a th:href="@{/}">Accueil</a></div>
+                <div class="breadcrumb-item"><a th:href="@{/admin/home}">Administration</a></div>
+                <div class="breadcrumb-item">Log</div>
+            </div>
+
+        </div>
+        <div class="section-body">
+            <h2 class="section-title">Log</h2>
+            <p class="section-lead">
+                Vous pouvez Consulter toutes vos logs
+            </p>
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4>Liste des logs</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="clearfix mb-3"></div>
+                            <div class="col-md-4 offset-4" th:if="${test.equals(true)}" >
+                                <img src="https://pandorafms.com/blog/wp-content/uploads/2020/12/567-Logs_-qu%C3%A9-son-y-por-qu%C3%A9-monitorizarlos.jpg" class="img-fluid">
+                            </div>
+                            <div th:if="${logs}" class="table-responsive">
+                                <table class="table table-striped" id="table-2">
+                                    <thead>
+                                    <tr>
+                                        <th>Utilisateur</th>
+                                        <th>Role</th>
+                                        <th>Station</th>
+                                        <th>Action</th>
+                                        <th>Réalisation</th>
+                                        <th>Impacte</th>
+                                        <th>Date</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="log : ${logs}">
+                                        <td th:text="${log.user}" class="align-middle">0001</td>
+                                        <td th:text="${log.getRole()}" class="align-middle"></td>
+
+                                        <td th:text="${log.getStation()}" class="align-middle">0001</td>
+                                        <td th:text="${log.getNomAction()}" class="align-middle"></td>
+
+                                        <td th:text="${log.getActionRealisee()}" class="align-middle">0001</td>
+                                        <td th:text="${log.getImpactAction()}" class="align-middle"></td>
+
+                                        <td th:text="${log.getLocalDate()}" class="align-middle">0001</td>
+
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</div>
+
+</html>

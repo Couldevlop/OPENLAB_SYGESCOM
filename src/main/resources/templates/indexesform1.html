@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Indexes</title>
+</head>
+
+<div layout:fragment="page_content" class="main-content">
+    <section class="section">
+        <div class="section-header">
+            <div class="section-header-back">
+                <a th:href="@{/gerant/indexe}" class="btn btn-icon"><i class="fas fa-arrow-left"></i></a>
+            </div>
+            <h1>Indexe</h1>
+            <div class="section-header-breadcrumb">
+                <div class="breadcrumb-item active"><a th:href="@{/}">Accueil</a></div>
+                <div class="breadcrumb-item"><a th:href="@{/parametrages/home}">Administration</a></div>
+                <div class="breadcrumb-item">Indexe</div>
+            </div>
+        </div>
+
+        <div class="section-body">
+            <h2 class="section-title">Enregistrer nouveau indexe</h2>
+            <p class="section-lead">
+                Sur cette page vous pouvez créer un nouveau indexe.
+            </p>
+
+            <div class="row" >
+                <div class="card" style="margin: auto">
+                    <div class="card-header">
+                        <h4>Enregistrer nouveau indexe</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-danger" th:if="${message}" th:text="${message}"></div>
+                        <form th:action="@{/parametrages/newindexes1}" th:object="${data}" method="post">
+                            <div class="form-group row mb-4">
+                                        <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Stations</label>
+                                        <select name="roles" class="select2"  th:field="*{stations}" required>
+                                            <option th:each="st : ${stations}"
+                                                    th:value="${st.id}"
+                                                    th:text="${st.nom}">
+                                            </option>
+                                        </select>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group row mb-4" >
+                                    <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Indexe Essence1</label>
+                                    <div class="col-sm-12 col-md-7">
+                                        <input name="essenceIndexeFin" class="form-control" type="text" th:field="*{super1}"
+                                               id="text-input-debut-essence"  autocomplete="off" required>
+                                    </div>
+                                </div>
+                                <div class="form-group row mb-4" >
+                                    <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Indexe Essence2</label>
+                                    <div class="col-sm-12 col-md-7">
+                                        <input name="essenceIndexeFin1" class="form-control" type="text" th:field="*{super2}"
+                                               id="text-input-debut-essence1"  autocomplete="off" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group row mb-4" >
+                                    <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Indexe Essence3</label>
+                                    <div class="col-sm-12 col-md-7">
+                                        <input name="essenceIndexeFin2" class="form-control" type="text" th:field="*{super3}"
+                                               id="text-input-debut-essence2"  autocomplete="off" required>
+                                    </div>
+                                </div>
+                                <div class="form-group row mb-4" >
+                                    <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Indexe Essence4</label>
+                                    <div class="col-sm-12 col-md-7">
+                                        <input name="essenceIndexeFin3" class="form-control" type="text" th:field="*{super4}"
+                                               id="text-input-debut-essence3"  autocomplete="off" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group row mb-4"  >
+                                    <!--                                    <div class="form-group row mb-4" th:each="p: ${pgazoil}" >-->
+                                    <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Indexe Gazoil1 </label>
+                                    <div class="col-sm-12 col-md-7">
+                                        <input name="gazoilIndexeFin" class="form-control" type="text" th:field="*{gazoil1}"
+                                               id="text-input-debut-essence-pompe"  autocomplete="off" required>
+                                    </div>
+                                </div>
+                                <div class="form-group row mb-4"  >
+                                    <!--                                    <div class="form-group row mb-4" th:each="p: ${pgazoil}" >-->
+                                    <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Indexe Gazoil2 </label>
+                                    <div class="col-sm-12 col-md-7">
+                                        <input name="gazoilIndexeFin1" class="form-control" type="text" th:field="*{gazoil2}"
+                                               id="text-input-debut-essence-pompe1"  autocomplete="off" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group row mb-4"  >
+                                    <!--                                    <div class="form-group row mb-4" th:each="p: ${pgazoil}" >-->
+                                    <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Indexe Gazoil3 </label>
+                                    <div class="col-sm-12 col-md-7">
+                                        <input name="gazoilIndexeFin2" class="form-control" type="text" th:field="*{gazoil3}"
+                                               id="text-input-debut-essence-pompe2"  autocomplete="off" required>
+                                    </div>
+                                </div>
+                                <div class="form-group row mb-4"  >
+                                    <!--                                    <div class="form-group row mb-4" th:each="p: ${pgazoil}" >-->
+                                    <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Indexe Gazoil4 </label>
+                                    <div class="col-sm-12 col-md-7">
+                                        <input name="gazoilIndexeFin3" class="form-control" type="text" th:field="*{gazoil4}"
+                                               id="text-input-debut-essence-pompe3"  autocomplete="off" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--<div class="row">
+                                <div class="form-group row mb-4">
+                                    <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Jauge Essence</label>
+                                    <div class="col-sm-12 col-md-7">
+                                        <input type="number" class="form-control" name="cuveEssence" id="cuveEssence" th:field="*{cuveEssence}"  autocomplete="off" required>
+                                    </div>
+                                </div>
+                                <div class="form-group row mb-4">
+                                    <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3"> Jauge Gazoil</label>
+                                    <div class="col-sm-12 col-md-7">
+                                        <input type="number" class="form-control" name="cuveGazoil" id="cuveGazoil" th:field="*{cuveGazoil}"  autocomplete="off" required>
+                                    </div>
+                                </div>
+                            </div>-->
+                            <div class="form-group row mb-4">
+                                <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3"></label>
+                                <div class="col-sm-12 col-md-7">
+                                    <button type="submit" class="btn btn-primary">Valider</button>
+                                </div>
+                            </div>
+
+                        </form>
+                    </div>
+                    </div>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </section>
+</div>
+</html>

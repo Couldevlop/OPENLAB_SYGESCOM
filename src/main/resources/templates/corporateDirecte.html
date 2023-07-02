@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+
+      layout:decorate="~{layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Bon de livraison Corporate</title>
+</head>
+
+<div layout:fragment="page_content" class="main-content">
+    <section class="section">
+        <div class="section-header">
+            <div class="section-header-back">
+                <a th:href="@{/facturation/caisse}" class="btn btn-icon"><i class="fas fa-arrow-left"></i></a>
+            </div>
+            <h1>Facturation corporate direct</h1>
+            <div class="section-header-button"  sec:authorize="hasAnyRole('ADMIN','RESPCOM')" >
+                <button  type="button" class="btn btn-primary"
+                         data-toggle="modal" data-target="#modalbl">
+                    Créer BL Coprorate
+                </button>
+            </div>
+                <div  class="section-header-button"  sec:authorize="hasAnyRole('ADMIN','RAF')">
+                    <a th:href="@{/facturation/blCorporateRejeter}" class="btn btn-primary">BL Corporate à Validé</a>
+                </div>
+
+
+            <div  class="section-header-button"  sec:authorize="hasAnyRole('RESPCOM','RAF')" >
+                <a th:href="@{/facturation/blCorporateAccepte}" class="btn btn-primary">BL Acceptés</a>
+            </div>
+            <div class="section-header-breadcrumb">
+                <div class="breadcrumb-item active"><a th:href="@{/}">Accueil</a></div>
+                <div class="breadcrumb-item"><a th:href="@{/admin/home}">Administration</a></div>
+                <div class="breadcrumb-item">Bon de Livraison Coprorate Directe</div>
+            </div>
+
+        </div>
+        <div class="section-body">
+            <h2 class="section-title">Facturation Corporate Directe</h2>
+            <p class="section-lead">
+                Vous pouvez gérer vos factures Coprorates Directes
+            </p>
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4>Liste des factures Corporate Directe</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="clearfix mb-3"></div>
+                            <div class="table-responsive">
+                                <table class="table table-striped" id="table-2" sec:authorize="hasAnyRole('ADMIN','RESPCOM','RAF')">
+                                    <thead>
+                                    <tr>
+                                        <th>N° BL</th>
+                                        <th>Date</th>
+                                        <th>RefEssence</th>
+                                        <th>Qte Essence</th>
+                                        <th>RefGazoil</th>
+                                        <th>Qte Gazoil</th>
+                                        <th>Prestataire</th>
+                                        <th>Chauffeur</th>
+                                        <th>Action</th>
+
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="b : ${bliDirect}">
+                                        <td th:text="${b.getNumBL()}" class="align-middle">Mohamed Traore</td>
+                                        <td th:text="${b.dateBL}" class="align-middle"></td>
+                                        <td  th:text="${b.refEs}" class="align-middle"></td>
+                                        <td  th:text="${b.qteEs}" class="align-middle"></td>
+                                        <td  th:text="${b.refGaz}" class="align-middle"></td>
+                                        <td  th:text="${b.qteGaz}" class="align-middle"></td>
+                                        <td  th:text="${b.prestataire.nom}" class="align-middle"></td>
+                                        <td  th:text="${b.prestataire.nomChauffeur}" class="align-middle"></td>
+
+                                        <td>
+                                            <a th:href="@{'/facturation/bl/corporate/' + ${b.id} + '/directe'}"
+                                               class="btn btn-info" onclick="return confirm('Etes-vous sur de vouloir Valider le BL?');">A valider
+                                            </a>
+                                            <a sec:authorize="hasAnyRole('ADMIN','DG','RAF','RESPCOM')" th:href="@{'/facturation/' + ${b.id} + '/ecart'}"
+                                               class="btn btn-success" onclick="return confirm('Etes-vous sur de vouloir supprimer?');">Ecart
+                                            </a>
+                                            <a sec:authorize="hasAnyRole('ADMIN','DG','RAF')" th:href="@{'/facturation/bl/' + ${b.id} + '/delete'}"
+                                               class="btn btn-danger" onclick="return confirm('Etes-vous sur de vouloir supprimer?');">Supprimer
+                                            </a>
+                                        </td>
+
+                                    </tr>
+                                    </tbody>
+                                </table>
+
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <div class="modal fade"  id="modalbl" tabindex="-1" role="dialog"
+         aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg"style="width: 1300px; height: 500px" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel" style="margin-left: 20%">Fenêtre d'enrégistrement d'un bon de livraison</h5>
+
+                </div>
+                <div class="myForm">
+                    <form th:action="@{/facturation/saveBl}" method="post" enctype="multipart/form-data" id="fileUploadForm" th:object="${bl}">
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-12 col-md-12 col-lg-12 ">
+                                    <div class="card">
+                                        <div class="card-body" style="margin: auto">
+                                            <div class=" row">
+                                                <div class=" col-md-4">
+                                                    <div class="form-group">
+                                                        <label>Numéro BL</label>
+                                                        <input type="text" for="id" name="numBl"
+                                                               class="form-control"
+                                                               autocomplete="off"   required th:field="*{numBL}">
+                                                    </div>
+                                                </div>
+                                                <div class=" col-md-4">
+                                                    <div class="form-group">
+                                                        <label>Réference Gasoil</label>
+                                                        <input type="text" for="id" name="refGaz"
+                                                               class="form-control"
+                                                               autocomplete="off" value="" id="referenceGaz" required th:field="*{refGaz}">
+                                                    </div>
+                                                </div>
+                                                <div class=" col-md-4">
+                                                    <div class="form-group">
+                                                        <label>Réference Essence</label>
+                                                        <input type="text" for="id" name="refEs"
+                                                               class="form-control"
+                                                               autocomplete="off" value="" id="referenceEs" required th:field="*{refEs}">
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class=" row">
+                                                <div class=" col-md-4">
+                                                    <div class="form-group">
+                                                        <label>Désignation Gasoil</label>
+                                                        <input type="text" for="id" name="designationGaz"
+                                                               class="form-control"
+                                                               autocomplete="off" value="" id="refernceGAZ" required th:field="*{designationGaz}">
+                                                    </div>
+                                                </div>
+                                                <div class=" col-md-4">
+                                                    <div class="form-group">
+                                                        <label>Désignation Essence</label>
+                                                        <input type="text" for="id" name="designationGaz"
+                                                               class="form-control"
+                                                               autocomplete="off" value="" id="designationGaz" required th:field="*{designationEs}">
+                                                    </div>
+                                                </div>
+                                                <div class=" col-md-4">
+                                                    <div class="form-group">
+                                                        <label>Quantité Essence</label>
+                                                        <input type="number" for="id" name="qteEs"
+                                                               class="form-control"
+                                                               autocomplete="off" value="" id="qteEs" required th:field="*{qteEs}">
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class=" row">
+                                                <div class=" col-md-4">
+                                                    <div class="form-group">
+                                                        <label>Quantité Gasoil</label>
+                                                        <input type="number" for="id" name="qte"
+                                                               class="form-control"
+                                                               autocomplete="off" value="" id="qte" required th:field="*{qteGaz}">
+                                                    </div>
+                                                </div>
+                                                <div class=" col-md-4">
+                                                    <div class="form-group">
+                                                        <label>Immatriculation</label>
+                                                        <input type="text" for="id" name="immatriculation"
+                                                               class="form-control"
+                                                               autocomplete="off" value="" id="immatriculation" required th:field="*{immatriculation}">
+                                                    </div>
+
+                                                </div>
+                                                <div class=" col-md-4">
+                                                    <div class="form-group">
+                                                        <label>Client corporate</label>
+                                                        <select name="corporates"  class="form-control selectric dropdown scrollable-menu"
+                                                                id="stations" required th:field="*{corporates}">
+                                                            <option th:each="st:${corpo}"
+                                                                    th:value="${st.id}"
+                                                                    th:text="${st.nom}"></option>
+
+                                                        </select>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class=" col-md-4">
+                                                    <div class="form-group">
+                                                        <label>Nom Chauffeur</label>
+                                                        <select name="stationDes"  class="form-control selectric dropdown scrollable-menu"
+                                                                id="prestataire" required th:field="*{prestataire}">
+                                                            <option th:each="st:${p}"
+                                                                    th:value="${st.id}"
+                                                                    th:text="${st.nomChauffeur}"></option>
+
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class=" col-md-4">
+                                                    <div class="form-group">
+                                                        <label>Transporteur</label>
+                                                        <input type="text" for="id" name="modeTransport"
+                                                               class="form-control"
+                                                               autocomplete="off" value="" id="transport" required th:field="*{modeTransport}">
+                                                    </div>
+                                                </div>
+                                                <div class=" col-md-4">
+                                                        <div class="form-group">
+                                                            <label>Pièces Jointes</label>
+                                                            <input name="files" type="file" multiple class="form-control" required>
+                                                        </div>
+
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                            <div class="modal-footer" style="margin-right: 40%">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                                <button type="submit" class="btn btn-primary">Valider</button>
+                            </div>
+
+                    </form>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+</html>
