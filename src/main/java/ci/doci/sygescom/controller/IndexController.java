@@ -2,10 +2,7 @@ package ci.doci.sygescom.controller;
 
 import ci.doci.sygescom.domaine.*;
 import ci.doci.sygescom.domaine.dto.IndexeDTO;
-import ci.doci.sygescom.service.EmailServiceImpl;
-import ci.doci.sygescom.service.OperationIndexesService;
-import ci.doci.sygescom.service.OperationsService;
-import ci.doci.sygescom.service.UserService;
+import ci.doci.sygescom.service.*;
 import ci.doci.sygescom.repository.*;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +30,7 @@ public class IndexController {
    private UserRepository userRepository;
 
     private InterimRepository interimRepository;
-
+   private final EcartStationService ecartStationService;
     private UserService userservice;
     private StockStationRepository service;
     private final IndexesRepository indexesRepository;
@@ -80,11 +77,19 @@ public class IndexController {
                 return "home";
             }
             StockStation st = service.findStockStationByStations(user.getStations());
+            EcartStations ecart = null;
+            if(ecartStationService.findByID(user.getId()) != null){
+                 ecart = ecartStationService.findByID(user.getId());
+                model.addAttribute("ecartEssence", ecart.getEcartEssence());
+                model.addAttribute("ecartGazoil", ecart.getEcartGazoil());
+                model.addAttribute("ecart", ecart);
+            }
 
 
             model.addAttribute("station", user.getStations().getNom());
             model.addAttribute("Gazoil",st.getQteGlobaleGazoile());
             model.addAttribute("Essence", st.getQteGlobaleEssence());
+
 
 
             return "home";

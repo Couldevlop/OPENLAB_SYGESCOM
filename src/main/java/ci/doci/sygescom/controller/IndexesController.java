@@ -465,26 +465,18 @@ public class IndexesController {
    //------------------------- Verification du stock d'alerte ---------------------/
 
     private void verificationDeSeuilAlerte(StockStation stck){
-        MimeMessage message = mailSendder.createMimeMessage();
-
-
-        List<StockStation> stockStationList = stockStationRepository.findAll();
-        for(StockStation st : stockStationList){
-
-            double qteCuveEssenceActuel = st.getQteGlobaleEssence();
-            double qteCuveGazoilActuel = st.getQteGlobaleGazoile();
 
             //---- on verifie si les seuils des deux cuves est attein si non on verifie cuve par cuve
-            if(qteCuveEssenceActuel<= 1000 && qteCuveGazoilActuel<= 1000){
+            if(stck.getQteGlobaleEssence()<= 1000 && stck.getQteGlobaleGazoile()<= 1000){
                 String messageGlobal = " Bonjour, " +  "\r\n"  +
-                        "Nous vous informons que la quantité de Gazoil et de l'Essence en cuve de la Station de " + st.getStations().getNom() +
+                        "Nous vous informons que la quantité de Gazoil et de l'Essence en cuve de la Station de " + stck.getStations().getNom() +
                         "\r\n"  +
                         " a atteint son niveau d'alerte à ce jour : "  +  LocalDate.now() +   " . Voici les détails: " + "\r\n" +
-                           " - Quantité  essence actuelle : "  +     +  qteCuveEssenceActuel  +   "\r\n" +
-                             "- Quantité  gazoil actuelle : "    +   qteCuveGazoilActuel    +  "\r\n"
+                           " - Quantité  essence actuelle : "  +     +  stck.getQteGlobaleEssence()  +   "\r\n" +
+                             "- Quantité  gazoil actuelle : "    +   stck.getQteGlobaleGazoile()    +  "\r\n"
                         +  "\r\n"  +  "\r\n"  +
 
-                          "ALERTE N°"  +  st.getAlerte()  + "\r\n" ;
+                          "ALERTE N°"  +  stck.getAlerte()  + "\r\n" ;
 
 
 
@@ -492,51 +484,51 @@ public class IndexesController {
                         .subject("NOTIFICATION: SEUIL ALERT STOCK STATION")
                         .msgBody(messageGlobal)
                         .attachment(null)
-                        .recipient("coulwao@gmail.com")
+                        .recipient("stockstations@doci.ci")
                         .build();
                 emailService.sendSimpleMail(mail);
                 return;
             }
-            if(qteCuveEssenceActuel<= 1000){
+            if(stck.getQteGlobaleEssence()<= 1000){
                 String messageEss = " Bonjour, " +  "\r\n"  +
-                        "Nous vous informons que la quantité de Gazoil et de l'Essence en cuve de la Station de " + st.getStations().getNom() +
+                        "Nous vous informons que la quantité de Gazoil et de l'Essence en cuve de la Station de " + stck.getStations().getNom() +
                         "\r\n"  +
                         " a atteint son niveau d'alerte à ce jour : "  +  LocalDate.now() +   " . Voici les détails: " + "\r\n" +
-                        " - Quantité  essence actuelle : "  +     +  qteCuveEssenceActuel
+                        " - Quantité  essence actuelle : "  +     +  stck.getQteGlobaleEssence()
 
                         +  "\r\n"  +  "\r\n"  +
 
-                        "ALERTE N°"  +  st.getAlerte()  + "\r\n" ;
+                        "ALERTE N°"  +  stck.getAlerte()  + "\r\n" ;
 
                 EmailDetails mail = EmailDetails.builder()
                         .subject("SEUIL ALERTE STOCKS EN STATION")
                         .msgBody( messageEss)
                         .attachment(null)
-                        .recipient("coulwao@gmail.com")
+                        .recipient("stockstations@doci.ci")
                         .build();
                 emailService.sendSimpleMail(mail);
                 return;
-            } if(qteCuveGazoilActuel<= 1000){
+            } if(stck.getQteGlobaleGazoile()<= 1000){
                 String messageGaz =  " Bonjour, " +  "\r\n"  +
-                        "Nous vous informons que la quantité de Gazoil et de l'Essence en cuve de la Station de " + st.getStations().getNom() +
+                        "Nous vous informons que la quantité de Gazoil et de l'Essence en cuve de la Station de " + stck.getStations().getNom() +
                         "\r\n"  +
                         " a atteint son niveau d'alerte à ce jour : "  +  LocalDate.now() +   " . Voici les détails: " + "\r\n" +
-                        " - Quantité  essence actuelle : "  +     +  qteCuveGazoilActuel
+                        " - Quantité  essence actuelle : "  +     +  stck.getQteGlobaleGazoile()
 
                         +  "\r\n"  +  "\r\n"  +
 
-                        "ALERTE N°"  +  st.getAlerte()  + "\r\n" ;
+                        "ALERTE N°"  +  stck.getAlerte()  + "\r\n" ;
 
 
                 EmailDetails mail = EmailDetails.builder()
                         .subject("SEUIL ALERT STOCK STATION")
                         .msgBody( messageGaz)
                         .attachment(null)
-                        .recipient("coulwao@gmail.com")
+                        .recipient("stockstations@doci.ci")
                         .build();
                 emailService.sendSimpleMail(mail);
                 return;
-            }
+
         }
 
 
