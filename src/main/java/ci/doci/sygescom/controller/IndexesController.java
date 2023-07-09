@@ -258,18 +258,28 @@ public class IndexesController {
 
                     alerte =0;
 
-            }else{
+            }
+            if(sta.getQteGlobaleGazoile() < 1000 || sta.getQteGlobaleGazoile() <1000){
 
                 alerte ++;
             }
 
-
+            int nbrIndex = 0;
             sta.setAlerte(alerte);
             indexes.setQtiteRestantEssence(qtRestanteEss);
             indexes.setQtiteRestantGasoil(qtRestanteGa);
             indexes.setDifPriseEss(stockCuveEsSenceConso);
             indexes.setDifPriseGaz(stockCuveGazoilConso);
             indexes.setDateJour(LocalDate.now());
+            nbrIndex= sta.getNbrIndex();
+            if(sta.getDateJour() == LocalDate.now()){
+                nbrIndex ++;
+
+            }else {
+                nbrIndex = 1;
+
+            }
+            sta.setNbrIndex(nbrIndex);
             StockStation savedStockStation = stockStationRepository.save(sta);
             indexesRepository.save(indexes);
 

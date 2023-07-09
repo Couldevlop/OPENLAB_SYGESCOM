@@ -177,6 +177,23 @@ public class ClientsController {
             return "errors-action";
         }
     }
+
+
+    @GetMapping("/superviseur/corporate/beneficiaire/{id}/update")
+    public String shwoBenefiaireOfCorporate(Model model, @PathVariable("id") long id) {
+        Optional<Beneficiaire> beneCorporate = beneficiaireRepository.findById(id);
+        if (beneCorporate.isPresent()) {
+            Beneficiaire benef = beneCorporate.get();
+            model.addAttribute("beneficiaire", benef);
+            model.addAttribute("stations", stationsRepository.findAll());
+            //model.addAttribute("benef", new Beneficiaire());
+            return "beneficiaireUpdate";
+        } else {
+            model.addAttribute("message", "Aucun corporate n'est associé au beneficiaire que vous voulez crée");
+            return "errors-action";
+        }
+    }
+
     @PostMapping("/superviseur/updateCorporate")
     public String updateCorporate(@RequestParam String interlocuteur,
                                   @RequestParam long idClient,
@@ -251,6 +268,10 @@ public class ClientsController {
         if (cp.equals(null)) {
             return "redirect:/superviseur/clienst";
         }
+        if(clientCorporateRepository.findClientsCorporatesByContact1(cp.getContact1()) != null){
+            model.addAttribute("message", "Un client existant a dèjà ce le numero: " + cp.getContact1());
+            return "accessDenied";
+        }
         cp.setDateEnreg(LocalDate.now());
         cp.setUser(user);
         clientCorporateRepository.save(cp);
@@ -282,21 +303,21 @@ public class ClientsController {
                                  RedirectAttributes redirectAttributes,
                                  @RequestParam("litreEssence") double litreEssence,
                                  @RequestParam("litreGazoil") double litreGazoil,
-                                 @RequestParam("numBon") String numBon,
+                                // @RequestParam("numBon") String numBon,
                                  @RequestParam("telBenef") String telBenef,
                                  @AuthenticationPrincipal User user ) {
-        if (numBon != "") {
+        if (contact != "") {
             String num = contact.replaceAll("\\s", "");
-            ClientsCorporates cp = clientCorporateRepository.findClientsCorporatesByContact1(num);
-            BadActionException badActionException = operationsService._returnClientCorporateAfterSelling(contact, litreEssence, litreGazoil, user.getStations(), telBenef,numBon);
-            if (badActionException.getT() != null && badActionException.getT().equals(cp)) {
+            //ClientsCorporates cp = clientCorporateRepository.findClientsCorporatesByContact1(num);
+            BadActionException badActionException = operationsService._returnClientCorporateAfterSelling(contact, litreEssence, litreGazoil, user.getStations(), telBenef);
+            if (badActionException.getT() != null ) {
                 Beneficiaire beneficiaire = beneficiaireRepository.findBeneficiaireByContact(telBenef);
                 ClientsCorporates cp1 = clientCorporateRepository.findClientsCorporatesByContact1(num);
-                redirectAttributes.addFlashAttribute("corporate",cp);
+               // redirectAttributes.addFlashAttribute("corporate",cp);
                 redirectAttributes.addFlashAttribute("beneficiaire", beneficiaire);
                 redirectAttributes.addFlashAttribute("litreEssence",litreEssence);
                 redirectAttributes.addFlashAttribute("litreGazoil",litreGazoil);
-                redirectAttributes.addFlashAttribute("numBon",numBon);
+               // redirectAttributes.addFlashAttribute("numBon",numBon);
                 redirectAttributes.addFlashAttribute("telBenef",telBenef);
                 redirectAttributes.addFlashAttribute("dates",LocalDate.now());
                 redirectAttributes.addFlashAttribute("messages",badActionException.getMessage());
@@ -308,8 +329,14 @@ public class ClientsController {
                 return "redirect:/gerant/searchcorporate";
             } if(badActionException.getT1()==null){
                 redirectAttributes.addFlashAttribute("message", badActionException.getMessage());
+
                 return "redirect:/gerant/searchcorporate";
             }
+            if(badActionException.getT1() !=null){
+                redirectAttributes.addFlashAttribute("success", badActionException.getMessage());
+                return "redirect:/gerant/searchcorporate";
+            }
+
 
         } else {
             String message = "veillez renseigner un numero de telephone SVP";
