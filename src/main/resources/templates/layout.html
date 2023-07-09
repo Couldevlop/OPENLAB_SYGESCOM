@@ -150,6 +150,12 @@
                         <i class="fas fa-rocket"></i> Suivi de Stock
                     </a>
 
+                    <li sec:authorize="hasAnyRole('GERANT', 'COMPTABLE', 'SUPERVISEUR')" class="nav-link"></li>
+                    <a sec:authorize="hasAnyRole('GERANT', 'COMPTABLE', 'SUPERVISEUR')" th:href="@{/gerant/versement}"
+                       class="btn btn-primary btn-lg btn-block btn-icon-split">
+                        <i class="fas fa-rocket"></i> Versement
+                    </a>
+
                   <!--  <li sec:authorize="hasRole('DG')" class="nav-link"></li>
                     <a sec:authorize="hasRole('DG')" th:href="@{/dg/stock}"
                        class="btn btn-primary btn-lg btn-block btn-icon-split">

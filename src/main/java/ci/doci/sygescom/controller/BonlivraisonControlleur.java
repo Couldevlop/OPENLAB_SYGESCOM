@@ -175,19 +175,27 @@ public class BonlivraisonControlleur {
     @GetMapping("/gerant/bl/{id}")
     public String validerBl(@PathVariable("id") long id,
                             Model model, @AuthenticationPrincipal User user){
-        BonLivraison livraison = bonlivraisonRepository.findById(id).orElse(null);
+        if(bonlivraisonRepository.existsById(id) == false){
+            model.addAttribute("message", "Aucun BL n'a été trouve vaec cet identifiant");
+            return "accessDenied";
+        }
+        BonLivraison livraison = bonlivraisonRepository.findById(id).get();
+        if(stockGestociRepository.getLastId() == 0){
+            model.addAttribute("message", "Le paramétrage des quantités de la GESTOCI ne sont fait");
+            return "accessDenied";
+        }
         long stId = stockGestociRepository.getLastId(); //recuperation Id du dernier stock gestoci
-        Stockgestoci stockgestoci = stockGestociRepository.findById(stId).orElse(null); //impact stock GESTOCI
+        Stockgestoci stockgestoci = stockGestociRepository.findById(stId).get(); //impact stock GESTOCI
         long stockStationId = stockInitStationsRepository.getLastId();// Get le stock de la station
-        long indexId = indexesRepository.lastId(user.getStations().getId());//dernière saisie de prise d'indexe
+       // long indexId = indexesRepository.lastId(user.getStations().getId());//dernière saisie de prise d'indexe
         Optional<StockInitStation> stInit = stockInitStationsRepository.findById(stockStationId);//Stock de parametrage
        if(stInit.isPresent() && id !=0){
            StockInitStation stockInitStation = stInit.get();
-           StockStation st = new StockStation();
+           StockStation st = stockStationRepository.findStockStationByStations(user.getStations());
            st.setEssenceDepot(livraison.getQteEs());
            st.setGazoilDepot(livraison.getQteGaz());
-           st.setEssenceInit(stockInitStation.getQteinites());
-           st.setGazoilInit(stockInitStation.getQteinitgaz());
+           //st.setEssenceInit(stockInitStation.getQteinites());
+          // st.setGazoilInit(stockInitStation.getQteinitgaz());
 
            //*********** Mise à jour des soldes de la station*****************
            double gazTotal= stockInitStation.getQteinitgaz() + livraison.getQteGaz();
@@ -195,7 +203,7 @@ public class BonlivraisonControlleur {
            //st.setQteGlobaleGazoile(gazTotal);//stock réel après dépotage gasoil
            //st.setQteGlobaleEssence(eseenceTotal);//stock réel après dépotage essence
            st.setDateDepot(LocalDate.now());
-           st.setStockInitStation(stockInitStation);//???
+           //st.setStockInitStation(stockInitStation);//???
            st.setStations(user.getStations());
            //saisie
            double qteEssenceDuBl = livraison.getQteEs(); //qte Essence presente sur le BL
@@ -210,10 +218,7 @@ public class BonlivraisonControlleur {
            st.setEcartGazoil(ecartGazoil);
            stockInitStation.setParametre(true);
            stockInitStationsRepository.save(stockInitStation);
-           Indexes indexes = indexesRepository.findById(indexId).orElse(null);
-          // indexes.setEssenceIndexeFin(eseenceTotal);//Mise à jour table indexe de la station
-          // indexes.setGazoilIndexeFin(gazTotal);//Mise à jour table indexe
-           indexesRepository.save(indexes);
+
            stockStationRepository.save(st);
            livraison.setUser(user);
            bonlivraisonRepository.save(livraison);
@@ -236,8 +241,13 @@ public class BonlivraisonControlleur {
        }
         // La station à un stock initial et n'a jamais reçu de dépotage
            // else si dépotage deja effectué
+
+        if(stockStationRepository.findStockStationByStations(user.getStations()) == null){
+            model.addAttribute("message", "Votre station n'a pas été paramétré correctement au niveau des stocks");
+            return "accessDenied";
+        }
         StockStation stockstation = stockStationRepository.findStockStationByStations(user.getStations());
-        StockStation  dernierStockStation = stockStationRepository.findById(stockstation.getId()).orElse(null);
+        StockStation  dernierStockStation = stockStationRepository.findById(stockstation.getId()).get();
         //*********** Mise à jour des soldes de la station*****************
         double gazTotal= dernierStockStation.getQteGlobaleGazoile() + livraison.getQteGaz();
         double eseenceTotal = dernierStockStation.getQteGlobaleEssence() + livraison.getQteEs();
@@ -245,7 +255,7 @@ public class BonlivraisonControlleur {
         double qteGazDuBl = livraison.getQteGaz(); //qte Gazoil present sur le BL
         double qteEssenceDepot = livraison.getQteEs();
         double qteGazoilDepot = livraison.getQteGaz();
-        Indexes indexes = indexesRepository.findById(indexId).orElse(null);
+        //Indexes indexes = indexesRepository.findById(indexId).orElse(null);
 
         //**********Mise à jour de la table des indexes pour impacter le stock global après dépotage*****************
       //  indexes.setEssenceIndexeFin(eseenceTotal);//Mise à jour table indexe de la station

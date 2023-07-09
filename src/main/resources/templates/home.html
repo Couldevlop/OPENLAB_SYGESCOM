@@ -58,10 +58,13 @@
                     </div>
                     <div class="card-wrap">
                         <div class="card-header">
-                            <h4>Total litre crédit jour</h4>
+                            <h4>Ecarts</h4>
                         </div>
-                        <div class="card-body">
-                            00
+                        <div class="card-body">00
+                            <p th:if="${ecart} ">
+                            E: <span th:text="${ecart.getEcartEssence()}"></span>
+                            G: <span th:text="${ecart.getEcartGazoil()}"></span>
+                            </p>
                         </div>
                     </div>
                 </div>

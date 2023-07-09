@@ -43,7 +43,7 @@ public class FacturationController {
 
     @GetMapping("/facturation/caisse")
     public String voirCaisse() {
-        return "caisse";
+        return "versement";
     }
 
     @GetMapping("/facturation/corporate/directe")
