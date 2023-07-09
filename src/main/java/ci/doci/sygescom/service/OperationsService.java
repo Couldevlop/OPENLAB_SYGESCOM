@@ -9,6 +9,7 @@ import ci.doci.sygescom.repository.BeneficiaireRepository;
 import ci.doci.sygescom.repository.ClientCorporateRepository;
 import ci.doci.sygescom.repository.StockStationRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
@@ -34,47 +35,57 @@ public class OperationsService {
        3- Mets à jour le stock
        4- retourne l'objet corporate à jours
      */
-    public BadActionException _returnClientCorporateAfterSelling(String contact, double litreEssence, double litreGazoil, Stations st, String telBenef,String numbon){
+    public BadActionException _returnClientCorporateAfterSelling(String contact, double litreEssence, double litreGazoil, Stations st, String telBenef){
         if(clientCorporateRepository.findClientsCorporatesByContact1(contact)==null){
             String message=" Le numéro du corporate renseigné est incorrecte";
             return  userService._doDetecteErrorAction(null,message, null);
         }
         ClientsCorporates ccpSave = clientCorporateRepository.findClientsCorporatesByContact1(contact);
         if(ccpSave.getPlafonageEssence() !=0 || ccpSave.getPlafonageGazoil() !=0){
-            double restePlafondEssence = ccpSave.getPlafonageEssence() - litreEssence;
-            double restePlafondGazoil = ccpSave.getPlafonageGazoil()-litreGazoil;
+            double restePlafondEssenceCorporate = ccpSave.getPlafonageEssence() - litreEssence;
+            double restePlafondGazoilCorporate = ccpSave.getPlafonageGazoil()-litreGazoil;
             try {
                 StockStation stockStation = stockStationRepository.findStockStationByStations(st);
                 stockStation.setQteGlobaleEssence(stockStation.getQteGlobaleEssence()-litreEssence);
                 stockStation.setQteGlobaleGazoile(stockStation.getQteGlobaleGazoile()-litreGazoil);
-                ccpSave.setPlafonageEssence(restePlafondEssence);
-                ccpSave.setPlafonageGazoil(restePlafondGazoil);
+                ccpSave.setPlafonageEssence(restePlafondEssenceCorporate);
+                ccpSave.setPlafonageGazoil(restePlafondGazoilCorporate);
                 //ClientsCorporates corporateSaved = clientCorporateRepository.save(ccpSave);
 
                 List<Beneficiaire> beneficiaireList = beneficiaireRepository.findBeneficiaireByClientsCorporates(ccpSave);
+                if(beneficiaireRepository.findBeneficiaireByContact(telBenef) == null){
+                    String message=" Le numéro du bénéficiaire renseigné est incorrecte";
+                    return  userService._doDetecteErrorAction(null,message, null);
+                }
                 Beneficiaire beneficiaire = beneficiaireRepository.findBeneficiaireByContact(telBenef);
+                if(beneficiaire.getPlafonageEssence()<0 || beneficiaire.getPlafonageGazoil() <0){
+                    String message=" La quantité demandée est superieur à votre stock restant";
+                    return  userService._doDetecteErrorAction(null,message, null);
+                }
+                if(beneficiaire.getPlafonageGazoil()<litreGazoil || beneficiaire.getPlafonageEssence()<litreEssence){
+                    String message=" Stock insuffisant: quantité essence " + beneficiaire.getPlafonageEssence() + ", quantité gasoil: " + beneficiaire.getPlafonageGazoil();
+                    return  userService._doDetecteErrorAction(null,message, null);
+                }
                 double restePlafondEssenceBeneficiaire = beneficiaire.getPlafonageEssence() - litreEssence;
                 double restePlafondGazoilBeneficiaire = beneficiaire.getPlafonageGazoil()-litreGazoil;
-                if(restePlafondEssenceBeneficiaire<0 || restePlafondGazoilBeneficiaire <0){
-                    String message=" La quantité demandée est superieur à votre stock restant";
-                    return  userService._doDetecteErrorAction(beneficiaire,message, null);
-                }
+
                 if(beneficiaireList.contains(beneficiaire)){
-                    if(numbon.trim() == (beneficiaire.getIdentification().trim())){
+                   /* if(numbon.trim() == (beneficiaire.getIdentification().trim())){
                         String message=" Le numéro du bon renseigné est incorrecte";
                         return  userService._doDetecteErrorAction(beneficiaire,message, null);
-                    }
+                    }*/
                     beneficiaire.setPlafonageEssence(restePlafondEssenceBeneficiaire);
                     beneficiaire.setPlafonageGazoil(restePlafondGazoilBeneficiaire);
                     beneficiaireRepository.save(beneficiaire);
 
                 }else{
                     String message=" Ce beneficiaire n'est pas lié à un corporate";
-                    return  userService._doDetecteErrorAction(beneficiaire,message, null);
+                    return  userService._doDetecteErrorAction(null,message, null);
                 }
 
                 stockStationRepository.save(stockStation);
-                String message="action réalisée avec succès";
+                clientCorporateRepository.save(ccpSave);
+                String message="action réalisée avec succès.";
                 return  userService._doDetecteErrorAction(null,message,ccpSave);
             }catch (Exception e){
                 String message="Le numéro du bénéficiaire n'est pas correct";

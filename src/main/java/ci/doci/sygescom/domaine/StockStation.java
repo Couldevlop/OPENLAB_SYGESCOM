@@ -32,5 +32,7 @@ public class StockStation {
     @JoinColumn(name = "stock_init_station_id")
     private StockInitStation stockInitStation;
     private int alerte = 0;
+    private int nbrIndex=0;
+    private LocalDate dateJour;
 
 }
