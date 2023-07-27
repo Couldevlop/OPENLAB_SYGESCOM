@@ -22,4 +22,6 @@ public class ClientsCorporates extends ClientsDoci{
     @OneToMany
     private List<Beneficiaire>beneficiaireList;
 
+
+
 }

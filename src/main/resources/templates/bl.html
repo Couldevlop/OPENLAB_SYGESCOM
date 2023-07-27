@@ -47,6 +47,7 @@
                         </div>
                         <div class="card-body">
                             <div class="clearfix mb-3"></div>
+                            <div class="alert alert-danger" th:if="${message}" th:text="${mesage}"></div>
                             <div class="table-responsive">
                                 <table class="table table-striped" id="table-2" sec:authorize="hasAnyRole('ADMIN','SUPERVISEUR')">
                                     <thead>

@@ -20,8 +20,8 @@ public class Ventes {
     private long id;
     private double puG;
     private double puE;
-    private long litrageEssence;
-    private long litrageGazoil;
+    private double litrageEssence;
+    private double litrageGazoil;
     private double mntEssenceRemise;
     private double mntGazoilRemise;
     private LocalDate dateEng;
@@ -29,7 +29,6 @@ public class Ventes {
     private double mntglobaGazoil;
     private double mntTotal;
     @ManyToOne(cascade = CascadeType.PERSIST)
-    @Transient
     @JoinColumn(name = "stations_id")
     private Stations stations;
 }

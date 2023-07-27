@@ -46,4 +46,6 @@ public class Indexes {
     private boolean initIndex = true;
     @DateTimeFormat(pattern="yyyy-MM-dd")
     private LocalDate dateJour;
+    private int prise=0;
+    private boolean etat = true;
 }

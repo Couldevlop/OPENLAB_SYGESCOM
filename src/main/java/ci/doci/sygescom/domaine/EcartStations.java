@@ -40,4 +40,7 @@ public class EcartStations {
     private double totalIndexGazoil;
 
     private double totalIndexEssence;
+
+    private double ecartTotalEssence;
+    private double ecartTotalGasoil;
 }

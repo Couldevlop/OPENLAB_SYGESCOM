@@ -1,6 +1,7 @@
 package ci.doci.sygescom.controller;
 
 import ci.doci.sygescom.domaine.*;
+import ci.doci.sygescom.domaine.dto.IndexDTO;
 import ci.doci.sygescom.domaine.dto.IndexeDTO;
 import ci.doci.sygescom.repository.*;
 import ci.doci.sygescom.service.DataIndexService;
@@ -12,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,12 +22,13 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.mail.internet.MimeMessage;
 import javax.validation.Valid;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 import static java.lang.Math.abs;
 
@@ -63,6 +66,7 @@ public class IndexesController {
         this.dataIndexService = dataIndexService;
         this.ecartStationService = ecartStationService;
         this.emailService = emailService;
+
         this.mailSendder = mailSendder;
     }
 
@@ -112,8 +116,6 @@ public class IndexesController {
 
     @GetMapping("/gerant/indexe")
     public String getAllIndexes(Model model, @AuthenticationPrincipal User user){
-        List<Indexes> ide = indexesRepository.findAll();
-        Long d = user.getStations().getId();
         model.addAttribute("indexe", indexesRepository.findIndexesByStationsId(user.getStations().getId()));
         return "indexes";
     }
@@ -121,10 +123,11 @@ public class IndexesController {
     @GetMapping("/gerant/newindexes")
     public String indexe(Model model, @AuthenticationPrincipal User use) {
         model.addAttribute("data", new DataIndex());
-        if(indexesRepository.lastId() != null){
-            Optional<Indexes> ind = indexesRepository.findById(indexesRepository.lastId());//recupère le dernier enregistrement
+        if(indexesRepository.lastId(use.getStations().getId()) != 0){
+            Long id = indexesRepository.lastId(use.getStations().getId());
+            Optional<Indexes> ind = indexesRepository.findById(id);//recupère le dernier enregistrement
             Indexes indexes = ind.get();
-            model.addAttribute("ind",ind);
+            model.addAttribute("ind",indexes);
         }
 
         Stations st = use.getStations();
@@ -147,6 +150,7 @@ public class IndexesController {
 
         LocalDate localDate = LocalDate.now();
         DataIndex indexesSaved = _returnToDataIndexSaved(user, localDate, data);
+        indexesSaved.setStations(user.getStations());
         Indexes indexes = buildIndexTable(indexesSaved);
         long st = user.getStations().getId();
         //long id = indexesRepository.lastId(st);
@@ -156,11 +160,37 @@ public class IndexesController {
         }
 
         //------------------ construction de l'objet ecar station----------------------
-        //EcartStations ec = buildEcartStation(user.getStations(), LocalDate.now(), new EcartStations(), indexes);
+        LocalTime time = LocalTime.now();
+        LocalTime heurePremierePrise = LocalTime.of(9,00,00,00000);
+        LocalTime heureDeuxiemePrise = LocalTime.of(15,00,00,00000);
+        LocalTime heureTroiemePrise = LocalTime.of(22,00,00,00000);
 
 
+        System.out.println(" Premier heruer " + heurePremierePrise + " || " + " seconde prise " + heureDeuxiemePrise + " || " + time);
 
         if(indexesRepository.lastId(st) != null){
+            long lastId= indexesRepository.lastId(st);
+            Indexes dernierIndex = indexesRepository.findById(lastId).get();
+            if(dernierIndex.isEtat() == false){
+                redirectAttributes.addFlashAttribute("message", "Désolé vous avez soit déjà effectué votre prise, soit vous n'êtes pas dans la plage horaire autorisée des saisies.");
+                return "redirect:/gerant/newindexes";
+            }
+
+           /* if(dernierIndex.isEtat() == false && heureDeuxiemePrise.compareTo(time)<0){
+                redirectAttributes.addFlashAttribute("message", "Désolé vous avez déjà fait la seconde prise, merci d'attendre la troisième qui sera entre 17h et 22h");
+                return "redirect:/gerant/newindexes";
+            }
+            if(dernierIndex.isEtat() == false && heureTroiemePrise.compareTo(time)<0){
+                redirectAttributes.addFlashAttribute("message", "Désolé vous avez déjà fait la troisieme prise, merci d'attendre le lendemain pour la première prise  qui sera entre 6h et 9h");
+                return "redirect:/gerant/newindexes";
+            }
+
+            if(dernierIndex.isEtat() == false){
+                redirectAttributes.addFlashAttribute("message", "Désolé vous n'ête pas dans un créneaux horaire autorisé: voici les créneau: 6h-9h/12h-15h/17h-22h " + heurePremierePrise + " || " +heureDeuxiemePrise + " || " + heureTroiemePrise + " || " + localDate);
+                return "redirect:/gerant/newindexes";
+            }
+*/
+
             List <Indexes> index = indexesRepository.findIndexesByStationsId(st);
             for(Indexes ind: index){
                 long index1 = ind.getId();
@@ -169,12 +199,91 @@ public class IndexesController {
                 }
                 In = indexesRepository.findById(index0).get();
             }
-            if(In.getSuper1()>indexes.getSuper1() || In.getSuper2()>indexes.getSuper2() || In.getSuper3()>indexes.getSuper3() ||
-                    In.getSuper4()>indexes.getSuper4() || In.getGazoil1()>indexes.getGazoil1() || In.getGazoil2()>indexes.getGazoil2()
-            || In.getGazoil3()>indexes.getGazoil3() || In.getGazoil4()>indexes.getGazoil4() ){
-                String errorS1="nouveau index petit que l'ancien";
+
+
+            if(data.getSuper1()<In.getSuper1()){
+                String errorS1 = In.getSuper1() + " est superieur à " + indexes.getSuper1();
                 redirectAttributes.addFlashAttribute("saisie", In);
                 redirectAttributes.addFlashAttribute("errorS1", errorS1);
+                return "redirect:/gerant/newindexes";
+            }
+            if(data.getSuper2()<In.getSuper2()){
+                String errorS2 = In.getSuper2() + " est superieur à " + indexes.getSuper2();
+                redirectAttributes.addFlashAttribute("saisie", In);
+                redirectAttributes.addFlashAttribute("errorS2", errorS2);
+                return "redirect:/gerant/newindexes";
+            }
+            if(data.getSuper3()<In.getSuper3()){
+                String errorS3 = In.getSuper3() + " est superieur à " + indexes.getSuper3();
+                redirectAttributes.addFlashAttribute("saisie", In);
+                redirectAttributes.addFlashAttribute("errorS3", errorS3);
+                return "redirect:/gerant/newindexes";
+            }
+            if( data.getSuper4()<In.getSuper4()){
+                String errorS4 = In.getSuper4() + " est superieur à " + indexes.getSuper4();
+                redirectAttributes.addFlashAttribute("saisie", In);
+                redirectAttributes.addFlashAttribute("errorS4", errorS4);
+                return "redirect:/gerant/newindexes";
+            }
+            if(data.getGazoil1()<In.getGazoil1()){
+                String errorG1 = In.getSuper1() + " est superieur à " + indexes.getSuper1();
+                redirectAttributes.addFlashAttribute("saisie", In);
+                redirectAttributes.addFlashAttribute("errorG1", errorG1);
+                return "redirect:/gerant/newindexes";
+            }
+            if(data.getGazoil2()<In.getGazoil2()){
+                String errorG2 = In.getSuper2() + " est superieur à " + indexes.getSuper2();
+                redirectAttributes.addFlashAttribute("saisie", In);
+                redirectAttributes.addFlashAttribute("errorG2", errorG2);
+                return "redirect:/gerant/newindexes";
+            }
+            if(data.getGazoil3()<In.getGazoil3()){
+                String errorG3 = In.getSuper3() + " est superieur à " + indexes.getSuper3();
+                redirectAttributes.addFlashAttribute("saisie", In);
+                redirectAttributes.addFlashAttribute("errorG3", errorG3);
+                return "redirect:/gerant/newindexes";
+            }
+            if(data.getGazoil4()<In.getGazoil4()){
+                String errorG4 = In.getSuper4() + " est superieur à " + indexes.getSuper4();
+                redirectAttributes.addFlashAttribute("saisie", In);
+                redirectAttributes.addFlashAttribute("errorG4", errorG4);
+                return "redirect:/gerant/newindexes";
+            }
+
+            //*************** Controle sur les cuve sans depotage******************
+            StockStation stock = null;
+            if(stockStationRepository.findStockStationByStationsId(st) != null){
+                stock = stockStationRepository.findStockStationByStationsId(st);
+            }
+
+               double maxCuveEssence = In.getCuveEssence()+200;
+               double maxCuveGazoil = In.getCuveGazoil()+200;
+
+            if(data.getCuveEssence()>maxCuveEssence ){
+                String message = data.getCuveEssence() + "  est superieur à " + maxCuveEssence + "  L'augmzntation de cette valeur doit se faire par la validation d'un BL.Regarder dans l'onglet GESTION BL si vous n'avez pas de BL en attentes ";
+                redirectAttributes.addFlashAttribute("saisie", In);
+                redirectAttributes.addFlashAttribute("message", message);
+                return "redirect:/gerant/newindexes";
+            }
+
+            if(data.getCuveEssence()>In.getCuveEssence() ){
+                String message = data.getCuveEssence() + "  est superieur à " + In.getCuveEssence() + "  Regarder dans l'onglet GESTION BL si vous n'avez pas de BL en attentes ";
+                redirectAttributes.addFlashAttribute("saisie", In);
+                redirectAttributes.addFlashAttribute("message", message);
+                return "redirect:/gerant/newindexes";
+            }
+
+            if(data.getCuveGazoil()>maxCuveGazoil ){
+                String message = data.getCuveGazoil() + "  est superieur à " + maxCuveGazoil + "  L'augmzntation de cette valeur doit se faire par la validation d'un BL.Regarder dans l'onglet GESTION BL si vous n'avez pas de BL en attentes ";
+                redirectAttributes.addFlashAttribute("saisie", In);
+                redirectAttributes.addFlashAttribute("message", message);
+                return "redirect:/gerant/newindexes";
+            }
+
+            if(data.getCuveGazoil()>In.getCuveGazoil()){
+                String message = data.getCuveGazoil() + " est superieur à " + In.getCuveGazoil() + " Regarder dans l'onglet GESTION BL si vous n'avez pas de BL en attentes ";
+                redirectAttributes.addFlashAttribute("saisie", In);
+                redirectAttributes.addFlashAttribute("message", message);
                 return "redirect:/gerant/newindexes";
             }
         }
@@ -234,6 +343,8 @@ public class IndexesController {
 
                         ecartStations.setEcartEssence(abs(stockCuveEsSenceConso - qtRestanteEss));
                         ecartStations.setEcartGazoil(abs(stockCuveGazoilConso - qtRestanteGa));
+                        ecartStations.setEcartTotalEssence(ecartStations.getEcartTotalEssence() + abs(stockCuveEsSenceConso - qtRestanteEss));
+                        ecartStations.setEcartTotalGasoil(ecartStations.getEcartTotalGasoil() + abs(stockCuveGazoilConso - qtRestanteGa));
 
                         // --------------- insertion dans EcartStation(prise totale)----------------------
                         ecartStations.setTotalIndexEssence(PriseTotalIndexEss);
@@ -280,7 +391,11 @@ public class IndexesController {
 
             }
             sta.setNbrIndex(nbrIndex);
+            sta.setNbrIndex(indexes.getPrise());
+            sta.setDateJour(LocalDate.now());
             StockStation savedStockStation = stockStationRepository.save(sta);
+            indexes.setPrise(1);
+            //indexes.setEtat(true);
             indexesRepository.save(indexes);
 
             //---------- Envoie de mail d'alerte -----------------
@@ -393,24 +508,31 @@ public class IndexesController {
     /*           Affichage tableau de bord du DGA                         */
      /* ------------------------------------------------------------------*/
 
-    @GetMapping("/dg/stat-indexe")
+    @GetMapping("/controle/stat-indexe")
     public String getLog( Model model){
         model.addAttribute("indexeList", service.getAllIndexeForAllStations().getObjects());
         return "stations-indexe-jour";
 
     }
-    @GetMapping("/dg/stat-indexe/jour")
+    @GetMapping("/controle/stat-indexe/jour")
     public String getLastIndexByStation(Model model){
       List<Indexes> resp =  service.getAllIndexeByStationToDay();
           model.addAttribute("indexeListJour", resp);
           return "stations-indexe-jour";
 
     }
-    @GetMapping("/dg/stat-indexe/jour/{id}")
+    @GetMapping("/controle/stat-indexe/jour/{id}")
     @ResponseBody
     public IndexeDTO getDetailsIndexByOneStation(@PathVariable("id") Long id){
         IndexeDTO ind = service.getDetailsForOneStation(id);
      return ind;
+
+    }
+
+    @GetMapping("/controle/suvi-journalier")
+    public String controleStock(Model model){
+        model.addAttribute("nbrPrise", service.getDataIndexByDay());
+        return "suiviPriseIndexJour";
 
     }
 
@@ -421,7 +543,7 @@ public class IndexesController {
     /*           Affichage tableau de bord du DGA                         */
     /* ------------------------------------------------------------------*/
 
-    @GetMapping("/dg/stat-indexe/excelExport")
+    @GetMapping("/controle/stat-indexe/excelExport")
     public ModelAndView exportToExcel(){
         ModelAndView mav = new ModelAndView();
         mav.setView(new IndexeDataExcelExport());
@@ -491,7 +613,7 @@ public class IndexesController {
 
 
                 EmailDetails mail = EmailDetails.builder()
-                        .subject("NOTIFICATION: SEUIL ALERT STOCK STATION")
+                        .subject("NOTIFICATION: SEUIL ALERTE STOCK STATION")
                         .msgBody(messageGlobal)
                         .attachment(null)
                         .recipient("stockstations@doci.ci")
@@ -531,7 +653,7 @@ public class IndexesController {
 
 
                 EmailDetails mail = EmailDetails.builder()
-                        .subject("SEUIL ALERT STOCK STATION")
+                        .subject("SEUIL ALERTE STOCK STATION")
                         .msgBody( messageGaz)
                         .attachment(null)
                         .recipient("stockstations@doci.ci")
@@ -544,4 +666,81 @@ public class IndexesController {
 
 
     }
+
+
+ //  @Scheduled(cron =" 0 0 10,11 * * ?")// Fermeture
+    public void blockPriseIndex(){
+        List<Indexes> indexes = indexesRepository.findIndexesByDateJour(LocalDate.now());
+        for(Indexes ind: indexes){
+            ind.setEtat(false);
+            indexesRepository.save(ind);
+        }
+    }
+
+    @Scheduled(cron =" 0 0 12,14 * * ?")//ouverture
+    public void ouvrePriseIndex(){
+        List<Indexes> indexes = indexesRepository.findIndexesByDateJour(LocalDate.now());
+        for(Indexes ind: indexes){
+            ind.setEtat(true);
+            indexesRepository.save(ind);
+        }
+    }
+
+
+    @Scheduled(cron =" 0 0 15,17 * * ?")
+    public void blockPriseIndex1(){
+        List<Indexes> indexes = indexesRepository.findIndexesByDateJour(LocalDate.now());
+        for(Indexes ind: indexes){
+            ind.setEtat(false);
+            indexesRepository.save(ind);
+        }
+    }
+
+    @Scheduled(cron =" 0 0 18,21 * * ?")
+    public void ouvertPriseIndex2(){
+        List<Indexes> indexes = indexesRepository.findIndexesByDateJour(LocalDate.now());
+        for(Indexes ind: indexes){
+            ind.setEtat(true);
+            indexesRepository.save(ind);
+        }
+    }
+    @Scheduled(cron =" 0 0 22,5 * * ?")
+    public void blockPriseIndex2(){
+        List<Indexes> indexes = indexesRepository.findIndexesByDateJour(LocalDate.now());
+        for(Indexes ind: indexes){
+            ind.setEtat(false);
+            indexesRepository.save(ind);
+        }
+    }
+
+   // @Scheduled(cron =" 0 0 5,8 * * ?")
+    public void ouvertPriseIndex3(){
+
+        // Je prends la date d'aujourd'hui(comme on sera à 6h) et je fait  -1 donc on se positionne à hier
+        Calendar calendar = Calendar.getInstance();
+        Calendar calendar1 = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        calendar.add(Calendar.DATE, -1);
+        Date d = calendar.getTime();
+        String date1 = sdf.format(d);
+
+        // Je convertis la date de String en localDate et je la passe à ma fonction
+        LocalDate localDate = LocalDate.parse(date1, formatter);
+        List<Indexes> indexes = indexesRepository.findIndexesByDateJour(localDate);
+
+        // je parcours chaque résultat(les 3 enregistrements par station) et pour chaque resultat
+        // Pour chaque station je recupère la dernière saisie et je mets le setEtat à true et voila!!!
+        for(Indexes index: indexes){
+            Long id = index.getId();
+            Indexes indexes1 = indexesRepository.findById(id).get();
+            indexes1.setEtat(true);
+            indexesRepository.save(indexes1);
+        }
+
+    }
+
+
+
+
 }

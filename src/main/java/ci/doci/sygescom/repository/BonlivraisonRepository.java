@@ -24,4 +24,5 @@ public interface BonlivraisonRepository extends JpaRepository<BonLivraison, Long
     List<BonLivraison>findBonLivraisonByHierachieTrueAndRejeterTrue();
     List<BonLivraison>findBonLivraisonByCloturerIsTrue();
 
+    List<BonLivraison> findBonLivraisonByNumBL(String numbl);
 }

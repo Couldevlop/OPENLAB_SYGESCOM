@@ -1,11 +1,14 @@
 package ci.doci.sygescom.controller;
 
 import ci.doci.sygescom.domaine.*;
+import ci.doci.sygescom.exception.BadActionException;
 import ci.doci.sygescom.repository.*;
+import ci.doci.sygescom.service.OperationsService;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
@@ -30,8 +33,10 @@ public class VentesController {
     private final LogActionRepository logActionRepository;
     private final MouvementsRepository mouvementsRepository;
     private  final IndexesRepository indexesRepository;
+    private final OperationsService operationsService;
+    private final BeneficiaireRepository beneficiaireRepository;
 
-    public VentesController(VentesRepository ventesRepository, StationsRepository stationsRepository, StockGestociRepository stockGestociRepository, PrixInitRepository prixInitRepository, VentesComptantRepository ventesComptantRepository, StockStationRepository stockStationRepository, ClientsComptantsRepository clientsComptantsRepository, ClientCorporateRepository clientCorporateRepository, ClientsRepository clientsRepository, HistoryStockStationRepository historyStockStationRepository, VentesCorporateRepository ventesCorporateRepository, LogActionRepository logActionRepository, MouvementsRepository mouvementsRepository, IndexesRepository indexesRepository) {
+    public VentesController(VentesRepository ventesRepository, StationsRepository stationsRepository, StockGestociRepository stockGestociRepository, PrixInitRepository prixInitRepository, VentesComptantRepository ventesComptantRepository, StockStationRepository stockStationRepository, ClientsComptantsRepository clientsComptantsRepository, ClientCorporateRepository clientCorporateRepository, ClientsRepository clientsRepository, HistoryStockStationRepository historyStockStationRepository, VentesCorporateRepository ventesCorporateRepository, LogActionRepository logActionRepository, MouvementsRepository mouvementsRepository, IndexesRepository indexesRepository, OperationsService operationsService, BeneficiaireRepository beneficiaireRepository) {
         this.ventesRepository = ventesRepository;
         this.stationsRepository = stationsRepository;
         this.stockGestociRepository = stockGestociRepository;
@@ -46,6 +51,8 @@ public class VentesController {
         this.logActionRepository = logActionRepository;
         this.mouvementsRepository = mouvementsRepository;
         this.indexesRepository = indexesRepository;
+        this.operationsService = operationsService;
+        this.beneficiaireRepository = beneficiaireRepository;
     }
 
     @GetMapping("/gerant/ventes")
@@ -383,13 +390,82 @@ public class VentesController {
     }
 
 
+    @GetMapping("/superviseur/ventes-corporates/validation-adv")
+    public String validationAdv(Model model){
+        model.addAttribute("vcorporates", ventesCorporateRepository.findByAdvValidateIsFalse());
+        return "validation-adv";
+    }
+    @PostMapping("/gerant/checkCorporate")
+    public String checkCorporate(@RequestParam("contact") String contact, Model model,
+                                 RedirectAttributes redirectAttributes,
+                                 @RequestParam("litreEssence") double litreEssence,
+                                 @RequestParam MultipartFile files,
+                                 @RequestParam("litreGazoil") double litreGazoil,
+                                 // @RequestParam("numBon") String numBon,
+                                 @RequestParam("telBenef") String telBenef,
+                                 @AuthenticationPrincipal User user ) {
+        if (contact != "") {
+            String num = contact.replaceAll("\\s", "");
+            //ClientsCorporates cp = clientCorporateRepository.findClientsCorporatesByContact1(num);
+            BadActionException badActionException = operationsService._returnClientCorporateAfterSelling(contact, litreEssence, litreGazoil, user.getStations(), telBenef, files);
+            if (badActionException.getT() != null ) {
+                Beneficiaire beneficiaire = beneficiaireRepository.findBeneficiaireByContact(telBenef);
+                ClientsCorporates cp1 = clientCorporateRepository.findClientsCorporatesByContact1(num);
+                // redirectAttributes.addFlashAttribute("corporate",cp);
+                redirectAttributes.addFlashAttribute("beneficiaire", beneficiaire);
+                redirectAttributes.addFlashAttribute("litreEssence",litreEssence);
+                redirectAttributes.addFlashAttribute("litreGazoil",litreGazoil);
+                // redirectAttributes.addFlashAttribute("numBon",numBon);
+                redirectAttributes.addFlashAttribute("telBenef",telBenef);
+                redirectAttributes.addFlashAttribute("dates",LocalDate.now());
+                redirectAttributes.addFlashAttribute("messages",badActionException.getMessage());
+                //return "redirect:/gerant/corporateCheck";
+                return "redirect:/gerant/searchcorporate";
+            } if(badActionException.getT()==null) {
+                String message="Corporate non trouvé";
+                redirectAttributes.addFlashAttribute("message", badActionException.getMessage());
+                return "redirect:/gerant/searchcorporate";
+            } if(badActionException.getT1()==null){
+                redirectAttributes.addFlashAttribute("message", badActionException.getMessage());
 
-    /*@PostMapping("/saveVenteComptant")
-    public String saveClientComptant(@ModelAttribute("vente") Ventes ventes){
-        ventes.setDateVente(LocalDateTime.now());
-        ventesRepository.save(ventes);
-        return "redirect:/gerant/newventecomptant";
-    }*/
+                return "redirect:/gerant/searchcorporate";
+            }
+            if(badActionException.getT1() !=null){
+                redirectAttributes.addFlashAttribute("success", badActionException.getMessage());
+                return "redirect:/gerant/searchcorporate";
+            }
+
+
+        } else {
+            String message = "veillez renseigner un numero de telephone SVP";
+            redirectAttributes.addFlashAttribute("message", message);
+            return "redirect:/gerant/searchcorporate";
+        }
+
+        return null;
+    }
+
+    @GetMapping("/superviseur/adv/{id}")
+    public String validationVenteCoporate(@PathVariable  Long id, Model model){
+        if(id == null){
+            model.addAttribute("message","l'identifiant: " + id + "est nul par conséquent il est impossible de trouver une valeur avec cet Id");
+            model.addAttribute("vcorporates", ventesCorporateRepository.findByAdvValidateIsFalse());
+            return "validation-adv";
+        }
+        if(ventesComptantRepository.existsById(id)){
+            model.addAttribute("message","Aucune ligne de vente ne correspond à l'identifiant: " + id);
+            model.addAttribute("vcorporates", ventesCorporateRepository.findByAdvValidateIsFalse());
+            return "validation-adv";
+        }
+        VentesCorporate ventesCorporate = ventesCorporateRepository.findById(id).get();
+        operationsService._doValidateOperation(ventesCorporate.getClientsCorporates().getContact1(), ventesCorporate.getLitrageEssence(), ventesCorporate.getLitrageGazoil(),
+                                               ventesCorporate.getStations());
+        ventesCorporate.setAdvValidate(true);
+        ventesCorporateRepository.save(ventesCorporate);
+        model.addAttribute("vcorporates", ventesCorporateRepository.findByAdvValidateIsFalse());
+        return "validation-adv";
+    }
+
 }
 
 

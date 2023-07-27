@@ -17,5 +17,12 @@ public class VentesCorporate extends Ventes{
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
     @ManyToOne
+    @JoinColumn(name = "corporate_id")
     private ClientsCorporates clientsCorporates;
+    @ManyToOne
+    @JoinColumn(name = "doc_id")
+    private Doc doc;
+    private boolean gerantValidate=false;
+    private  boolean advValidate=false;
+
 }
