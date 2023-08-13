@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -27,7 +28,14 @@ public class EcarStationServiceImpl implements EcartStationService {
     }
 
     @Override
-    public EcartStations findByID(Long id) {
-        return null;
+    public EcartStations findById(Long id) {
+        Optional<EcartStations>ecartStations = ecartStationsRepository.findById(id);
+        if(ecartStations.isPresent()){
+            EcartStations ecartStations1 =ecartStations.get();
+            return ecartStations1;
+        }else {
+            return null;
+        }
+
     }
 }

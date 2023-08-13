@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script th:src="@{/assets/js/Piechart.js}"></script>
+    <script th:src="@{/assets/js/highcharts.js}"></script>
+    <script th:src="@{/assets/js/exporting.js}"></script>
+    <script th:src="@{/assets/js/export-data.js}"></script>
+    <script th:src="@{/assets/js/accessibility.js}"></script>
+    <link rel="stylesheet" th:href="@{/assets/css/pieChart.css}"/>
+    <title>Title</title>
+</head>
+<body>
+<figure class="highcharts-figure">
+    <div id="container">
+        heloo
+    </div>
+    <p class="highcharts-description">
+        Pie chart demonstrating a monochrome color scheme. Monochrome color
+        schemes can make certain charts easier to understand, as it helps
+        readers to focus on the content instead of the colors. There can also
+        be accessibility benefits to using this kind of color scheme, both fo
+        color blindness and tactile mediums, as long as there is a clear
+        separation between slices.
+    </p>
+    </figure>
+</body>
+</html>
+
+<script type="text/javascript">
+    // Data retrieved from https://netmarketshare.com/
+    // Make monochrome colors
+    const colors = Highcharts.getOptions().colors.map((c, i) =>
+        // Start out with a darkened base color (negative brighten), and end
+        // up with a much brighter color
+        Highcharts.color(Highcharts.getOptions().colors[0])
+            .brighten((i - 3) / 7)
+            .get()
+    );
+
+    // Build the chart
+    Highcharts.chart('container', {
+        chart: {
+            plotBackgroundColor: null,
+            plotBorderWidth: null,
+            plotShadow: false,
+            type: 'pie'
+        },
+        title: {
+            text: 'Browser market shares in February, 2022',
+            align: 'left'
+        },
+        tooltip: {
+            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+        },
+        accessibility: {
+            point: {
+                valueSuffix: '%'
+            }
+        },
+        plotOptions: {
+            pie: {
+                allowPointSelect: true,
+                cursor: 'pointer',
+                colors,
+                borderRadius: 5,
+                dataLabels: {
+                    enabled: true,
+                    format: '<b>{point.name}</b><br>{point.percentage:.1f} %',
+                    distance: -50,
+                    filter: {
+                        property: 'percentage',
+                        operator: '>',
+                        value: 4
+                    }
+                }
+            }
+        },
+        series: [{
+            name: 'Share',
+            data: [
+                { name: 'Chrome', y: 74.03 },
+                { name: 'Edge', y: 12.66 },
+                { name: 'Firefox', y: 4.96 },
+                { name: 'Safari', y: 2.49 },
+                { name: 'Internet Explorer', y: 2.31 },
+                { name: 'Other', y: 3.398 }
+            ]
+        }]
+    });
+
+</script>

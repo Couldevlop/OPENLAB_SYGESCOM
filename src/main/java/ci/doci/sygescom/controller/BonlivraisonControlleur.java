@@ -1,5 +1,6 @@
 package ci.doci.sygescom.controller;
 
+
 import ci.doci.sygescom.domaine.*;
 import ci.doci.sygescom.repository.*;
 import ci.doci.sygescom.service.DocStorageService;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -89,7 +91,7 @@ public class BonlivraisonControlleur {
                          @ModelAttribute("BonLivraison") BonLivraison bl,
                          @RequestParam("gerant") User gerant,
                          @RequestParam("stations") Stations stations,
-                         Model model) throws IOException{
+                         Model model, RedirectAttributes redirectAttributes) throws IOException{
 
         Doc doc = docStorageService.saveFile(files);
         bl.setDoc(doc);
@@ -108,9 +110,20 @@ public class BonlivraisonControlleur {
         logAction.setStation(user.getStations().getNom());
         logAction.setId(user.getId());
         logAction.setNomAction("Création de BL");
-        LogAction logAction1 = logActionRepository.save(logAction);
-        log.info(logAction1.toString());
+        logActionRepository.save(logAction);
         docRepository.save(doc);
+        if(!bonlivraisonRepository.findBonLivraisonByNumBL(bl.getNumBL()).isEmpty()){
+            model.addAttribute("message", "Désolé un BL existe déjà avec ce numero: " + bl.getNumBL());
+            model.addAttribute("bl", bonlivraisonRepository.findAll());
+            model.addAttribute("BonLivraison", new BonLivraison());
+            model.addAttribute("station", stationsRepository.findAll());
+            model.addAttribute("p", prestataireRepository.findAll());
+            model.addAttribute("user", userRepository.findByStations(user.getStations()));
+            model.addAttribute("bc", bonDeCommandeRepository.findAll());
+            model.addAttribute("bonlivre", bonlivraisonRepository.findBonLivraisonByStationsAndAccepterFalseAndRejeterIsFalse(user.getStations()));
+            return "bl";
+
+        }
         bonlivraisonRepository.save(bl);
 
         return "redirect:/superviseur/listbl";
@@ -123,6 +136,13 @@ public class BonlivraisonControlleur {
         model.addAttribute("blist", ListBL);
         model.addAttribute("user", user);
         return "bl";
+    }
+
+    @GetMapping("/superviseur/list-bl-valides-en-station")
+    public String blValiderParGerant(@AuthenticationPrincipal User user, Model model){
+        List<BonLivraison> ListBL = bonlivraisonRepository.findBonLivraisonByAccepterIsTrue();
+        model.addAttribute("ListBlValide", ListBL);
+        return "blValiderParGerant";
     }
 
     @PostMapping("/gerant/bl/{id}")
@@ -168,10 +188,6 @@ public class BonlivraisonControlleur {
     }
 
 
-    /*
-     Validation du BL par le gérant de la station
-     dépotage conforme avec le BL
-    */
     @GetMapping("/gerant/bl/{id}")
     public String validerBl(@PathVariable("id") long id,
                             Model model, @AuthenticationPrincipal User user){
@@ -181,30 +197,39 @@ public class BonlivraisonControlleur {
         }
         BonLivraison livraison = bonlivraisonRepository.findById(id).get();
         if(stockGestociRepository.getLastId() == 0){
-            model.addAttribute("message", "Le paramétrage des quantités de la GESTOCI ne sont fait");
+            model.addAttribute("message", "Le paramétrage des quantités de la GESTOCI n'est pas fait");
+            return "accessDenied";
+        }
+        if(stockStationRepository.findStockStationByStations(user.getStations()) == null){
+            model.addAttribute("message", "Votre station n'a pas été paramétré correctement au niveau des stocks");
             return "accessDenied";
         }
         long stId = stockGestociRepository.getLastId(); //recuperation Id du dernier stock gestoci
         Stockgestoci stockgestoci = stockGestociRepository.findById(stId).get(); //impact stock GESTOCI
-        long stockStationId = stockInitStationsRepository.getLastId();// Get le stock de la station
-       // long indexId = indexesRepository.lastId(user.getStations().getId());//dernière saisie de prise d'indexe
-        Optional<StockInitStation> stInit = stockInitStationsRepository.findById(stockStationId);//Stock de parametrage
-       if(stInit.isPresent() && id !=0){
-           StockInitStation stockInitStation = stInit.get();
+
+
            StockStation st = stockStationRepository.findStockStationByStations(user.getStations());
+           // récuperation des anciennes valeurs avnat la mise à jour
+            double ancienQteGlobaleEssence = st.getQteGlobaleEssence();
+            double ancienGlobalGasoil = st.getQteGlobaleGazoile();
+            double ancienGazoilInit = st.getGazoilInit();
+            double ancienEcartEssence = st.getEcartEssence();
+            double ancienEcartGasoil = st.getEcartGazoil();
+            double ancienEssenceInit = st.getEssenceInit();
+
            st.setEssenceDepot(livraison.getQteEs());
            st.setGazoilDepot(livraison.getQteGaz());
-           //st.setEssenceInit(stockInitStation.getQteinites());
-          // st.setGazoilInit(stockInitStation.getQteinitgaz());
+
 
            //*********** Mise à jour des soldes de la station*****************
-           double gazTotal= stockInitStation.getQteinitgaz() + livraison.getQteGaz();
-           double eseenceTotal = stockInitStation.getQteinites() + livraison.getQteEs();
-           //st.setQteGlobaleGazoile(gazTotal);//stock réel après dépotage gasoil
-           //st.setQteGlobaleEssence(eseenceTotal);//stock réel après dépotage essence
+           double gazTotal= st.getQteGlobaleGazoile() + livraison.getQteGaz();
+           double eseenceTotal = st.getQteGlobaleEssence() + livraison.getQteEs();
+           st.setQteGlobaleGazoile(gazTotal);//stock réel après dépotage gasoil
+           st.setQteGlobaleEssence(eseenceTotal);//stock réel après dépotage essence
            st.setDateDepot(LocalDate.now());
-           //st.setStockInitStation(stockInitStation);//???
            st.setStations(user.getStations());
+
+
            //saisie
            double qteEssenceDuBl = livraison.getQteEs(); //qte Essence presente sur le BL
            double qteGazDuBl = livraison.getQteGaz(); //qte Gazoil present sur le BL
@@ -216,94 +241,43 @@ public class BonlivraisonControlleur {
            double ecartGazoil = qteGazDuBl - qteGazoilDepot; //calcul écart gasoil s'il y en a
            st.setEcartEssence(ecartEssence);
            st.setEcartGazoil(ecartGazoil);
-           stockInitStation.setParametre(true);
-           stockInitStationsRepository.save(stockInitStation);
 
            stockStationRepository.save(st);
-           livraison.setUser(user);
-           bonlivraisonRepository.save(livraison);
 
            //*************  Mise à jour du solde de gestoci *************************
            double qteEssence =   stockgestoci.getQteGlobalEs() - qteEssenceDepot;
            double qteGaz = stockgestoci.getQteGlobaleGaz() - qteGazoilDepot;
            stockgestoci.setQteGlobalEs(qteEssence);
            stockgestoci.setQteGlobaleGaz(qteGaz);
+
            stockGestociRepository.save(stockgestoci);
            livraison.setAccepter(true);
-           bonlivraisonRepository.save(livraison);
-           model.addAttribute("bonLivre", livraison);
-           model.addAttribute("user",user);
-           model.addAttribute("bonlivraison", bonlivraisonRepository.findBonLivraisonByStationsAndAccepterFalseAndRejeterFalse(user.getStations()));
-           return "blgerant";
-       }else if(!stInit.isPresent()){
-           model.addAttribute("message","le paramètrage initial des indexes pour cette station n'est pas fait ou le BL n'existe pas");
-           return "blgerant";
-       }
-        // La station à un stock initial et n'a jamais reçu de dépotage
-           // else si dépotage deja effectué
-
-        if(stockStationRepository.findStockStationByStations(user.getStations()) == null){
-            model.addAttribute("message", "Votre station n'a pas été paramétré correctement au niveau des stocks");
-            return "accessDenied";
-        }
-        StockStation stockstation = stockStationRepository.findStockStationByStations(user.getStations());
-        StockStation  dernierStockStation = stockStationRepository.findById(stockstation.getId()).get();
-        //*********** Mise à jour des soldes de la station*****************
-        double gazTotal= dernierStockStation.getQteGlobaleGazoile() + livraison.getQteGaz();
-        double eseenceTotal = dernierStockStation.getQteGlobaleEssence() + livraison.getQteEs();
-        double qteEssenceDuBl = livraison.getQteEs(); //qte Essence presente sur le BL
-        double qteGazDuBl = livraison.getQteGaz(); //qte Gazoil present sur le BL
-        double qteEssenceDepot = livraison.getQteEs();
-        double qteGazoilDepot = livraison.getQteGaz();
-        //Indexes indexes = indexesRepository.findById(indexId).orElse(null);
-
-        //**********Mise à jour de la table des indexes pour impacter le stock global après dépotage*****************
-      //  indexes.setEssenceIndexeFin(eseenceTotal);//Mise à jour table indexe de la station
-       // indexes.setGazoilIndexeFin(gazTotal);//Mise à jour table indexe
-       // indexesRepository.save(indexes);
-
-        //*************** Calcul des ecarts ************************
-        double ecartEssence = qteEssenceDuBl - qteEssenceDepot;
-        double ecartGazoil = qteGazDuBl - qteGazoilDepot;
-        dernierStockStation.setEcartEssence(ecartEssence);
-        dernierStockStation.setEcartGazoil(ecartGazoil);
-        dernierStockStation.setEssenceDepot(livraison.getSaisieEssence());
-        dernierStockStation.setGazoilDepot(livraison.getSaisieGazoil());
-        dernierStockStation.setDateDepot(LocalDate.now());
-        dernierStockStation.setQteGlobaleEssence(eseenceTotal); //Mise à jour du stock de la station en essence dans la table stock station
-        dernierStockStation.setQteGlobaleGazoile(gazTotal); //Mise à jour du stock de la station en gasoil dans la table stock station
-        dernierStockStation.setStockInitStation(stInit.get());
-        stockStationRepository.save(dernierStockStation);
-        livraison.setAccepter(true);
-        livraison.setUser(user);
-        bonlivraisonRepository.save(livraison);
-        //*************  Mise à jour du solde de gestoci *************************
-        stockgestoci.setQteGlobalEs( stockgestoci.getQteGlobalEs() - livraison.getQteEs());
-        stockgestoci.setQteGlobaleGaz(stockgestoci.getQteGlobaleGaz() - livraison.getQteGaz());
-        stockgestoci.setQteGazDepot(livraison.getQteGaz());
-        stockgestoci.setQteEsDepot(livraison.getQteEs());
-        stockGestociRepository.save(stockgestoci);
-        livraison.setAccepter(true);
-        bonlivraisonRepository.save(livraison);
-        model.addAttribute("bonLivre", livraison);
-        model.addAttribute("user",user);
+           livraison.setUser(user);
 
         //*********** Historisation de l'ancien stock de la station
         HistoryStockStation historyStockStation = new HistoryStockStation();
-        historyStockStation.setStations(dernierStockStation.getStations());
-        historyStockStation.setEssenceInit(dernierStockStation.getEssenceInit());
-        historyStockStation.setDateDepot(dernierStockStation.getDateDepot());
-        historyStockStation.setEssenceDepot(dernierStockStation.getEssenceDepot());
-        historyStockStation.setGazoilInit(dernierStockStation.getGazoilInit());
-        historyStockStation.setGazoilDepot(dernierStockStation.getGazoilDepot());
-        historyStockStation.setEcartEssence(dernierStockStation.getEcartEssence());
-        historyStockStation.setEcartGazoil(dernierStockStation.getEcartGazoil());
-        historyStockStation.setQteGlobaleEssence(dernierStockStation.getQteGlobaleEssence());
-        historyStockStation.setQteGlobaleGazoile(dernierStockStation.getQteGlobaleGazoile());
-        historyStockStation.setStations(dernierStockStation.getStations());
+        historyStockStation.setStations(st.getStations());
+        historyStockStation.setEssenceInit(ancienEssenceInit);
+        historyStockStation.setDateDepot(st.getDateDepot());
+        historyStockStation.setEssenceDepot(st.getEssenceDepot());
+        historyStockStation.setGazoilInit(ancienGazoilInit);
+        historyStockStation.setGazoilDepot(st.getGazoilDepot());
+        historyStockStation.setEcartEssence(ancienEcartEssence);
+        historyStockStation.setEcartGazoil(ancienEcartGasoil);
+        historyStockStation.setQteGlobaleEssence(st.getQteGlobaleEssence());
+        historyStockStation.setQteGlobaleGazoile(st.getQteGlobaleGazoile());
+        historyStockStation.setStations(st.getStations());
         historyStockStation.setMotif("Sauvegarde de stock avant dépotage de carburant en station");
+        historyStockStation.setStockAvanTransacEss(ancienQteGlobaleEssence);
+        historyStockStation.setStockAvanTransacGas(ancienGlobalGasoil);
+        historyStockStation.setNbrIndex(st.getNbrIndex());
         historyStockStationRepository.save(historyStockStation);
+        livraison.setDateValidation(LocalDate.now());
+        bonlivraisonRepository.save(livraison);
         model.addAttribute("bonlivraison", bonlivraisonRepository.findBonLivraisonByStationsAndAccepterFalseAndRejeterFalse(user.getStations()));
+        model.addAttribute("bonLivre", livraison);
+        model.addAttribute("user",user);
+       // model.addAttribute("bonlivraison", bonlivraisonRepository.findBonLivraisonByStationsAndAccepterFalseAndRejeterFalse(user.getStations()));
         return "blgerant";
     }
 
@@ -375,7 +349,7 @@ public class BonlivraisonControlleur {
             //*************** Calcul des ecarts ************************
             double ecartEssence = qteEssenceDuBl - qteEssenceDepot;
             double ecartGazoil = qteGazDuBl - qteGazoilDepot;
-            st.setEcartEssence(ecartEssence);
+           st.setEcartEssence(ecartEssence);
             st.setEcartGazoil(ecartGazoil);
             stockInitStation.setParametre(true);
             stockInitStationsRepository.save(stockInitStation);
@@ -416,8 +390,8 @@ public class BonlivraisonControlleur {
             dernierStockStation.setQteGlobaleEssence(eseenceTotal);
             dernierStockStation.setQteGlobaleGazoile(gazTotal);
             dernierStockStation.setStockInitStation(stockInitStation);
-            stockStationRepository.save(dernierStockStation);
-            bonlivraisonRepository.save(livraison);
+
+
             //Mise à jour des indexes
             Indexes ind = indexesRepository.findById(user.getId()).orElse(null);
             ind.setCuveEssence(ind.getCuveEssence()+qteEssenceDepot);
@@ -448,6 +422,9 @@ public class BonlivraisonControlleur {
             historyStockStation.setQteGlobaleGazoile(dernierStockStation.getQteGlobaleGazoile());
             historyStockStation.setStations(dernierStockStation.getStations());
             historyStockStationRepository.save(historyStockStation);
+            stockStationRepository.save(dernierStockStation);
+            livraison.setDateValidation(LocalDate.now());
+            bonlivraisonRepository.save(livraison);
 
             return "redirect:/superviseur/listbl";
 

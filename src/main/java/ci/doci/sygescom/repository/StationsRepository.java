@@ -10,4 +10,6 @@ public interface StationsRepository extends JpaRepository<Stations, Long> {
     //Zone trouverZoneStation(Long id);
     @Query(value = "select max(i.id) as maxid from Stations i")
     Long getLastId();
+
+    Stations findByNom(String nom);
 }

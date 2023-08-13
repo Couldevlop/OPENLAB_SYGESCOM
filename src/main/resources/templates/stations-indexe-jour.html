@@ -17,16 +17,25 @@
 <div layout:fragment="page_content" class="main-content">
     <section class="section">
         <div class="section-header">
+            <div class="section-header-back" th:if="${indexeListJour}">
+                <a th:href="@{/controle/stat-indexe}" class="btn btn-icon"><i class="fas fa-arrow-left"></i></a>
+            </div>
             <h1>Etat réél des stations</h1>
             <div class="section-header-button">
-                <a th:href="@{/dg/stat-indexe/jour}" class="btn btn-primary">Toutes les indexes du jour</a>
+                <a th:href="@{/controle/stat-indexe/jour}" class="btn btn-primary">Tous les indexes du jour</a>
 
             </div>&nbsp;&nbsp;
-            <div>
-                <a th:href="@{/dg/stat-indexe/excelExport}" class="btn btn-primary">Export data into Excel
+            <div class="section-header-button">
+                <a th:href="@{/controle/suvi-journalier}" class="btn btn-primary">Nombre de prises
+                    </a>
+
+            </div>
+            <div class="section-header-button">
+                <a th:href="@{/controle/stat-indexe/excelExport}" class="btn btn-primary">Export data into Excel
                     <i class="fas fa-file-excel" style="color: #ffffff;"></i></a>
 
-            </div><br/>
+            </div>
+           <br/>
             <div class="section-header-breadcrumb">
                 <div class="breadcrumb-item active"><a th:href="@{/}">Accueil</a></div>
                 <div class="breadcrumb-item"><a th:href="@{/admin/home}">Administration</a></div>

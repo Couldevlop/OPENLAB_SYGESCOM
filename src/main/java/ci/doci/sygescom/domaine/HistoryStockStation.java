@@ -1,6 +1,7 @@
 package ci.doci.sygescom.domaine;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -12,6 +13,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Builder
 public class HistoryStockStation {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -31,4 +33,8 @@ public class HistoryStockStation {
     private double stockAvanTransacEss;
     private double stockAvanTransacGas;
     private String motif;
+    private int alerte = 0;
+    private int nbrIndex=0;
+    private LocalDate dateJour;
+
 }

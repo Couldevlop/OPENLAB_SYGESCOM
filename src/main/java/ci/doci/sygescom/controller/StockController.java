@@ -7,8 +7,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.time.LocalDate;
+
 @Controller
-@RequestMapping("/dg")
 public class StockController {
 
     private final StockStationRepository stockStationRepository;
@@ -19,17 +20,24 @@ public class StockController {
         this.stockGestociRepository = stockGestociRepository;
     }
 
-    @GetMapping("/stock")
+    @GetMapping("/dg/stock")
     public String graphic(Model model){
         model.addAttribute("st", stockStationRepository.findAll());
         return "stock";
     }
 
-    @GetMapping("/stock/gestoci")
+    @GetMapping("/superviseur/stock")
+    public String stockStation(Model model){
+        model.addAttribute("st", stockStationRepository.findAll());
+        return "stockStation";
+    }
+
+    @GetMapping("/dg/stock/gestoci")
     public String gestoci(Model model){
         model.addAttribute("stgesto", stockGestociRepository.findAll());
         return "stockGestoci";
     }
+
 
 
 }

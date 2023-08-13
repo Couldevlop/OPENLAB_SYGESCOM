@@ -96,6 +96,17 @@
                        class="btn btn-primary btn-lg btn-block btn-icon-split">
                         <i class="fas fa-rocket"></i> Gestion BL
                     </a>
+                    <li sec:authorize="hasAnyRole('LOGISTIQUE','SUPERVISEUR' )" class="nav-link"></li>
+                    <a sec:authorize="hasAnyRole('LOGISTIQUE','SUPERVISEUR')" th:href="@{/superviseur/list-bl-valides-en-station}"
+                       class="btn btn-primary btn-lg btn-block btn-icon-split">
+                        <i class="fas fa-rocket"></i> BL Validés en Stations
+                    </a>
+
+                    <li sec:authorize="hasAnyRole('LOGISTIQUE','SUPERVISEUR' )" class="nav-link"></li>
+                    <a sec:authorize="hasAnyRole('LOGISTIQUE','SUPERVISEUR')" th:href="@{/superviseur/stock}"
+                       class="btn btn-primary btn-lg btn-block btn-icon-split">
+                        <i class="fas fa-rocket"></i> Stocks Stations
+                    </a>
                     <li sec:authorize="hasRole('GERANT' )" class="nav-link"></li>
                     <a sec:authorize="hasRole('GERANT')" th:href="@{/gerant/gerantlistbl}"
                        class="btn btn-primary btn-lg btn-block btn-icon-split">
@@ -133,8 +144,8 @@
                         <i class="fas fa-rocket"></i> Trace-log
                     </a>
 
-                    <li sec:authorize="hasAnyRole('ADMIN','DG')" class="nav-link"></li>
-                    <a sec:authorize="hasAnyRole('ADMIN','DG')" th:href="@{/dg/stat-indexe}"
+                    <li sec:authorize="hasAnyRole('ADMIN','DG','CONTROLEUR')" class="nav-link"></li>
+                    <a sec:authorize="hasAnyRole('ADMIN','DG','CONTROLEUR')" th:href="@{/controle/stat-indexe}"
                        class="btn btn-primary btn-lg btn-block btn-icon-split">
                         <i class="fas fa-rocket"></i> Stat indexe J-J
                     </a>
@@ -155,7 +166,16 @@
                        class="btn btn-primary btn-lg btn-block btn-icon-split">
                         <i class="fas fa-rocket"></i> Versement
                     </a>
-
+                    <li sec:authorize="hasAnyRole('SUPERVISEUR','DG','COMPTABLE','RAF','ADMIN')" class="nav-link"></li>
+                    <a sec:authorize="hasAnyRole('SUPERVISEUR','DG','COMPTABLE','RAF','ADMIN')" th:href="@{/superviseur/ventes-corporates/validation-adv}"
+                       class="btn btn-primary btn-lg btn-block btn-icon-split">
+                        <i class="fas fa-rocket"></i> Validation AVD
+                    </a>
+                    <li sec:authorize="hasRole('ADMIN')" class="nav-link"></li>
+                    <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin/correction-index}"
+                       class="btn btn-primary btn-lg btn-block btn-icon-split">
+                        <i class="fas fa-rocket"></i> Correction Index
+                    </a>
                   <!--  <li sec:authorize="hasRole('DG')" class="nav-link"></li>
                     <a sec:authorize="hasRole('DG')" th:href="@{/dg/stock}"
                        class="btn btn-primary btn-lg btn-block btn-icon-split">
@@ -189,6 +209,8 @@
                        class="btn btn-primary btn-lg btn-block btn-icon-split">
                         <i class="fas fa-rocket"></i> Gestion BL
                     </a>
+
+
                     <!--<li sec:authorize="hasRole('COMPTABLE')" class="nav-link"></li>
                     <a sec:authorize="hasRole('COMPTABLE')" th:href="@{/comptable/stock}"
                        class="btn btn-primary btn-lg btn-block btn-icon-split">
@@ -219,7 +241,7 @@
             <div class="footer-left">
                 Copyright &copy; 2022
                 <div class="bullet"></div>
-                Concu par la sociéte<a href="www.openlaconsulting.com">OPENLAB CONSULTING</a> spécialiste en innovation technologique
+                Concu par la sociéte<a href="www.openlaconsulting.com">  OPENLAB CONSULTING  </a> spécialiste en innovation technologique
                 <a href="#"></a>
             </div>
             <div class="footer-right">

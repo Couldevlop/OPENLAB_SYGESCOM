@@ -7,9 +7,13 @@ import ci.doci.sygescom.repository.StockStationRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 public class GraphiqueController {
@@ -32,8 +36,16 @@ public class GraphiqueController {
 
     }
 */
-    @RequestMapping("/superadmin/stat/stock")
-    public String getPiechartData(){
+    @GetMapping("/superadmin/stat/stock")
+    public String getPiechartData(Model model){
+        Map<String, Integer> data = new LinkedHashMap<String, Integer>();
+        data.put("Ashish", 30);
+        data.put("Ankit", 50);
+        data.put("Gurpreet", 70);
+        data.put("Mohit", 90);
+        data.put("Manish", 25);
+        model.addAttribute("keySet", data.keySet());
+        model.addAttribute("values", data.values());
         return "graphique";
     }
 }

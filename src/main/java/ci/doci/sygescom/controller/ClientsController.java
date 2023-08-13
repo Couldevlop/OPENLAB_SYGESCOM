@@ -8,6 +8,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
@@ -298,52 +299,5 @@ public class ClientsController {
         return "corporateCheck";
     }
 
-    @PostMapping("/gerant/checkCorporate")
-    public String checkCorporate(@RequestParam("contact") String contact, Model model,
-                                 RedirectAttributes redirectAttributes,
-                                 @RequestParam("litreEssence") double litreEssence,
-                                 @RequestParam("litreGazoil") double litreGazoil,
-                                // @RequestParam("numBon") String numBon,
-                                 @RequestParam("telBenef") String telBenef,
-                                 @AuthenticationPrincipal User user ) {
-        if (contact != "") {
-            String num = contact.replaceAll("\\s", "");
-            //ClientsCorporates cp = clientCorporateRepository.findClientsCorporatesByContact1(num);
-            BadActionException badActionException = operationsService._returnClientCorporateAfterSelling(contact, litreEssence, litreGazoil, user.getStations(), telBenef);
-            if (badActionException.getT() != null ) {
-                Beneficiaire beneficiaire = beneficiaireRepository.findBeneficiaireByContact(telBenef);
-                ClientsCorporates cp1 = clientCorporateRepository.findClientsCorporatesByContact1(num);
-               // redirectAttributes.addFlashAttribute("corporate",cp);
-                redirectAttributes.addFlashAttribute("beneficiaire", beneficiaire);
-                redirectAttributes.addFlashAttribute("litreEssence",litreEssence);
-                redirectAttributes.addFlashAttribute("litreGazoil",litreGazoil);
-               // redirectAttributes.addFlashAttribute("numBon",numBon);
-                redirectAttributes.addFlashAttribute("telBenef",telBenef);
-                redirectAttributes.addFlashAttribute("dates",LocalDate.now());
-                redirectAttributes.addFlashAttribute("messages",badActionException.getMessage());
-                //return "redirect:/gerant/corporateCheck";
-                return "redirect:/gerant/searchcorporate";
-            } if(badActionException.getT()==null) {
-                String message="Corporate non trouvé";
-                redirectAttributes.addFlashAttribute("message", badActionException.getMessage());
-                return "redirect:/gerant/searchcorporate";
-            } if(badActionException.getT1()==null){
-                redirectAttributes.addFlashAttribute("message", badActionException.getMessage());
 
-                return "redirect:/gerant/searchcorporate";
-            }
-            if(badActionException.getT1() !=null){
-                redirectAttributes.addFlashAttribute("success", badActionException.getMessage());
-                return "redirect:/gerant/searchcorporate";
-            }
-
-
-        } else {
-            String message = "veillez renseigner un numero de telephone SVP";
-            redirectAttributes.addFlashAttribute("message", message);
-            return "redirect:/gerant/searchcorporate";
-        }
-
-        return null;
-    }
 }

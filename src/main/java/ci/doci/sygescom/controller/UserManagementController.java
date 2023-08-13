@@ -73,7 +73,11 @@ public class UserManagementController {
     }
 
     @PostMapping("/newuser")
-    public String createUser(@ModelAttribute("user") User user) {
+    public String createUser(@ModelAttribute("user") User user, Model model) {
+        if(userRepository.findByLogin(user.getLogin()).get() != null){
+            model.addAttribute("message", "Un utilisateur existe déjà avec ce login");
+            return "errors";
+        }
         user.setPassword(passwordEncoder.encode("123456"));
         user.setFirstConnection(true);
         userService.createUser(user);
@@ -148,10 +152,15 @@ public class UserManagementController {
 
 
     @PostMapping("/register")
-    public String register(@ModelAttribute("user") User user, Errors errors, @AuthenticationPrincipal User userAppli,
+    public String register(@ModelAttribute("user") User user, Errors errors, @AuthenticationPrincipal User userAppli,Model model,
                            RedirectAttributes redirectAttributes) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User userConnecte = (User) authentication.getPrincipal();
+
+        if(userRepository.findByLogin(user.getLogin()).get() != null){
+            model.addAttribute("message", "Un utilisateur existe déjà avec ce login");
+            return "errors";
+        }
 
         log.info("Debut méthode enregistrement d'un utilisateur");
         log.info("Machine connectée : " + request.getRemoteAddr());

@@ -1,14 +1,13 @@
 package ci.doci.sygescom.domaine;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 
 @Table(name = "doci_stockStation")
-@Data
+@Setter
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -24,6 +23,7 @@ public class StockStation {
     private double ecartEssence=0;
     private double ecartGazoil=0;
     @ManyToOne
+    @EqualsAndHashCode.Exclude()
     @JoinColumn(name = "stations_id")
     private Stations stations;
     private double qteGlobaleEssence;

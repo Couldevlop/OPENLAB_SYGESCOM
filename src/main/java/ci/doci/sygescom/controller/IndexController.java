@@ -78,8 +78,8 @@ public class IndexController {
             }
             StockStation st = service.findStockStationByStations(user.getStations());
             EcartStations ecart = null;
-            if(ecartStationService.findByID(user.getId()) != null){
-                 ecart = ecartStationService.findByID(user.getId());
+            if(ecartStationService.findById(user.getId()) != null){
+                 ecart = ecartStationService.findById(user.getId());
                 model.addAttribute("ecartEssence", ecart.getEcartEssence());
                 model.addAttribute("ecartGazoil", ecart.getEcartGazoil());
                 model.addAttribute("ecart", ecart);
