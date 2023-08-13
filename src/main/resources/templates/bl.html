@@ -78,10 +78,13 @@
                                         <td  th:text="${b.prestataire.nomChauffeur}" class="align-middle"></td>
 
                                         <td>
-                                            <a th:href="@{'/superviseur/bl/' + ${b.id}}"
-                                               class="btn btn-info" onclick="return confirm('Etes-vous sur de vouloir Consulter?');">Voir
+                                            <a th:if="${b.accepter.equals(false)}" th:href="@{'/superviseur/bl/' + ${b.id}}"
+                                               class="btn btn-info" onclick="return confirm('Etes-vous sur de vouloir Consulter?');">Modifier
                                             </a>
-                                            <a sec:authorize="hasRole('ADMIN')" th:href="@{'/superviseur/bl/' + ${b.id} + '/delete'}"
+                                            <a th:if="${b.accepter.equals(true)}"
+                                               class="btn btn-success" ><font color="white"> BL est Validé par le gérant</font>
+                                            </a>
+                                            <a th:if="${b.accepter.equals(false)}" th:href="@{'/superviseur/bl/' + ${b.id} + '/delete'}"
                                                class="btn btn-danger" onclick="return confirm('Etes-vous sur de vouloir supprimer?');">Supprimer
                                             </a>
                                         </td>

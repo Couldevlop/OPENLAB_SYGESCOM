@@ -1,8 +1,8 @@
 package ci.doci.sygescom.controller;
 
 import ci.doci.sygescom.domaine.*;
-import ci.doci.sygescom.domaine.dto.IndexDTO;
 import ci.doci.sygescom.domaine.dto.IndexeDTO;
+import ci.doci.sygescom.domaine.dto.StockStationDTO;
 import ci.doci.sygescom.repository.*;
 import ci.doci.sygescom.service.DataIndexService;
 import ci.doci.sygescom.service.EcartStationService;
@@ -10,6 +10,7 @@ import ci.doci.sygescom.service.EmailService;
 import ci.doci.sygescom.service.OperationIndexesService;
 import ci.doci.sygescom.util.IndexeDataExcelExport;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -48,13 +49,15 @@ public class IndexesController {
     private final DataIndexService dataIndexService;
     private final EcartStationService ecartStationService;
     private final EmailService emailService;
-
+    private final HistoryStockStationRepository historyStockStationRepository;
     private final JavaMailSender mailSendder;
 
     private final Logger log = LoggerFactory.getLogger(IndexesController.class);
 
+    private final ModelMapper modelMapper;
+
     public IndexesController(IndexesRepository indexesRepository, ZoneRepository zoneRepository,
-                             StationsRepository stationsRepository, MouvementsRepository mouvementsRepository, StockInitStationsRepository stockInitStationsRepository, StockStationRepository stockStationRepository, LogActionRepository logActionRepository, OperationIndexesService service, DataIndexService dataIndexService, EcartStationService ecartStationService, EmailService emailService, JavaMailSender mailSendder) {
+                             StationsRepository stationsRepository, MouvementsRepository mouvementsRepository, StockInitStationsRepository stockInitStationsRepository, StockStationRepository stockStationRepository, LogActionRepository logActionRepository, OperationIndexesService service, DataIndexService dataIndexService, EcartStationService ecartStationService, EmailService emailService, HistoryStockStationRepository historyStockStationRepository, JavaMailSender mailSendder, ModelMapper modelMapper) {
         this.indexesRepository = indexesRepository;
         this.zoneRepository = zoneRepository;
         this.stationsRepository = stationsRepository;
@@ -66,8 +69,9 @@ public class IndexesController {
         this.dataIndexService = dataIndexService;
         this.ecartStationService = ecartStationService;
         this.emailService = emailService;
-
+        this.historyStockStationRepository = historyStockStationRepository;
         this.mailSendder = mailSendder;
+        this.modelMapper = modelMapper;
     }
 
 
@@ -137,6 +141,38 @@ public class IndexesController {
         model.addAttribute("zone", zoneRepository.findAll());
         return "indexesform";
     }
+
+    @GetMapping("/admin/correction-index")
+    public String showPageToCorrectIndex(Model model){
+        model.addAttribute("stations", stationsRepository.findAll());
+        return "indexCorrectionForm";
+    }
+
+    @PostMapping("/admin/tocorrect-index")
+    public String toCorrectIndex(@RequestParam("date1") Date date1,
+                                 @RequestParam("stations") String id,
+                                 RedirectAttributes model){
+
+        Date localDate = date1;
+        if(id == null){
+            model.addFlashAttribute("message", "Aucune données ne correspond à la station choisie");
+            model.addFlashAttribute("stations", stationsRepository.findAll());
+        }
+
+        if(stockStationRepository.findStockStationByStationsId(Long.parseLong(id)) != null){
+            StockStation stockStation = stockStationRepository.findStockStationByStationsId(Long.parseLong(id));
+            String nomSatation = stockStation.getStations().getNom();
+            model.addFlashAttribute("nomStation", nomSatation);
+            model.addFlashAttribute("stockStation", stockStation);
+            return "redirect:/admin/correction-index";
+        }else{
+            model.addFlashAttribute("message", "La station selectionnée ne contient aucune données ou elle n'est pas paramétrée");
+            model.addFlashAttribute("stations", stationsRepository.findAll());
+            return "redirect:/admin/correction-index";
+        }
+
+    }
+
 
     @PostMapping("/gerant/newindexes")
     public String createIndexe(@Valid @ModelAttribute("data") DataIndex data,
@@ -252,40 +288,40 @@ public class IndexesController {
 
             //*************** Controle sur les cuve sans depotage******************
             StockStation stock = null;
-            if(stockStationRepository.findStockStationByStationsId(st) != null){
+            if(stockStationRepository.findStockStationByStationsId(user.getStations().getId()) != null){
                 stock = stockStationRepository.findStockStationByStationsId(st);
             }
 
-               double maxCuveEssence = In.getCuveEssence()+200;
-               double maxCuveGazoil = In.getCuveGazoil()+200;
+               double maxCuveEssence = stock.getQteGlobaleEssence();
+               double maxCuveGazoil = stock.getQteGlobaleGazoile();
 
             if(data.getCuveEssence()>maxCuveEssence ){
-                String message = data.getCuveEssence() + "  est superieur à " + maxCuveEssence + "  L'augmzntation de cette valeur doit se faire par la validation d'un BL.Regarder dans l'onglet GESTION BL si vous n'avez pas de BL en attentes ";
+                String message = data.getCuveEssence() + "  est superieur à " + maxCuveEssence + "  L'augmentation de cette valeur doit se faire par la validation d'un BL.Regarder dans l'onglet GESTION BL si vous n'avez pas de BL en attente ";
                 redirectAttributes.addFlashAttribute("saisie", In);
                 redirectAttributes.addFlashAttribute("message", message);
                 return "redirect:/gerant/newindexes";
             }
 
-            if(data.getCuveEssence()>In.getCuveEssence() ){
+           /* if(data.getCuveEssence()>In.getCuveEssence() ){
                 String message = data.getCuveEssence() + "  est superieur à " + In.getCuveEssence() + "  Regarder dans l'onglet GESTION BL si vous n'avez pas de BL en attentes ";
                 redirectAttributes.addFlashAttribute("saisie", In);
                 redirectAttributes.addFlashAttribute("message", message);
                 return "redirect:/gerant/newindexes";
-            }
+            }*/
 
             if(data.getCuveGazoil()>maxCuveGazoil ){
-                String message = data.getCuveGazoil() + "  est superieur à " + maxCuveGazoil + "  L'augmzntation de cette valeur doit se faire par la validation d'un BL.Regarder dans l'onglet GESTION BL si vous n'avez pas de BL en attentes ";
+                String message = data.getCuveGazoil() + "  est superieur à " + maxCuveGazoil + "  L'augmentation de cette valeur doit se faire par la validation d'un BL.Regarder dans l'onglet GESTION BL si vous n'avez pas de BL en attentes ";
                 redirectAttributes.addFlashAttribute("saisie", In);
                 redirectAttributes.addFlashAttribute("message", message);
                 return "redirect:/gerant/newindexes";
             }
 
-            if(data.getCuveGazoil()>In.getCuveGazoil()){
+          /*  if(data.getCuveGazoil()>In.getCuveGazoil()){
                 String message = data.getCuveGazoil() + " est superieur à " + In.getCuveGazoil() + " Regarder dans l'onglet GESTION BL si vous n'avez pas de BL en attentes ";
                 redirectAttributes.addFlashAttribute("saisie", In);
                 redirectAttributes.addFlashAttribute("message", message);
                 return "redirect:/gerant/newindexes";
-            }
+            }*/
         }
 
         Optional<Indexes> ind = indexesRepository.findById(indexesRepository.lastId(st));
@@ -320,6 +356,7 @@ public class IndexesController {
                 model.addAttribute("message", "La station n'a pas de stock");
                 return "errors";
             }
+
 
 
             //---------stock cuve par calcul de prises ---------------
@@ -390,12 +427,31 @@ public class IndexesController {
                 nbrIndex = 1;
 
             }
+            //---------------- Sauvegarder les données de la table stockstation dans la table HistoriqueStockStation------------
+            HistoryStockStation historyStockStation = HistoryStockStation.builder()
+                    .alerte(sta.getAlerte())
+                    .dateDepot(sta.getDateDepot())
+                    .ecartEssence(sta.getEcartEssence())
+                    .ecartGazoil(sta.getEcartGazoil())
+                    .essenceDepot(sta.getEssenceDepot())
+                    .stations(sta.getStations())
+                    .dateJour(sta.getDateJour())
+                    .essenceInit(sta.getEssenceInit())
+                    .gazoilDepot(sta.getGazoilDepot())
+                    .gazoilInit(sta.getGazoilInit())
+                    .id(sta.getId())
+                    .nbrIndex(sta.getNbrIndex())
+                    .qteGlobaleEssence(sta.getQteGlobaleEssence())
+                    .qteGlobaleGazoile(sta.getQteGlobaleGazoile())
+                    .motif("saveIndex")
+                    .build();
+            historyStockStationRepository.save(historyStockStation);
             sta.setNbrIndex(nbrIndex);
             sta.setNbrIndex(indexes.getPrise());
             sta.setDateJour(LocalDate.now());
             StockStation savedStockStation = stockStationRepository.save(sta);
             indexes.setPrise(1);
-            //indexes.setEtat(true);
+            indexes.setEtat(true);
             indexesRepository.save(indexes);
 
             //---------- Envoie de mail d'alerte -----------------
@@ -668,7 +724,7 @@ public class IndexesController {
     }
 
 
- //  @Scheduled(cron =" 0 0 10,11 * * ?")// Fermeture
+   @Scheduled(cron =" 0 0 9,11 * * ?")// Fermeture
     public void blockPriseIndex(){
         List<Indexes> indexes = indexesRepository.findIndexesByDateJour(LocalDate.now());
         for(Indexes ind: indexes){
@@ -713,7 +769,7 @@ public class IndexesController {
         }
     }
 
-   // @Scheduled(cron =" 0 0 5,8 * * ?")
+    @Scheduled(cron =" 0 0 5,8 * * ?")
     public void ouvertPriseIndex3(){
 
         // Je prends la date d'aujourd'hui(comme on sera à 6h) et je fait  -1 donc on se positionne à hier

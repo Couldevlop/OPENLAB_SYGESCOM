@@ -48,7 +48,7 @@ public class BonLivraison {
     private double saisieGazoil;
     private Boolean rejeter=false;
     private Boolean hierachie = false;
-
+   private LocalDate dateValidation;
     private Boolean cloturer = false;
 
 

@@ -18,4 +18,5 @@ public interface StockStationRepository extends JpaRepository<StockStation, Long
     StockStation findStockStationByStationsId(Long id);
 
 
+
 }

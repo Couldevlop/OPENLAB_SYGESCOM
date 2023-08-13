@@ -16,28 +16,28 @@
             <div class="section-header-back">
                 <a th:href="@{/home}" class="btn btn-icon"><i class="fas fa-arrow-left"></i></a>
             </div>
-            <h1>Bon de livraison</h1>
-            <div class="section-header-button"  sec:authorize="hasAnyRole('ADMIN','SUPERVISEUR')" >
+            <h1>Bon de livraison modification</h1>
+            <!--<div class="section-header-button"  sec:authorize="hasAnyRole('ADMIN','SUPERVISEUR')" >
                 <button  type="button" class="btn btn-primary"
                          data-toggle="modal" data-target="#modalbl">
                     Nouveau
                 </button>
-            </div>
-            <div  class="section-header-button"  sec:authorize="hasRole('GERANT')" >
+            </div>-->
+           <!-- <div  class="section-header-button"  sec:authorize="hasRole('GERANT')" >
                 <a th:href="@{/gerant/blValiderParHierachie}" class="btn btn-primary">BL Validé Par Hierachie</a>&nbsp;
                 <a th:href="@{/gerant/blAccepteGerant}" class="btn btn-primary">BL Acceptés</a>
-            </div>
+            </div>-->
             <div class="section-header-breadcrumb">
                 <div class="breadcrumb-item active"><a th:href="@{/}">Accueil</a></div>
                 <div class="breadcrumb-item"><a th:href="@{/admin/home}">Administration</a></div>
-                <div class="breadcrumb-item">Bon de Livraison</div>
+                <div class="breadcrumb-item">Bon de Livraison modification</div>
             </div>
 
         </div>
         <div class="section-body">
             <h2 class="section-title">Bon de livraison</h2>
             <p class="section-lead">
-                Vous pouvez gérer tous vos Bon de livraison
+                Vous pouvez modifier tous vos Bon de livraison
             </p>
             <div class="row mt-4">
                 <div class="col-12">

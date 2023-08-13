@@ -20,10 +20,16 @@ public class StockController {
         this.stockGestociRepository = stockGestociRepository;
     }
 
-    @GetMapping("/dg//stock")
+    @GetMapping("/dg/stock")
     public String graphic(Model model){
         model.addAttribute("st", stockStationRepository.findAll());
         return "stock";
+    }
+
+    @GetMapping("/superviseur/stock")
+    public String stockStation(Model model){
+        model.addAttribute("st", stockStationRepository.findAll());
+        return "stockStation";
     }
 
     @GetMapping("/dg/stock/gestoci")

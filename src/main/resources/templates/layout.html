@@ -96,6 +96,17 @@
                        class="btn btn-primary btn-lg btn-block btn-icon-split">
                         <i class="fas fa-rocket"></i> Gestion BL
                     </a>
+                    <li sec:authorize="hasAnyRole('LOGISTIQUE','SUPERVISEUR' )" class="nav-link"></li>
+                    <a sec:authorize="hasAnyRole('LOGISTIQUE','SUPERVISEUR')" th:href="@{/superviseur/list-bl-valides-en-station}"
+                       class="btn btn-primary btn-lg btn-block btn-icon-split">
+                        <i class="fas fa-rocket"></i> BL Validés en Stations
+                    </a>
+
+                    <li sec:authorize="hasAnyRole('LOGISTIQUE','SUPERVISEUR' )" class="nav-link"></li>
+                    <a sec:authorize="hasAnyRole('LOGISTIQUE','SUPERVISEUR')" th:href="@{/superviseur/stock}"
+                       class="btn btn-primary btn-lg btn-block btn-icon-split">
+                        <i class="fas fa-rocket"></i> Stocks Stations
+                    </a>
                     <li sec:authorize="hasRole('GERANT' )" class="nav-link"></li>
                     <a sec:authorize="hasRole('GERANT')" th:href="@{/gerant/gerantlistbl}"
                        class="btn btn-primary btn-lg btn-block btn-icon-split">
@@ -159,6 +170,11 @@
                     <a sec:authorize="hasAnyRole('SUPERVISEUR','DG','COMPTABLE','RAF','ADMIN')" th:href="@{/superviseur/ventes-corporates/validation-adv}"
                        class="btn btn-primary btn-lg btn-block btn-icon-split">
                         <i class="fas fa-rocket"></i> Validation AVD
+                    </a>
+                    <li sec:authorize="hasRole('ADMIN')" class="nav-link"></li>
+                    <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin/correction-index}"
+                       class="btn btn-primary btn-lg btn-block btn-icon-split">
+                        <i class="fas fa-rocket"></i> Correction Index
                     </a>
                   <!--  <li sec:authorize="hasRole('DG')" class="nav-link"></li>
                     <a sec:authorize="hasRole('DG')" th:href="@{/dg/stock}"

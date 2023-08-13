@@ -15,7 +15,9 @@ import java.util.List;
 public interface IndexesRepository extends JpaRepository<Indexes, Long> {
     List<Indexes> findIndexesByStationsIdAndDateJour(Long id, LocalDate jour);
     List<Indexes> findIndexesByDateJour(LocalDate jour);
-    //Indexes findIndexesByStationsId(Long id);
+
+    @Query(nativeQuery = true, value = "SELECT * FROM doci_indexes where date_jour between :d1 and :d2")
+    List<Indexes> findIndexesByDateJours(@Param("d1") LocalDate jour1, @Param("d2") LocalDate jour2);
     Indexes findEssenceIndexeFinAndGazoilIndexeFinAndCuveEssenceAndCuveGazoilOrderByStations(Stations st);
     Indexes findDistinctByStations(Stations stations);
     @Query(nativeQuery = true,  value = "SELECT max(I.Id) from doci_indexes I where I.stations_id =:id")

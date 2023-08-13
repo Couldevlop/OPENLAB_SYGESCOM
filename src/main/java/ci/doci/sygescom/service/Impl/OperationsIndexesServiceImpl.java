@@ -1,13 +1,9 @@
 package ci.doci.sygescom.service.Impl;
 
-import ci.doci.sygescom.domaine.Indexes;
-import ci.doci.sygescom.domaine.ResponseEntity;
-import ci.doci.sygescom.domaine.Stations;
+import ci.doci.sygescom.domaine.*;
 import ci.doci.sygescom.domaine.dto.IndexDTO;
 import ci.doci.sygescom.domaine.dto.IndexeDTO;
-import ci.doci.sygescom.repository.IndexdtoRepository;
-import ci.doci.sygescom.repository.IndexesRepository;
-import ci.doci.sygescom.repository.StationsRepository;
+import ci.doci.sygescom.repository.*;
 import ci.doci.sygescom.service.OperationIndexesService;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -22,12 +18,17 @@ public class OperationsIndexesServiceImpl implements OperationIndexesService {
     private final  IndexesRepository indexesRepository;
     private final StationsRepository stationsRepository;
     private final IndexdtoRepository indexdtoRepository;
+
+    private StockStationRepository stockStationRepository;
+    private final HistoryStockStationRepository historyStockStationRepository;
+
     private final ModelMapper modelMapper;
 
-    public OperationsIndexesServiceImpl(IndexesRepository indexesRepository, StationsRepository stationsRepository, IndexdtoRepository indexdtoRepository, ModelMapper modelMapper) {
+    public OperationsIndexesServiceImpl(IndexesRepository indexesRepository, StationsRepository stationsRepository, IndexdtoRepository indexdtoRepository, HistoryStockStationRepository historyStockStationRepository, ModelMapper modelMapper) {
         this.indexesRepository = indexesRepository;
         this.stationsRepository = stationsRepository;
         this.indexdtoRepository = indexdtoRepository;
+        this.historyStockStationRepository = historyStockStationRepository;
         this.modelMapper = modelMapper;
     }
 
@@ -113,6 +114,47 @@ public class OperationsIndexesServiceImpl implements OperationIndexesService {
     @Override
     public List<IndexDTO> getDataIndexByDay() {
         return indexdtoRepository.reportingJour();
+    }
+
+
+
+    //------------------------------------------------------------------------------------------
+    //---------- MODFICATION DE STOCKS EN CAS D'ERREURS DE SAISIES D'INDEXE-------------------
+    //-----------------------------------------------------------------------------------------
+
+    public void _doUpdateIndexTableAndStockStationTableByStation(LocalDate d, Stations st, String motif){
+
+        //----------Recuperation des lignes d'index de ce jour(jour de l'erreur)
+        List<Indexes> listErreurIndex = indexesRepository.findIndexesByDateJours(d, LocalDate.now());
+        for(Indexes ind: listErreurIndex){
+            indexdtoRepository.deleteById(ind.getId());
+        }
+
+
+        //----------Recuperer les lignes dans hitoryStockStation à la date avan laquelle l'erreur s'est produite---------
+        LocalDate d1 = d.minusDays(1);
+        List<HistoryStockStation> historyStockStations = historyStockStationRepository.findHistoryStockStationByDateJourAndStationsAndMotif(d1, st, motif);
+        HistoryStockStation historyStockStation = historyStockStations.get(historyStockStations.size()-1);
+
+
+        //--------Recuperer la ligne de la table StockStation correspondant et mise à jour-----------------
+        StockStation stockStation = stockStationRepository.findStockStationByStationsId(historyStockStation.getStations().getId());
+        stockStation.setQteGlobaleGazoile(historyStockStation.getQteGlobaleGazoile());
+        stockStation.setQteGlobaleEssence(historyStockStation.getQteGlobaleEssence());
+        stockStation.setNbrIndex(historyStockStation.getNbrIndex());
+        stockStation.setStations(historyStockStation.getStations());
+        stockStation.setGazoilDepot(historyStockStation.getGazoilDepot());
+        stockStation.setEcartEssence(historyStockStation.getEcartEssence());
+        stockStation.setEcartGazoil(historyStockStation.getEcartGazoil());
+        stockStation.setEssenceDepot(historyStockStation.getEssenceDepot());
+        stockStation.setAlerte(historyStockStation.getAlerte());
+        stockStation.setDateJour(historyStockStation.getDateJour());
+        stockStation.setId(historyStockStation.getId());
+        stockStation.setEssenceInit(historyStockStation.getEssenceInit());
+        stockStation.setGazoilInit(historyStockStation.getGazoilInit());
+        stockStationRepository.save(stockStation);
+        historyStockStation.setMotif(historyStockStation.getMotif() + " .Erreur constatée le: " + d + " de la station " + historyStockStation.getStations().getNom());
+
     }
 
 }

@@ -138,6 +138,13 @@ public class BonlivraisonControlleur {
         return "bl";
     }
 
+    @GetMapping("/superviseur/list-bl-valides-en-station")
+    public String blValiderParGerant(@AuthenticationPrincipal User user, Model model){
+        List<BonLivraison> ListBL = bonlivraisonRepository.findBonLivraisonByAccepterIsTrue();
+        model.addAttribute("ListBlValide", ListBL);
+        return "blValiderParGerant";
+    }
+
     @PostMapping("/gerant/bl/{id}")
     public String gerantValidateBl(@PathVariable("id") String id,
                             @AuthenticationPrincipal User user){
@@ -202,6 +209,14 @@ public class BonlivraisonControlleur {
 
 
            StockStation st = stockStationRepository.findStockStationByStations(user.getStations());
+           // récuperation des anciennes valeurs avnat la mise à jour
+            double ancienQteGlobaleEssence = st.getQteGlobaleEssence();
+            double ancienGlobalGasoil = st.getQteGlobaleGazoile();
+            double ancienGazoilInit = st.getGazoilInit();
+            double ancienEcartEssence = st.getEcartEssence();
+            double ancienEcartGasoil = st.getEcartGazoil();
+            double ancienEssenceInit = st.getEssenceInit();
+
            st.setEssenceDepot(livraison.getQteEs());
            st.setGazoilDepot(livraison.getQteGaz());
 
@@ -242,18 +257,22 @@ public class BonlivraisonControlleur {
         //*********** Historisation de l'ancien stock de la station
         HistoryStockStation historyStockStation = new HistoryStockStation();
         historyStockStation.setStations(st.getStations());
-        historyStockStation.setEssenceInit(st.getEssenceInit());
+        historyStockStation.setEssenceInit(ancienEssenceInit);
         historyStockStation.setDateDepot(st.getDateDepot());
         historyStockStation.setEssenceDepot(st.getEssenceDepot());
-        historyStockStation.setGazoilInit(st.getGazoilInit());
+        historyStockStation.setGazoilInit(ancienGazoilInit);
         historyStockStation.setGazoilDepot(st.getGazoilDepot());
-        historyStockStation.setEcartEssence(st.getEcartEssence());
-        historyStockStation.setEcartGazoil(st.getEcartGazoil());
+        historyStockStation.setEcartEssence(ancienEcartEssence);
+        historyStockStation.setEcartGazoil(ancienEcartGasoil);
         historyStockStation.setQteGlobaleEssence(st.getQteGlobaleEssence());
         historyStockStation.setQteGlobaleGazoile(st.getQteGlobaleGazoile());
         historyStockStation.setStations(st.getStations());
         historyStockStation.setMotif("Sauvegarde de stock avant dépotage de carburant en station");
+        historyStockStation.setStockAvanTransacEss(ancienQteGlobaleEssence);
+        historyStockStation.setStockAvanTransacGas(ancienGlobalGasoil);
+        historyStockStation.setNbrIndex(st.getNbrIndex());
         historyStockStationRepository.save(historyStockStation);
+        livraison.setDateValidation(LocalDate.now());
         bonlivraisonRepository.save(livraison);
         model.addAttribute("bonlivraison", bonlivraisonRepository.findBonLivraisonByStationsAndAccepterFalseAndRejeterFalse(user.getStations()));
         model.addAttribute("bonLivre", livraison);
@@ -330,7 +349,7 @@ public class BonlivraisonControlleur {
             //*************** Calcul des ecarts ************************
             double ecartEssence = qteEssenceDuBl - qteEssenceDepot;
             double ecartGazoil = qteGazDuBl - qteGazoilDepot;
-            st.setEcartEssence(ecartEssence);
+           st.setEcartEssence(ecartEssence);
             st.setEcartGazoil(ecartGazoil);
             stockInitStation.setParametre(true);
             stockInitStationsRepository.save(stockInitStation);
@@ -371,8 +390,8 @@ public class BonlivraisonControlleur {
             dernierStockStation.setQteGlobaleEssence(eseenceTotal);
             dernierStockStation.setQteGlobaleGazoile(gazTotal);
             dernierStockStation.setStockInitStation(stockInitStation);
-            stockStationRepository.save(dernierStockStation);
-            bonlivraisonRepository.save(livraison);
+
+
             //Mise à jour des indexes
             Indexes ind = indexesRepository.findById(user.getId()).orElse(null);
             ind.setCuveEssence(ind.getCuveEssence()+qteEssenceDepot);
@@ -403,6 +422,9 @@ public class BonlivraisonControlleur {
             historyStockStation.setQteGlobaleGazoile(dernierStockStation.getQteGlobaleGazoile());
             historyStockStation.setStations(dernierStockStation.getStations());
             historyStockStationRepository.save(historyStockStation);
+            stockStationRepository.save(dernierStockStation);
+            livraison.setDateValidation(LocalDate.now());
+            bonlivraisonRepository.save(livraison);
 
             return "redirect:/superviseur/listbl";
 

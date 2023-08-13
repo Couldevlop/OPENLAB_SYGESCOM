@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Correction Index</title>
+</head>
+
+<div layout:fragment="page_content" class="main-content">
+    <section class="section">
+        <div class="section-header">
+            <div class="section-header-back">
+                <a th:href="@{/admin/zone}" class="btn btn-icon"><i class="fas fa-arrow-left"></i></a>
+            </div>
+            <h1>Zone de Correction Index</h1>
+            <div class="section-header-breadcrumb">
+                <div class="breadcrumb-item active"><a th:href="@{/}">Accueil</a></div>
+                <div class="breadcrumb-item"><a th:href="@{/admin/home}">Administration</a></div>
+                <div class="breadcrumb-item">Correction Index</div>
+            </div>
+        </div>
+
+        <div class="section-body">
+            <h2 class="section-title">Réaliser une Correction d'index</h2>
+            <p class="section-lead">
+                Sur cette page vous permet de faire des corrections d'index.
+            </p>
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4>Corriger Index</h4>
+                        </div>
+                        <div class="card-body">
+                            <form th:action="@{/admin/tocorrect-index}"  method="post">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group  mb-4 col-md-6 ml-5" >
+                                            <label class="col-form-label  col-3 col-md-1 col-lg-3">Station</label>
+                                            <div class="col-sm-12 col-md-12">
+                                                <select name="stations"  class="form-control selectric dropdown scrollable-menu"
+                                                        id="stations" required>
+                                                    <option th:each="st:${stations}"
+                                                            th:value="${st.id}"
+                                                            th:text="${st.nom}"></option>
+
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group  mb-10 col-md-6">
+                                            <label class="col-form-label  col-3 col-md-1 col-lg-3">Date</label>
+                                            <div class="col-sm-12 col-md-12">
+                                                <input type="date" class="form-control"  name="date1"  autocomplete="off">
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                                <div class="form-group row mb-4">
+                                    <label class="col-form-label  col-12 col-md-3 col-lg-3"></label>
+                                    <div class="col-sm-12 col-md-7">
+                                        <button type="submit" class="btn btn-primary">Valider</button>
+                                    </div>
+                                </div>
+                            </form>
+                            <div class="row" th:if="${stockStation}">
+                                <div class="clearfix mb-3"></div>
+                                <div class="table-responsive">
+                                    <table class="table table-striped" id="table-2">
+                                        <thead>
+                                        <tr>
+                                           <th>Nom station</th>
+                                            <th>Qte Globale Essence</th>
+                                            <th>Qte Globale Gasoil</th>
+                                            <th>Date</th>
+                                            <th>Actions</th>
+                                            <!--                                        <th>Action</th>-->
+                                        </tr>
+                                        </thead>
+                                        <tr>
+                                           <td  th:text="${nomStation}" class="align-middle"></td>
+                                            <td  th:text="${stockStation.getQteGlobaleEssence()}" class="align-middle"></td>
+                                            <td  th:text="${stockStation.getQteGlobaleGazoile()}" class="align-middle"></td>
+
+                                            <td  th:text="${stockStation.getDateJour()}" class="align-middle"></td>
+                                            <td  th:text="${stockStation.getDateJour()}" class="align-middle"></td>
+
+                                            <td>
+                                                <a  th:href="@{'/admin/station/' + ${stockStation.id}}" class="btn btn-info" onclick="return confirm('Etes-vous sur de vouloir apporter une correction?');">Correction</a>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+</html>
