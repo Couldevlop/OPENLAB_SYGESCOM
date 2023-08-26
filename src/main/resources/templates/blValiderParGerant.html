@@ -42,6 +42,7 @@
                                     <thead>
                                     <tr>
                                         <th>N° BL</th>
+                                        <th>Creation BL</th>
                                         <th>Date Validation</th>
                                         <th>Station</th>
                                         <th>RefEssence</th>
@@ -58,6 +59,7 @@
                                     <tr th:each="b : ${ListBlValide}">
                                         <td th:text="${b.getNumBL()}" class="align-middle">Mohamed Traore</td>
                                         <td th:text="${b.dateBL}" class="align-middle"></td>
+                                        <td th:text="${b.dateValidation}" class="align-middle"></td>
                                         <td  th:text="${b.stations.nom}" class="align-middle"></td>
                                         <td  th:text="${b.refEs}" class="align-middle"></td>
                                         <td  th:text="${b.qteEs}" class="align-middle"></td>

@@ -3,6 +3,7 @@ package ci.doci.sygescom.controller;
 import ci.doci.sygescom.domaine.*;
 import ci.doci.sygescom.exception.BadActionException;
 import ci.doci.sygescom.repository.*;
+import ci.doci.sygescom.service.EmailService;
 import ci.doci.sygescom.service.OperationsService;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -26,6 +27,7 @@ public class VentesController {
     private final VentesComptantRepository ventesComptantRepository;
     private final StockStationRepository stockStationRepository;
     private final ClientsComptantsRepository clientsComptantsRepository;
+    private final EmailService emailService;
     private final ClientCorporateRepository clientCorporateRepository;
     private final ClientsRepository clientsRepository;
     private HistoryStockStationRepository historyStockStationRepository;
@@ -36,7 +38,7 @@ public class VentesController {
     private final OperationsService operationsService;
     private final BeneficiaireRepository beneficiaireRepository;
 
-    public VentesController(VentesRepository ventesRepository, StationsRepository stationsRepository, StockGestociRepository stockGestociRepository, PrixInitRepository prixInitRepository, VentesComptantRepository ventesComptantRepository, StockStationRepository stockStationRepository, ClientsComptantsRepository clientsComptantsRepository, ClientCorporateRepository clientCorporateRepository, ClientsRepository clientsRepository, HistoryStockStationRepository historyStockStationRepository, VentesCorporateRepository ventesCorporateRepository, LogActionRepository logActionRepository, MouvementsRepository mouvementsRepository, IndexesRepository indexesRepository, OperationsService operationsService, BeneficiaireRepository beneficiaireRepository) {
+    public VentesController(VentesRepository ventesRepository, StationsRepository stationsRepository, StockGestociRepository stockGestociRepository, PrixInitRepository prixInitRepository, VentesComptantRepository ventesComptantRepository, StockStationRepository stockStationRepository, ClientsComptantsRepository clientsComptantsRepository, EmailService emailService, ClientCorporateRepository clientCorporateRepository, ClientsRepository clientsRepository, HistoryStockStationRepository historyStockStationRepository, VentesCorporateRepository ventesCorporateRepository, LogActionRepository logActionRepository, MouvementsRepository mouvementsRepository, IndexesRepository indexesRepository, OperationsService operationsService, BeneficiaireRepository beneficiaireRepository) {
         this.ventesRepository = ventesRepository;
         this.stationsRepository = stationsRepository;
         this.stockGestociRepository = stockGestociRepository;
@@ -44,6 +46,7 @@ public class VentesController {
         this.ventesComptantRepository = ventesComptantRepository;
         this.stockStationRepository = stockStationRepository;
         this.clientsComptantsRepository = clientsComptantsRepository;
+        this.emailService = emailService;
         this.clientCorporateRepository = clientCorporateRepository;
         this.clientsRepository = clientsRepository;
         this.historyStockStationRepository = historyStockStationRepository;
@@ -393,6 +396,7 @@ public class VentesController {
     @GetMapping("/superviseur/ventes-corporates/validation-adv")
     public String validationAdv(Model model){
         model.addAttribute("vcorporates", ventesCorporateRepository.findByAdvValidateIsFalse());
+        model.addAttribute("vcorporatesList", ventesCorporateRepository.findAll());
         return "validation-adv";
     }
     @PostMapping("/gerant/checkCorporate")
@@ -445,8 +449,14 @@ public class VentesController {
         return null;
     }
 
+
+    //-----------------------------------------------------------------------------------------------------------
+    //--------------------------- VALIDATION d4OPERATION DE VENTE A CREDIT AU CORPORATE: VALIDATION AVD ---------
+    //------------------------------------------------------------------------------------------------------------
+
     @GetMapping("/superviseur/adv/{id}")
-    public String validationVenteCoporate(@PathVariable  Long id, Model model){
+    public String validationVenteCoporate(@PathVariable  Long id, Model model,
+                                          @AuthenticationPrincipal  User user){
         if(id == null){
             model.addAttribute("message","l'identifiant: " + id + "est nul par conséquent il est impossible de trouver une valeur avec cet Id");
             model.addAttribute("vcorporates", ventesCorporateRepository.findByAdvValidateIsFalse());
@@ -461,8 +471,32 @@ public class VentesController {
         operationsService._doValidateOperation(ventesCorporate.getClientsCorporates().getContact1(), ventesCorporate.getLitrageEssence(), ventesCorporate.getLitrageGazoil(),
                                                ventesCorporate.getStations());
         ventesCorporate.setAdvValidate(true);
+        ventesCorporate.setNomAvdValider(user.getUsername());
         ventesCorporateRepository.save(ventesCorporate);
+
+        String message = " Bonjour, " +  "\r\n"  +
+                "Nous vous informons par ce mail que  la Station de " + ventesCorporate.getStations().getNom() +
+                "\r\n"  +
+                " a procédé à une vente à crédit au corporate  le : "  +  LocalDate.now() +   " . Voici les détails: " + "\r\n" +
+                " - Quantité  essence vendue : "  +     +  ventesCorporate.getLitrageEssence()  +   "\r\n" +
+                "- Quantité  gazoil vendue : "    +   ventesCorporate.getLitrageGazoil()    +  "\r\n" +
+                "- Le nom du corporate : "    +   ventesCorporate.getClientsCorporates().getNom()    +  "\r\n" +
+                "- Le Le contact du corporate : "    +   ventesCorporate.getClientsCorporates().getContact1()    +  "\r\n" +
+                "- Le réprésentant du corpoarte : "    +   ventesCorporate.getClientsCorporates().getInterlocuteur()    +  "\r\n"
+                +  "\r\n"  +  "\r\n"  +
+
+                "IMPORTANT ! "  +  " Merci de proceder à la validation afin d'équilibrer le stock de la station" + "\r\n" ;
+
+
+        EmailDetails mail = EmailDetails.builder()
+                .subject("NOTIFICATION: OPERATION DE VENTE AU CORPORATE EN ATTENTE DE VALIDATION(TEST)")
+                .msgBody(message)
+                .attachment(null)
+                .recipient("validationstock@doci.ci")
+                .build();
+        emailService.sendSimpleMail(mail);
         model.addAttribute("vcorporates", ventesCorporateRepository.findByAdvValidateIsFalse());
+        model.addAttribute("messageOk", "La vete a été enregistrée avec succes. Un mail est envoyé à votre AVD pour validation de l'opération. Une fois celle-ci validée, vos stock seront mises à jour.");
         return "validation-adv";
     }
 

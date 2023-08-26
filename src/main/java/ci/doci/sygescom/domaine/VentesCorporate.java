@@ -24,5 +24,6 @@ public class VentesCorporate extends Ventes{
     private Doc doc;
     private boolean gerantValidate=false;
     private  boolean advValidate=false;
+    private String nomAvdValider;
 
 }

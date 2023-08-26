@@ -63,7 +63,10 @@
                                         <td  th:text="${b.saisieGazoil}" class="align-middle"></td>
                                         <td  th:text="${b.prestataire.nomChauffeur}" class="align-middle"></td>
                                         <td>
-                                            <a href="#" class="btn btn-success">Validé Par la Hiérachie
+                                            <a th:if="${b.dateValidation == null}" href="#" class="btn btn-primary">En attente de validation
+                                            </a>
+
+                                            <a th:if="${b.dateValidation != null}" href="#" class="btn btn-success">Validé Par la Hiérachie
                                             </a>
                                         </td>
 

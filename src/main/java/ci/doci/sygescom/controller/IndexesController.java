@@ -2,12 +2,8 @@ package ci.doci.sygescom.controller;
 
 import ci.doci.sygescom.domaine.*;
 import ci.doci.sygescom.domaine.dto.IndexeDTO;
-import ci.doci.sygescom.domaine.dto.StockStationDTO;
 import ci.doci.sygescom.repository.*;
-import ci.doci.sygescom.service.DataIndexService;
-import ci.doci.sygescom.service.EcartStationService;
-import ci.doci.sygescom.service.EmailService;
-import ci.doci.sygescom.service.OperationIndexesService;
+import ci.doci.sygescom.service.*;
 import ci.doci.sygescom.util.IndexeDataExcelExport;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -17,6 +13,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
@@ -53,11 +50,13 @@ public class IndexesController {
     private final JavaMailSender mailSendder;
 
     private final Logger log = LoggerFactory.getLogger(IndexesController.class);
+    private final ControlDepotageRepository controlDepotageRepository;
+    private final BonlivraisonRepository bonlivraisonRepository;
 
     private final ModelMapper modelMapper;
 
     public IndexesController(IndexesRepository indexesRepository, ZoneRepository zoneRepository,
-                             StationsRepository stationsRepository, MouvementsRepository mouvementsRepository, StockInitStationsRepository stockInitStationsRepository, StockStationRepository stockStationRepository, LogActionRepository logActionRepository, OperationIndexesService service, DataIndexService dataIndexService, EcartStationService ecartStationService, EmailService emailService, HistoryStockStationRepository historyStockStationRepository, JavaMailSender mailSendder, ModelMapper modelMapper) {
+                             StationsRepository stationsRepository, MouvementsRepository mouvementsRepository, StockInitStationsRepository stockInitStationsRepository, StockStationRepository stockStationRepository, LogActionRepository logActionRepository, OperationIndexesService service, DataIndexService dataIndexService, EcartStationService ecartStationService, EmailService emailService, HistoryStockStationRepository historyStockStationRepository, JavaMailSender mailSendder, ControlDepotageRepository controlDepotageRepository, BonlivraisonRepository bonlivraisonRepository, ModelMapper modelMapper) {
         this.indexesRepository = indexesRepository;
         this.zoneRepository = zoneRepository;
         this.stationsRepository = stationsRepository;
@@ -71,7 +70,10 @@ public class IndexesController {
         this.emailService = emailService;
         this.historyStockStationRepository = historyStockStationRepository;
         this.mailSendder = mailSendder;
+        this.controlDepotageRepository = controlDepotageRepository;
+        this.bonlivraisonRepository = bonlivraisonRepository;
         this.modelMapper = modelMapper;
+
     }
 
 
@@ -142,6 +144,10 @@ public class IndexesController {
         return "indexesform";
     }
 
+    //----------------------------------------------------------------------------------------------------------------
+    //------------- CORRECTION DES ERREURS SUR LES PRISES D4INDEX-----------------------------------------------------
+    //----------------------------------------------------------------------------------------------------------------
+
     @GetMapping("/admin/correction-index")
     public String showPageToCorrectIndex(Model model){
         model.addAttribute("stations", stationsRepository.findAll());
@@ -149,21 +155,29 @@ public class IndexesController {
     }
 
     @PostMapping("/admin/tocorrect-index")
-    public String toCorrectIndex(@RequestParam("date1") Date date1,
+    public String toCorrectIndex(@RequestParam("date1") String date1,
                                  @RequestParam("stations") String id,
                                  RedirectAttributes model){
 
-        Date localDate = date1;
-        if(id == null){
-            model.addFlashAttribute("message", "Aucune données ne correspond à la station choisie");
+        //Date localDate = date1;
+        if(id == null || date1 == null ){
+            model.addFlashAttribute("message", "Aucune données ne correspond à la station choisie. merci de vous assurer que vous avez bien selectionner une station et une date");
             model.addFlashAttribute("stations", stationsRepository.findAll());
         }
 
         if(stockStationRepository.findStockStationByStationsId(Long.parseLong(id)) != null){
-            StockStation stockStation = stockStationRepository.findStockStationByStationsId(Long.parseLong(id));
+            //Date date = new Date();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyy-MM-dd");
+            LocalDate localDate = LocalDate.parse(date1, formatter);
+            //LocalDate localDate = date1.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+             StockStation stockStation = stockStationRepository.findStockStationByStationsId(Long.parseLong(id));
             String nomSatation = stockStation.getStations().getNom();
+            List<ControleDepotage> cd = controlDepotageRepository.findByDateJourAndStation(localDate, nomSatation);
+            if(cd.isEmpty()){
+                model.addFlashAttribute("message", "Désolé aucun résultat ne correspond à votre demande. Nous vous retournons un tableau vide.");
+            }
             model.addFlashAttribute("nomStation", nomSatation);
-            model.addFlashAttribute("stockStation", stockStation);
+            model.addFlashAttribute("controleDepotage", cd);
             return "redirect:/admin/correction-index";
         }else{
             model.addFlashAttribute("message", "La station selectionnée ne contient aucune données ou elle n'est pas paramétrée");
@@ -173,7 +187,71 @@ public class IndexesController {
 
     }
 
+    @GetMapping("/admin/correction/{id}")
+    @Transactional
+    public String correction(@PathVariable ("id") Long id,
+                             @AuthenticationPrincipal User user,
+                             Model model){
 
+
+
+        if(id == null){
+            model.addAttribute("message", "Une erreur s'est produite, merci de rééssayer à nouveau");
+        }if(controlDepotageRepository.existsById(id) == false){
+            model.addAttribute("message", "Aucune données ne correspond à votre demande");
+        }
+        ControleDepotage cd = controlDepotageRepository.findById(id).get();
+        LocalDate localDate = cd.getDateJour();
+        if(stationsRepository.findByNom(cd.getStation()).equals(null)){
+            model.addAttribute("message","Aucune station ne portant le nom " + cd.getStation() + " n'a été trouvée");
+        }
+        Stations station = stationsRepository.findByNom(cd.getStation());
+        if(stockStationRepository.findStockStationByStations(station) == null){
+            model.addAttribute("message","Aucun stock de station pour la station " + cd.getStation() + " n'a été trouvée");
+        }
+
+        StockStation st = stockStationRepository.findStockStationByStations(station);
+        LocalDate date1 = localDate.minusDays(-1);
+        if(controlDepotageRepository.findByDateJourAndStationAndDateDepot(date1, cd.getStation(), cd.getDateDepot()) == null){
+            model.addAttribute("message","Aucun sauvegarde n'a été trouvée dans la table d'historique pour la date " + date1 + " et pour la station " + cd.getStation());
+        }
+        ControleDepotage cd2 =controlDepotageRepository.findByDateJourAndStationAndDateDepot(date1, cd.getStation(), cd.getDateDepot());
+
+        //Comparer les dernier élements de l'historique et de la table stockStation
+        if(cd.getGasoilApresDepot()<0 || cd.getEssenceApresDepot()<0){
+            deleteLingne(station.getId(), date1);
+        }
+         st.setQteGlobaleEssence(cd.getEssenceAvantDepot());
+         st.setQteGlobaleGazoile(cd.getGasoilAvantDepot());
+         stockStationRepository.save(st);
+         deleteLigneHitorique(id, localDate);
+         deleteLigneEcart(id, localDate);
+         deleteLigneDataIndex(id, localDate);
+         model.addAttribute("message", "La correction a été éffectuée avec succes");
+
+           return "indexCorrectionForm";
+
+    }
+
+    private void deleteLigneEcart(Long id, LocalDate localDate) {
+        controlDepotageRepository.deleteligneEcartOfStation(id, localDate);
+    }
+
+    private void deleteLigneDataIndex(Long id, LocalDate localDate) {
+        controlDepotageRepository.deleteligneInDataIndexOfStation(id, localDate);
+    }
+
+    private void deleteLigneHitorique(Long id, LocalDate localDate) {
+        controlDepotageRepository.deleteligneHistoOfStation(id, localDate);
+    }
+
+    private void deleteLingne(Long id, LocalDate date1) {
+         controlDepotageRepository.deleteligneIndexOfStation(id, date1);
+    }
+
+//------------------------------------------------------------------------------------------------------------------------
+//---------------------------------- FIN DE CORRECTION DES ERREURS SUR LES INDEX------------------------------------------
+//-------------------------------------------------------------------------------------------------------------------------
     @PostMapping("/gerant/newindexes")
     public String createIndexe(@Valid @ModelAttribute("data") DataIndex data,
                                Errors errors,
@@ -325,15 +403,19 @@ public class IndexesController {
         }
 
         Optional<Indexes> ind = indexesRepository.findById(indexesRepository.lastId(st));
+        StockStation stInit = null;
         if(ind.isPresent()){
             Indexes indexes1 = ind.get();
             if(indexes1.getCuveEssence() ==0.0 || indexes1.getCuveGazoil() ==0.0){
-                StockStation stInit = stockStationRepository.findStockStationByStations(indexes1.getStations());
+                 stInit = stockStationRepository.findStockStationByStations(indexes1.getStations());
                 indexes1.setCuveEssence(stInit.getEssenceInit());
                 indexes1.setCuveGazoil(stInit.getGazoilInit());
             }
-            double lastCuveEss = indexes1.getCuveEssence();  //Cuve Essence précédent 145550
-            double lastCuvGaz = indexes1.getCuveGazoil(); //Cuve Gasoil précédent    3700
+            //double lastCuveEss = indexes1.getCuveEssence();  //Cuve Essence précédent 145550
+            StockStation stockStation = stockStationRepository.findStockStationByStations(user.getStations());
+            double lastCuveEss = stockStation.getQteGlobaleEssence();
+            //double lastCuvGaz = indexes1.getCuveGazoil(); //Cuve Gasoil précédent    3700
+            double lastCuvGaz = stockStation.getQteGlobaleGazoile();
             double PriseIndexeEs1 = indexes.getSuper1() - indexes1.getSuper1() ;//   237373.5-236025.7 = 1347.8
             double PriseIndexeEs2 = indexes.getSuper2() - indexes1.getSuper2(); // 297516.06 - 296765.17 = 750.89
             double PriseIndexeEs3 = indexes.getSuper3() - indexes1.getSuper3();// 248982.59 - 248664.89 = 317.7
@@ -368,7 +450,7 @@ public class IndexesController {
             // -------------insertion dans EcartStaion(ecart cuve)-------------------
 
             EcartStations ecartStations = new EcartStations();
-            List<Indexes> indexesList = indexesRepository.findIndexesByDateJour(localDate);
+            List<Indexes> indexesList = indexesRepository.findIndexesByDateJour(LocalDate.now());
             if(!indexesList.isEmpty()){
                 for(Indexes indx : indexesList){
                     if(indx.getStations().getId() == user.getStations().getId()){

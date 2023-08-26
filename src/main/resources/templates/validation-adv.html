@@ -42,9 +42,10 @@
                         </div>
                         <div class="card-body">
                             <div th:if="${message}" th:text="${message}" class="alert alert-danger"></div>
+                            <div th:if="${messageOk}" th:text="${messageOk}" class="alert alert-primary"></div>
                             <div class="clearfix mb-3"></div>
                             <div class="table-responsive">
-                                <table  class="table table-striped" id="table-2">
+                                <table sec:authorize="hasRole('GERANT')" class="table table-striped" id="table-2">
                                     <thead>
                                     <tr>
                                         <th>Station</th>
@@ -78,6 +79,45 @@
                                            <!-- <a th:href="@{'/gerant/bl/' + ${v.id} + '/rejeter'}"
                                                class="btn btn-danger" onclick="return confirm('Etes-vous sur de vouloir envoyer ce BL pour validation au superieur Hiérachique?');">Validation Hierachique
                                             </a>-->
+                                        </td>
+
+                                    </tr>
+                                    </tbody>
+                                </table>
+                                <table  class="table table-striped" id="table-2" sec:authorize="hasAnyRole('SUPERVISEUR','DG','COMPTABLE','RAF','ADMIN')">
+                                    <thead>
+                                    <tr>
+                                        <th>Station</th>
+                                        <th>Litrage Essence</th>
+                                        <th>Litrage Gasoil</th>
+                                        <th>Remise Essence</th>
+                                        <th>Remise Gasoil</th>
+                                        <th>Corporate</th>
+                                        <th>Fichier</th>
+                                        <th>Action</th>
+
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="v : ${vcorporatesList}">
+                                        <td  th:text="${v.stations.nom}" class="align-middle"></td>
+                                        <td th:text="${v.litrageEssence}" class="align-middle">Mohamed Traore</td>
+                                        <td th:text="${v.litrageGazoil}" class="align-middle"></td>
+                                        <td  th:text="${v.mntEssenceRemise}" class="align-middle"></td>
+                                        <td  th:text="${v.mntGazoilRemise}" class="align-middle"></td>
+                                        <td  th:text="${v.clientsCorporates.nom}" class="align-middle"></td>
+                                        <!--                                        <td  th:text="${b.prestataire.nom}" class="align-middle"></td>-->
+                                        <td th:if="${v.doc.id}"><a th:href="@{'/gerant/downloadFile/'+${v.doc.id}}" class="badge badge-primary">Download</a></td>
+                                        <td>
+                                            <a th:if="${v.advValidate == false}" th:href="@{'/superviseur/adv/' + ${v.id}}"
+                                               class="btn btn-info" onclick="return confirm('Etes-vous sur de confirmer ce bon de livraison?');">Validation AVD
+                                            </a>
+                                            <a th:if="${v.advValidate == true}" href="#"
+                                               class="btn btn-success">Validé
+                                            </a>
+                                            <!-- <a th:href="@{'/gerant/bl/' + ${v.id} + '/rejeter'}"
+                                                class="btn btn-danger" onclick="return confirm('Etes-vous sur de vouloir envoyer ce BL pour validation au superieur Hiérachique?');">Validation Hierachique
+                                             </a>-->
                                         </td>
 
                                     </tr>
