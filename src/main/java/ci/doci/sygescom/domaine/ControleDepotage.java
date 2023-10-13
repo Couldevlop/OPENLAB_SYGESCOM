@@ -24,4 +24,5 @@ public class ControleDepotage {
     private double GasoilAvantDepot;
     private double  GasoilApresDepot;
     private String station;
+    private Long id_;
 }

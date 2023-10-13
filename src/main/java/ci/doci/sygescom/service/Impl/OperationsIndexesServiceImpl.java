@@ -131,7 +131,7 @@ public class OperationsIndexesServiceImpl implements OperationIndexesService {
         }
 
 
-        //----------Recuperer les lignes dans hitoryStockStation à la date avan laquelle l'erreur s'est produite---------
+        //----------Recuperer les lignes dans hitoryStockStation à la date avant laquelle l'erreur s'est produite ---------
         LocalDate d1 = d.minusDays(1);
         List<HistoryStockStation> historyStockStations = historyStockStationRepository.findHistoryStockStationByDateJourAndStationsAndMotif(d1, st, motif);
         HistoryStockStation historyStockStation = historyStockStations.get(historyStockStations.size()-1);

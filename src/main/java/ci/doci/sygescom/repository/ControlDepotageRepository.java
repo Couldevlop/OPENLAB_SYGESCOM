@@ -12,8 +12,8 @@ import java.util.List;
 @Repository
 public interface ControlDepotageRepository extends JpaRepository<ControleDepotage, Long> {
 
-    @Query(value = "SELECT * from divineoil.controle_depotage WHERE date_jour=:jour  AND station=:station", nativeQuery = true)
-    List<ControleDepotage> findByDateJourAndStation(@Param("jour") LocalDate jour, @Param("station") String station);
+    @Query(value = "SELECT DISTINCT *  from divineoil.controle_depotage WHERE date_jour=:jour  AND station=:station", nativeQuery = true)
+    List<ControleDepotage> dataQueryPOfStation(@Param("jour") LocalDate jour, @Param("station") String station);
 
     ControleDepotage findByDateJourAndStationAndDateDepot(LocalDate d, String station, LocalDate d2);
 
@@ -28,4 +28,7 @@ public interface ControlDepotageRepository extends JpaRepository<ControleDepotag
 
     @Query(value = "DELETE FROM divineoil.doci_ecarts_stations WHERE stations_id =:id AND date_jour >=:localDate", nativeQuery = true)
     void deleteligneEcartOfStation(@Param("id") Long id, @Param("localDate") LocalDate localDate);
+
+    @Query(value = "select * from divineoil.controle_depotage where id_ =:id", nativeQuery = true)
+    ControleDepotage dataQuery(@Param("id") Long id);
 }

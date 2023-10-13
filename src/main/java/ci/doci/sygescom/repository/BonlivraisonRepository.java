@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 public interface BonlivraisonRepository extends JpaRepository<BonLivraison, Long> {
@@ -28,5 +29,14 @@ public interface BonlivraisonRepository extends JpaRepository<BonLivraison, Long
     List<BonLivraison> findBonLivraisonByNumBL(String numbl);
 
     List<BonLivraison> findBonLivraisonByAccepterIsTrue();
+
+    @Query(nativeQuery = true, value = "SELECT * FROM divineoil.doci_bonlivraison where  datebl between :d1  AND :d2 AND accepter IS true;")
+    List<BonLivraison>MonthBlByAccepterIsTrue(String d1, String d2);
+
+    @Query(nativeQuery = true, value = "SELECT * FROM divineoil.doci_bonlivraison where  datebl between :d1  AND :d2 AND accepter IS false;")
+    List<BonLivraison>MonthBlByAccepterIsFalse(String d1, String d2);
+
+    @Query(nativeQuery = true, value = "SELECT * FROM divineoil.doci_bonlivraison where  datebl between :d1  AND :d2 AND hierachie IS true;")
+    List<BonLivraison>MonthBlByHierachieTrue(String d1, String d2);
 
 }

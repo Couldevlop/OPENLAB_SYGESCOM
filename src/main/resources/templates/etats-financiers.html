@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layout}">
+
+<script type="text/javascript" src="../static/js/popup.js" th:src="@{../js/popup.js}"/>
+<head>
+    <meta charset="UTF-8">
+    <title>Etats financiers</title>
+    <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css"/>
+</head>
+
+<div layout:fragment="page_content" class="main-content">
+    <section class="section">
+        <div class="section-header">
+
+            <h1>Etats Financiers</h1>
+            <div class="section-header-button">
+                <a th:href="@{/etats/financiers/bc}" class="btn btn-primary">Etat des Bons de Commandes</a>
+
+            </div>&nbsp;&nbsp;
+            <div class="section-header-button">
+                <a th:href="@{/etats/financiers/bl}" class="btn btn-primary">Etat des Bons de Livraisons
+                    </a>
+
+            </div>
+            <div class="section-header-button">
+                <a th:href="@{/controle/stat-indexe/excelExport}" class="btn btn-primary">Export data into Excel
+                    <i class="fas fa-file-excel" style="color: #ffffff;"></i></a>
+
+            </div>
+           <br/>
+            <div class="section-header-breadcrumb">
+                <div class="breadcrumb-item active"><a th:href="@{/}">Accueil</a></div>
+                <div class="breadcrumb-item"><a th:href="@{/admin/home}">Administration</a></div>
+                <div class="breadcrumb-item">Statistiques Journalière des indexes</div>
+            </div>
+
+        </div>
+        <div class="section-body">
+            <h2 class="section-title">Indexe du jour</h2>
+            <p class="section-lead">
+                Vous pouvez Consulter toutes les indexes du jour globalement ou par station
+            </p>
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4>Suivi des indexes du jour</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="img-fluid" th:if="${image}">
+                                <img src="/assets/img/etat-finance.jpeg" style="height: 400px; width: 650px; margin-left: 30%;";>
+                            </div>
+                            
+                            <div class="clearfix mb-3"></div>
+
+
+                            <div th:if="${indexeListJour}" class="table-responsive">
+                                <table class="table table-striped" id="table-2">
+                                    <thead>
+                                    <tr>
+                                        <th>Stations</th>
+                                        <th>Gérant</th>
+                                        <th>Essence vendu</th>
+                                        <th>Gazoil vendu</th>
+                                        <th>Essence restant</th>
+                                        <th>Gazoil restant</th>
+                                        <th>Date</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="ind : ${indexeListJour}">
+                                        <td th:text="${ind.stations.nom}" class="align-middle">0001</td>
+                                        <td th:text="${ind.createBy}" class="align-middle">0001</td>
+                                        <td th:text="${ind.difPriseEss}" class="align-middle">0001</td>
+                                        <td th:text="${ind.difPriseGaz}" class="align-middle">0001</td>
+                                        <td th:text="${ind.qtiteRestantEssence}" class="align-middle">0001</td>
+                                        <td th:text="${ind.qtiteRestantGasoil}" class="align-middle"></td>
+                                        <td th:text="${ind.dateJour}" class="align-middle">0001</td>
+                                        <!--<td>
+                                            <a th:href="@{'/dg/stat-indexe/jour/' + ${ind.id}}"  class="btn btn-primary" style="color: #ffffff">
+                                            Détails
+                                        </a>-->
+
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div th:if="${listBC}" class="table-responsive">
+                                <table class="table table-striped" id="table-2">
+                                    <thead>
+                                    <tr>
+                                        <th>Date Edition</th>
+                                        <th>Qte Essence</th>
+                                        <th>Qte Gasoileu</th>
+                                        <th>Status</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="bc : ${listBC}">
+                                        <td th:text="${bc.dateBC}" class="align-middle">0001</td>
+                                        <td th:text="${bc.qteEs}" class="align-middle">0001</td>
+                                        <td th:text="${bc.qteGaz}" class="align-middle">0001</td>
+                                        <td th:if="${bc.aaccepte == true}">
+                                            <a  class="btn btn-success" style="color: #ffffff">VALIDER</a>
+
+                                        <td th:if="${bc.aaccepte == false}">
+                                            <a  class="btn btn-primary" style="color: #ffffff">EN COURS</a>
+                                        </td>
+
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div th:if="${listBL}" class="table-responsive">
+                                <table class="table table-striped" id="table-2">
+                                    <thead>
+                                    <tr>
+                                        <th>Date Edition</th>
+                                        <th>Numéro BL</th>
+                                        <th>Qte Essence</th>
+                                        <th>Qte Gasoile</th>
+                                        <th>Destinataire</th>
+                                        <th>Etat de BL</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="bl : ${listBL}">
+                                        <td th:text="${bl.dateBL}" class="align-middle">0001</td>
+                                        <td th:text="${bl.numBL}" class="align-middle">0001</td>
+                                        <td th:text="${bl.qteEs}" class="align-middle">0001</td>
+                                        <td th:text="${bl.qteGaz}" class="align-middle">0001</td>
+                                        <td th:text="${bl.stations.nom}" class="align-middle">0001</td>
+                                        <td >
+                                            <span th:if="${bl.accepter == true}">
+                                                <a  class="btn btn-success" style="color: #ffffff">VALIDER</a>
+                                            </span>
+                                            <span th:if="${bl.accepter == false}">
+                                                <a  class="btn btn-primary" style="color: #ffffff">EN COURS</a>
+                                            </span>
+                                            <span th:if="${bl.hierachie == false}">
+                                                 <a  class="btn btn-danger" style="color: #ffffff">EN VALIDATION</a>
+                                            </span>
+
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<style type="text/css">
+    .scrollable-menu{
+        height: auto;
+        max-height: 200px;
+        overflow-y: hidden;
+    }
+</style>
+</html>

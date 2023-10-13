@@ -172,9 +172,10 @@ public class IndexesController {
             //LocalDate localDate = date1.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
              StockStation stockStation = stockStationRepository.findStockStationByStationsId(Long.parseLong(id));
             String nomSatation = stockStation.getStations().getNom();
-            List<ControleDepotage> cd = controlDepotageRepository.findByDateJourAndStation(localDate, nomSatation);
+            List<ControleDepotage> cd = controlDepotageRepository.dataQueryPOfStation(localDate, nomSatation);
             if(cd.isEmpty()){
                 model.addFlashAttribute("message", "Désolé aucun résultat ne correspond à votre demande. Nous vous retournons un tableau vide.");
+                return "redirect:/admin/correction-index";
             }
             model.addFlashAttribute("nomStation", nomSatation);
             model.addFlashAttribute("controleDepotage", cd);
@@ -193,29 +194,35 @@ public class IndexesController {
                              @AuthenticationPrincipal User user,
                              Model model){
 
-
-
         if(id == null){
             model.addAttribute("message", "Une erreur s'est produite, merci de rééssayer à nouveau");
-        }if(controlDepotageRepository.existsById(id) == false){
+            model.addAttribute("stations", stationsRepository.findAll());
+            return "indexCorrectionForm";
+        }/*if(!controlDepotageRepository.existsById(id)){
             model.addAttribute("message", "Aucune données ne correspond à votre demande");
-        }
-        ControleDepotage cd = controlDepotageRepository.findById(id).get();
+            return "indexCorrectionForm";
+        }*/
+        ControleDepotage cd = controlDepotageRepository.dataQuery(id);
         LocalDate localDate = cd.getDateJour();
         if(stationsRepository.findByNom(cd.getStation()).equals(null)){
-            model.addAttribute("message","Aucune station ne portant le nom " + cd.getStation() + " n'a été trouvée");
+            model.addAttribute("message","Aucune station  portant le nom " + cd.getStation() + " n'a été trouvée");
+            model.addAttribute("stations", stationsRepository.findAll());
+            return "indexCorrectionForm";
         }
         Stations station = stationsRepository.findByNom(cd.getStation());
         if(stockStationRepository.findStockStationByStations(station) == null){
             model.addAttribute("message","Aucun stock de station pour la station " + cd.getStation() + " n'a été trouvée");
+            model.addAttribute("stations", stationsRepository.findAll());
+            return "indexCorrectionForm";
         }
 
         StockStation st = stockStationRepository.findStockStationByStations(station);
         LocalDate date1 = localDate.minusDays(-1);
-        if(controlDepotageRepository.findByDateJourAndStationAndDateDepot(date1, cd.getStation(), cd.getDateDepot()) == null){
+        /*if(controlDepotageRepository.findByDateJourAndStationAndDateDepot(date1, cd.getStation(), cd.getDateDepot()) == null){
             model.addAttribute("message","Aucun sauvegarde n'a été trouvée dans la table d'historique pour la date " + date1 + " et pour la station " + cd.getStation());
-        }
-        ControleDepotage cd2 =controlDepotageRepository.findByDateJourAndStationAndDateDepot(date1, cd.getStation(), cd.getDateDepot());
+            return "indexCorrectionForm";
+        }*/
+        //ControleDepotage cd2 =controlDepotageRepository.findByDateJourAndStationAndDateDepot(date1, cd.getStation(), cd.getDateDepot());
 
         //Comparer les dernier élements de l'historique et de la table stockStation
         if(cd.getGasoilApresDepot()<0 || cd.getEssenceApresDepot()<0){
@@ -224,11 +231,16 @@ public class IndexesController {
          st.setQteGlobaleEssence(cd.getEssenceAvantDepot());
          st.setQteGlobaleGazoile(cd.getGasoilAvantDepot());
          stockStationRepository.save(st);
-         deleteLigneHitorique(id, localDate);
+         if(historyStockStationRepository.verifierDateEtStationDansHistorique(localDate, cd.getId()).isEmpty()){
+             model.addAttribute("message","La station n'a pas de ligne d'historique ");
+             model.addAttribute("stations", stationsRepository.findAll());
+             return "indexCorrectionForm";
+         }
+         deleteLigneHitorique(cd.getId(), localDate);
          deleteLigneEcart(id, localDate);
          deleteLigneDataIndex(id, localDate);
          model.addAttribute("message", "La correction a été éffectuée avec succes");
-
+        model.addAttribute("stations", stationsRepository.findAll());
            return "indexCorrectionForm";
 
     }
@@ -370,8 +382,8 @@ public class IndexesController {
                 stock = stockStationRepository.findStockStationByStationsId(st);
             }
 
-               double maxCuveEssence = stock.getQteGlobaleEssence();
-               double maxCuveGazoil = stock.getQteGlobaleGazoile();
+               double maxCuveEssence = stock.getQteGlobaleEssence() + 50;
+               double maxCuveGazoil = stock.getQteGlobaleGazoile() + 50;
 
             if(data.getCuveEssence()>maxCuveEssence ){
                 String message = data.getCuveEssence() + "  est superieur à " + maxCuveEssence + "  L'augmentation de cette valeur doit se faire par la validation d'un BL.Regarder dans l'onglet GESTION BL si vous n'avez pas de BL en attente ";
@@ -380,26 +392,12 @@ public class IndexesController {
                 return "redirect:/gerant/newindexes";
             }
 
-           /* if(data.getCuveEssence()>In.getCuveEssence() ){
-                String message = data.getCuveEssence() + "  est superieur à " + In.getCuveEssence() + "  Regarder dans l'onglet GESTION BL si vous n'avez pas de BL en attentes ";
-                redirectAttributes.addFlashAttribute("saisie", In);
-                redirectAttributes.addFlashAttribute("message", message);
-                return "redirect:/gerant/newindexes";
-            }*/
-
             if(data.getCuveGazoil()>maxCuveGazoil ){
                 String message = data.getCuveGazoil() + "  est superieur à " + maxCuveGazoil + "  L'augmentation de cette valeur doit se faire par la validation d'un BL.Regarder dans l'onglet GESTION BL si vous n'avez pas de BL en attentes ";
                 redirectAttributes.addFlashAttribute("saisie", In);
                 redirectAttributes.addFlashAttribute("message", message);
                 return "redirect:/gerant/newindexes";
             }
-
-          /*  if(data.getCuveGazoil()>In.getCuveGazoil()){
-                String message = data.getCuveGazoil() + " est superieur à " + In.getCuveGazoil() + " Regarder dans l'onglet GESTION BL si vous n'avez pas de BL en attentes ";
-                redirectAttributes.addFlashAttribute("saisie", In);
-                redirectAttributes.addFlashAttribute("message", message);
-                return "redirect:/gerant/newindexes";
-            }*/
         }
 
         Optional<Indexes> ind = indexesRepository.findById(indexesRepository.lastId(st));
