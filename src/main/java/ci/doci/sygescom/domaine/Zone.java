@@ -9,6 +9,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 
+import static javax.persistence.FetchType.EAGER;
+
 @Entity
 @Data
 @NoArgsConstructor
@@ -23,7 +25,7 @@ public class Zone {
     private String description;
     private LocalDate dateCreation;
     private String createBy;
-    @OneToMany
+    @OneToMany(fetch = FetchType.LAZY)
     private List<Stations> stationsList;
 
 

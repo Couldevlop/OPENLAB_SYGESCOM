@@ -36,9 +36,11 @@ public class VersementController {
 
 
     @GetMapping("/gerant/versement")
-    private String getVersementTemplate(Model model){
+    private String getVersementTemplate(Model model, @AuthenticationPrincipal User user){
         model.addAttribute("Versement", new Versement());
-        model.addAttribute("listVersement", versementService.getAllVersement());
+        String nomStation = user.getStations().getNom();
+        model.addAttribute("listVersement", versementRepository.findVersementByStation(nomStation));
+        model.addAttribute("AllVersement", versementRepository.findAll());
         return "versement";
     }
 
@@ -53,7 +55,7 @@ public class VersementController {
         doc.setDocType(files.getContentType());
         doc.setData(files.getBytes());
         docRepository.save(doc);
-        versement.setStation(user.getUsername());
+        versement.setStation(user.getStations().getNom());
         versementService.addVersement(versement);
         return "redirect:/gerant/versement";
     }

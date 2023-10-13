@@ -47,8 +47,7 @@
                         <div class="card-body">
                             <div class="clearfix mb-3"></div>
                             <div class="table-responsive">
-
-                                <table sec:authorize="hasAnyRole('SUPERVISEUR','GERANT','COMPTABLE' )" class="table table-striped" id="table-2">
+                                <table sec:authorize="hasRole('GERANT')" class="table table-striped" id="table-2">
                                     <thead>
                                     <tr>
                                         <th>Deposant</th>
@@ -57,7 +56,6 @@
                                         <th>Monatnt</th>
                                         <th>Banque</th>
                                         <th>Fichier</th>
-<!--                                        <th>Action</th>-->
 
                                     </tr>
                                     </thead>
@@ -68,6 +66,43 @@
                                         <td  th:text="${c.dateEnreg}" class="align-middle"></td>
                                         <td  th:text="${c.montant}" class="align-middle"></td>
                                         <td  th:text="${c.banque}" class="align-middle"></td>
+                                        <td th:if="${c.doc.id}"><a th:href="@{'/gerant/downloadFile/'+${c.doc.id}}" class="badge badge-primary" style="margin: auto">Download</a></td>
+                                        <td th:if="${c.doc.id}==null"><a href="#" class="badge badge-primary" style="margin: auto">Aucun</a></td>
+                                        <!--<td>
+
+                                            <a  href="#"
+                                               class="btn btn-success">Validé
+                                            </a>
+                                            <a  href="#"
+                                               class="btn btn-primary">Non validé
+                                            </a>
+                                        </td>-->
+
+                                    </tr>
+                                    </tbody>
+                                </table>
+
+                                <table sec:authorize="hasAnyRole('SUPERVISEUR','COMPTABLE' )" class="table table-striped" id="table-2">
+                                    <thead>
+                                    <tr>
+                                        <th>Deposant</th>
+                                        <th>N° Borderau</th>
+                                        <th>Date</th>
+                                        <th>Monatnt</th>
+                                        <th>Banque</th>
+                                        <th>Station</th>
+                                        <th>Fichier</th>
+
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="c : ${AllVersement}">
+                                        <td th:text="${c.deposant}" class="align-middle"></td>
+                                        <td th:text="${c.numBorderau}" class="align-middle"></td>
+                                        <td  th:text="${c.dateEnreg}" class="align-middle"></td>
+                                        <td  th:text="${c.montant}" class="align-middle"></td>
+                                        <td  th:text="${c.banque}" class="align-middle"></td>
+                                        <td  th:text="${c.getStation()}" class="align-middle"></td>
                                         <td th:if="${c.doc.id}"><a th:href="@{'/gerant/downloadFile/'+${c.doc.id}}" class="badge badge-primary" style="margin: auto">Download</a></td>
                                         <td th:if="${c.doc.id}==null"><a href="#" class="badge badge-primary" style="margin: auto">Aucun</a></td>
                                         <!--<td>
@@ -123,10 +158,24 @@
                                                             <option value="BICICI"> BICICI</option>
                                                             <option value="BNI"> BNI</option>
                                                             <option value="BACI"> BACI</option>
-                                                            <option value="BPCI"> Banque Populaire</option>
-                                                            <option value="BIAO"> BIAO</option>
-                                                            <option value="CORIS BANQUE"> CORIS BANQUE</option>
+                                                            <option value="BPCI"> BANQUE POPULAIRE</option>
+                                                            <option value="BIAO"> NSIA BANQUE</option>
+                                                            <option value="CORIS BANQUE"> CORIS BANK</option>
                                                             <option value="ORABANK"> ORABANK</option>
+                                                            <option value="ORABANK"> BANQUE ATLANTIQUE</option>
+                                                            <option value="ORABANK"> BSIC</option>
+                                                            <option value="ORABANK"> BDU-CI</option>
+                                                            <option value="ORABANK"> ORABANK</option>
+                                                            <option value="ORABANK"> BGFIBANK</option>
+                                                            <option value="ORABANK"> BRIDGE BANK GROUP</option>
+                                                            <option value="ORABANK"> VERSUS BANK</option>
+                                                            <option value="ORABANK"> BHCI</option>
+                                                            <option value="ORABANK"> BDA</option>
+                                                            <option value="ORABANK"> GTBANK</option>
+                                                            <option value="ORABANK"> UBA</option>
+                                                            <option value="ORABANK"> AFRILAND FIRST BANK</option>
+                                                            <option value="ORABANK"> CITI</option>
+                                                            <option value="ORABANK"> SIB</option>
                                                         </select>
                                                     </div>
                                                 </div>

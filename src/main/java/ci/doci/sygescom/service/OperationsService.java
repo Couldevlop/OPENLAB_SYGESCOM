@@ -126,9 +126,15 @@ public class OperationsService {
             double restePlafondEssenceCorporate = ccpSave.getPlafonageEssence() - litreEssence;
             double restePlafondGazoilCorporate = ccpSave.getPlafonageGazoil() - litreGazoil;
 
+
+
             StockStation stockStation = stockStationRepository.findStockStationByStations(st);
-            stockStation.setQteGlobaleEssence(stockStation.getQteGlobaleEssence() - litreEssence);
-            stockStation.setQteGlobaleGazoile(stockStation.getQteGlobaleGazoile() - litreGazoil);
+            double stockEssenceRestant = stockStation.getQteGlobaleEssence() - litreEssence;
+            double  stockGasoilRestant = stockStation.getQteGlobaleGazoile() - litreGazoil;
+
+            stockStation.setQteGlobaleEssence(stockEssenceRestant);
+            stockStation.setQteGlobaleGazoile(stockGasoilRestant);
+
             stockStationRepository.save(stockStation);
             ccpSave.setPlafonageEssence(restePlafondEssenceCorporate);
             ccpSave.setPlafonageGazoil(restePlafondGazoilCorporate);

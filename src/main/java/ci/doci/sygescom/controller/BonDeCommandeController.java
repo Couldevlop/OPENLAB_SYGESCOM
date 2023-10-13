@@ -20,7 +20,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Optional;
 
 
@@ -309,6 +313,34 @@ public class BonDeCommandeController {
             return "blAModifier";
         }
         return "listbc";
+    }
+
+
+
+    //------------------------Element du tableau de bord du DG---------------------
+
+
+    @GetMapping("/bons/commandes")
+    public String bonsDeCommandes(Model model){
+        Calendar calendar = Calendar.getInstance();
+        Calendar calendar1 = Calendar.getInstance();
+        calendar.add(Calendar.MONTH, -1);
+        DateFormat format = new SimpleDateFormat("YYYY-MM-dd");
+        Date d = calendar.getTime();
+        Date dd = calendar1.getTime();
+        String d2 = format.format(d);
+        String d1 = format.format(dd);
+        model.addAttribute("BCV", bonDeCommandeRepository.MonthBlByAccepterIsTrue(d2, d1).size());
+        model.addAttribute("BCN", bonDeCommandeRepository.MonthBlByAccepterIsFalse(d2, d1).size());
+        model.addAttribute("BCVT", bonDeCommandeRepository.findAll().size());
+        return "gestion-bons";
+    }
+
+    @GetMapping("/etats/financiers/bc")
+    public String etatsFinancierBC(Model model){
+        model.addAttribute("listBC", bonDeCommandeRepository.findAll());
+        model.addAttribute("image", false);
+        return "etats-financiers";
     }
 
 

@@ -31,6 +31,7 @@
 
             <div class="row">
                 <div class="col-12">
+                    <div class="alert alert-danger" th:if="${message}" th:text="${message}"></div>
                     <div class="card">
                         <div class="card-header">
                             <h4>Corriger Index</h4>
@@ -56,7 +57,7 @@
                                         <div class="form-group  mb-10 col-md-6">
                                             <label class="col-form-label  col-3 col-md-1 col-lg-3">Date</label>
                                             <div class="col-sm-12 col-md-12">
-                                                <input type="date" class="form-control"  name="date1"  autocomplete="off">
+                                                <input type="date" class="form-control"  name="date1"  autocomplete="off" required>
                                             </div>
                                         </div>
 
@@ -70,30 +71,35 @@
                                     </div>
                                 </div>
                             </form>
-                            <div class="row" th:if="${stockStation}">
+                            <div class="row" th:if="${controleDepotage}">
                                 <div class="clearfix mb-3"></div>
                                 <div class="table-responsive">
                                     <table class="table table-striped" id="table-2">
                                         <thead>
                                         <tr>
-                                           <th>Nom station</th>
-                                            <th>Qte Globale Essence</th>
-                                            <th>Qte Globale Gasoil</th>
+                                           <th>Station</th>
+                                            <th>Date Depotage</th>
                                             <th>Date</th>
+                                            <th> Essence avant</th>
+                                            <th> Essence après</th>
+                                            <th> Gasoil avant</th>
+                                            <th> Gasoil apres</th>
                                             <th>Actions</th>
                                             <!--                                        <th>Action</th>-->
                                         </tr>
                                         </thead>
-                                        <tr>
-                                           <td  th:text="${nomStation}" class="align-middle"></td>
-                                            <td  th:text="${stockStation.getQteGlobaleEssence()}" class="align-middle"></td>
-                                            <td  th:text="${stockStation.getQteGlobaleGazoile()}" class="align-middle"></td>
+                                        <tr th:each="cp :${controleDepotage}">
+                                           <td  th:text="${cp.getStation()}" class="align-middle"></td>
+                                            <td  th:text="${cp.getDateDepot()}" class="align-middle"></td>
+                                            <td  th:text="${cp.getDateJour()}" class="align-middle"></td>
+                                            <td  th:text="${cp.getEssenceAvantDepot()}" class="align-middle"></td>
+                                            <td  th:text="${cp.getEssenceApresDepot()}" class="align-middle"></td>
 
-                                            <td  th:text="${stockStation.getDateJour()}" class="align-middle"></td>
-                                            <td  th:text="${stockStation.getDateJour()}" class="align-middle"></td>
+                                            <td  th:text="${cp.getGasoilAvantDepot()}" class="align-middle"></td>
+                                            <td  th:text="${cp.getGasoilApresDepot()}" class="align-middle"></td>
 
                                             <td>
-                                                <a  th:href="@{'/admin/station/' + ${stockStation.id}}" class="btn btn-info" onclick="return confirm('Etes-vous sur de vouloir apporter une correction?');">Correction</a>
+                                                <a  th:href="@{'/admin/correction/' + ${cp.id_}}" class="btn btn-info" onclick="return confirm('Etes-vous sur de vouloir apporter une correction?');">Correction</a>
                                             </td>
                                         </tr>
                                         </tbody>
