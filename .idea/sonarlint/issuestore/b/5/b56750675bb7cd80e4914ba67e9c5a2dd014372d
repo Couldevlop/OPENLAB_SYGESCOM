@@ -1,0 +1,69 @@
+
+y
+java:S1192¦"VDefine a constant instead of duplicating this literal "Machine connectÃ©e : " 4 times.(®‹¶¯ùÿÿÿÿ8ï×úæ–1
+v
+java:S1192§"YDefine a constant instead of duplicating this literal "Utilisateur connectÃ© : " 4 times.(×‰Ú:8Î×ıæ–1
+c
+java:S1192f"FDefine a constant instead of duplicating this literal "users" 7 times.(ô‡•Î8Î×ıæ–1
+x
+java:S1192Z"VDefine a constant instead of duplicating this literal "redirect:/admin/users" 5 times.(ñŞÊ¤üÿÿÿÿ8Î×ıæ–1
+c
+java:S1192G"FDefine a constant instead of duplicating this literal "roles" 3 times.(”À“‡8ğ×úæ–1
+m	java:S117a"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(İ¦Á8ğ×úæ–1
+m	java:S117b"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(›ì×8ğ×úæ–1
+m	java:S117c"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(£€ø´8Ğ×ıæ–1
+U
+java:S3655£"7Call "Optional#isPresent()" before accessing the value.( ø”÷8í×ıæ–1
+T
+java:S3655M"7Call "Optional#isPresent()" before accessing the value.(ö…Š•8í×ıæ–1
+U
+java:S3655 "7Call "Optional#isPresent()" before accessing the value.(ö…Š•8í×ıæ–1
+X	java:S125"<This block of commented-out lines of code should be removed.(°›Õú8‰Øúæ–1
+W	java:S125&"<This block of commented-out lines of code should be removed.(œË’b8ŒØúæ–1
+X	java:S1259"<This block of commented-out lines of code should be removed.(ü¤›¡8Øúæ–1
+X	java:S125E"<This block of commented-out lines of code should be removed.(ÑÓÄÆ8Øúæ–1
+b
+java:S4684L"@Replace this persistent entity with a simple POJO or DTO object.(Ö¸£àüÿÿÿÿ8Øúæ–1
+S
+java:S6437Q"6Revoke and change this password, as it is compromised.(¥€ìĞ8÷×ıæ–1
+`
+java:S1854a"CRemove this useless assignment to local variable "role_chefcaisse".(İ¦Á8ù×ıæ–1
+b
+java:S4684_"@Replace this persistent entity with a simple POJO or DTO object.(©¿ûÊøÿÿÿÿ8ù×ıæ–1
+Q
+java:S1481a"4Remove this unused "role_chefcaisse" local variable.(İ¦Á8ú×ıæ–1
+Y
+java:S3972h"7Move this "if" to a new line or add the missing "else".(²™ßôüÿÿÿÿ8û×ıæ–1
+^
+java:S4684›"@Replace this persistent entity with a simple POJO or DTO object.(é Î¯8€Øıæ–1
+^
+java:S4684›"@Replace this persistent entity with a simple POJO or DTO object.(é Î¯8€Øıæ–1
+^
+java:S4684Ë"@Replace this persistent entity with a simple POJO or DTO object.(·ÃÈ—8˜Øúæ–1
+^
+java:S4684Ì"@Replace this persistent entity with a simple POJO or DTO object.(äÆ‘8ˆØıæ–1
+^
+java:S4684Ì"@Replace this persistent entity with a simple POJO or DTO object.(äÆ‘8‰Øıæ–1
+O
+java:S1602à",Remove useless curly braces around statement(ŠĞàıÿÿÿÿ8Øıæ–1
+c
+java:S4684™"@Replace this persistent entity with a simple POJO or DTO object.(ÉÁ÷„üÿÿÿÿ8Øıæ–1
+h
+java:S4488˜"JReplace "@RequestMapping(method = RequestMethod.POST)" with "@PostMapping"(¶¤¢£8Øıæ–1
+^	java:S125ğ"<This block of commented-out lines of code should be removed.(È¼¦„ùÿÿÿÿ8Øıæ–1
+c
+java:S4684Ÿ"@Replace this persistent entity with a simple POJO or DTO object.(¢¤î´úÿÿÿÿ8‘Øıæ–1
+]
+java:S4684±"@Replace this persistent entity with a simple POJO or DTO object.(ıç·G8“Øıæ–1
+^
+java:S4684¶"@Replace this persistent entity with a simple POJO or DTO object.(Ş”ã8“Øıæ–1
+Y	java:S125¸"<This block of commented-out lines of code should be removed.(ÑÓÄÆ8”Øıæ–1
+V
+java:S1854Å"9Remove this useless assignment to local variable "roles".(•Ş“Y8”Øıæ–1
+^
+java:S4684¿"@Replace this persistent entity with a simple POJO or DTO object.(Œ¹’¿8”Øıæ–1
+^
+java:S4684Ã"@Replace this persistent entity with a simple POJO or DTO object.(û”Îñ8”Øıæ–1
+G
+java:S1481Å"*Remove this unused "roles" local variable.(•Ş“Y8•Øıæ–1
+Y	java:S125Æ"<This block of commented-out lines of code should be removed.(ş«üº8•Øıæ–1

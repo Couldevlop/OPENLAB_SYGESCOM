@@ -1,0 +1,56 @@
+
+d
+java:S1192x"IDefine a constant instead of duplicating this literal "Auteur: " 3 times.(ùÌåñùÿÿÿÿ
+‡
+java:S1192t"rDefine a constant instead of duplicating this literal "a enregistrer une nouvelle valeur de stockgestoci" 3 times.(–à¤
+v
+java:S1192M"`Define a constant instead of duplicating this literal "redirect:/parametrages/Stations" 3 times.(•÷¥×
+j
+java:S1192w"TDefine a constant instead of duplicating this literal "Action rÃ©alisÃ©e: " 3 times.(˜¤¯
+h
+java:S1192v"RDefine a constant instead of duplicating this literal "Nom de l'acteur: " 3 times.(»èÇ²
+n
+java:S1192x"SDefine a constant instead of duplicating this literal "Role de l'auteur: " 3 times.(ùÌåñùÿÿÿÿ
+i
+java:S1192z"TDefine a constant instead of duplicating this literal "Impacte de l'action" 3 times.( ×âB
+l
+java:S1192y"QDefine a constant instead of duplicating this literal "Date Operation: " 3 times.(¶ÊÎüÿÿÿÿ
+g	java:S117Ã"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ıµ®
+Z
+java:S2259"CA "NullPointerException" could be thrown; "dtInt" is nullable here.(›»È­
+U	java:S107"AConstructor has 8 parameters, which is greater than 7 authorized.(Á,
+5
+java:S3751+"Make this method non "private".(íˆ”Ú
+:
+java:S37511"Make this method non "private".(‘èøÕüÿÿÿÿ
+[
+java:S46849"@Replace this persistent entity with a simple POJO or DTO object.(ÇƒÃ÷øÿÿÿÿ
+[
+java:S4684:"@Replace this persistent entity with a simple POJO or DTO object.(Ç»ÔÆüÿÿÿÿ
+:
+java:S37519"Make this method non "private".(ÇƒÃ÷øÿÿÿÿ
+=
+java:S1125N"'Remove the unnecessary boolean literal.(“Ñ»ñ
+c	java:S100f"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(œ‡©“
+V
+java:S4684f"@Replace this persistent entity with a simple POJO or DTO object.(œ‡©“
+i	java:S100†"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(©–ñäøÿÿÿÿ
+\
+java:S4684†"@Replace this persistent entity with a simple POJO or DTO object.(©–ñäøÿÿÿÿ
+W
+java:S4684ˆ"@Replace this persistent entity with a simple POJO or DTO object.(Î÷Öë
+;
+java:S3751†"Make this method non "private".(©–ñäøÿÿÿÿ
+W	java:S125Œ"<This block of commented-out lines of code should be removed.(áÀõ×øÿÿÿÿ
+;
+java:S3751¡"Make this method non "private".(Ôôÿÿÿÿÿ
+V
+java:S4684©"@Replace this persistent entity with a simple POJO or DTO object.(³Ç·s
+\
+java:S4684ª"@Replace this persistent entity with a simple POJO or DTO object.(©¿ûÊøÿÿÿÿ
+5
+java:S3751©"Make this method non "private".(³Ç·s
+P
+java:S1068":Remove this unused "stockGestociRepository" private field.(´š–Ô
+M
+java:S1068"2Remove this unused "zoneRepository" private field.(ÔÙ©Ôüÿÿÿÿ

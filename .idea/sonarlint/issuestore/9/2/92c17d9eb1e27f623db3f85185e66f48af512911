@@ -1,0 +1,14 @@
+
+c	java:S100/"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(¶ßûÕ
+W
+java:S14811"<Remove this unused "ecartStationsListReport" local variable.(•”Ìèøÿÿÿÿ
+M
+java:S14812"2Remove this unused "reportSavedId" local variable.(¥©§‚ýÿÿÿÿ
+S	java:S106J"9Replace this use of System.out or System.err by a logger.(¹Ô”øÿÿÿÿ
+m
+java:S1128
+"RRemove this unused import 'com.sun.xml.bind.v2.runtime.unmarshaller.XsiNilLoader'.(Î¦­Åùÿÿÿÿ
+`
+java:S1128"ERemove this unused import 'org.springframework.stereotype.Component'.(Þ÷Ñ¸ÿÿÿÿÿ
+G
+java:S1128"1Remove this unused import 'java.util.Comparator'.(î¹ó¹

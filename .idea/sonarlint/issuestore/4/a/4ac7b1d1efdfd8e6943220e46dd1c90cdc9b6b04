@@ -1,0 +1,138 @@
+
+p
+java:S2293Î"YReplace the type specification in this constructor call with the diamond operator ("<>").(‚·¾°
+u
+java:S2293¡"YReplace the type specification in this constructor call with the diamond operator ("<>").(Âí ûÿÿÿÿ
+]
+java:S1192W"GDefine a constant instead of duplicating this literal "gerant" 5 times.(ôÎÃŞ
+k
+java:S1192"ODefine a constant instead of duplicating this literal "validation-adv" 4 times.(°ñå¤ùÿÿÿÿ
+e
+java:S1192Ô"NDefine a constant instead of duplicating this literal "errors-action" 3 times.(ÃÂ­í
+\
+java:S1192q"FDefine a constant instead of duplicating this literal "idcli" 3 times.(Úşäè
+^
+java:S1192P"HDefine a constant instead of duplicating this literal "station" 5 times.(™¤ï
+_
+java:S1192f"IDefine a constant instead of duplicating this literal "message" 10 times.(÷˜‡–
+}
+java:S1192«"aDefine a constant instead of duplicating this literal "redirect:/gerant/searchcorporate" 5 times.(æäíÙøÿÿÿÿ
+e
+java:S1192O"ODefine a constant instead of duplicating this literal "ventesComptant" 3 times.(¹Õ‘é
+c
+java:S1192"LDefine a constant instead of duplicating this literal "vcorporates" 4 times.(ˆ‘‡
+g	java:S117À"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(­§±¡
+g	java:S117Á"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ıîáÈ
+g	java:S117“"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(­§±¡
+g	java:S117”"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ıîáÈ
+a
+java:S2789e"FEnsure this "Optional" could never be null and remove this null-check.(õÎ¸”øÿÿÿÿ
+S
+java:S4973›"<Strings and Boxed types should be compared using "equals()".(Úû–à
+h
+java:S2259Ú"QA "NullPointerException" could be thrown; "dernierStockStation" is nullable here.(šÊ°¼
+h
+java:S2259­"QA "NullPointerException" could be thrown; "dernierStockStation" is nullable here.(šÊ°¼
+W
+java:S2259S"AA "NullPointerException" could be thrown; "pri" is nullable here.(ëİÖØ
+`
+java:S2259Ó"DA "NullPointerException" could be thrown; "clicpt" is nullable here.(ë‡ Çıÿÿÿÿ
+X
+java:S2259ÿ"AA "NullPointerException" could be thrown; "pri" is nullable here.(ëİÖØ
+`
+java:S2259¦"DA "NullPointerException" could be thrown; "clicpt" is nullable here.(ë‡ Çıÿÿÿÿ
+X
+java:S2259£"AA "NullPointerException" could be thrown; "mvt" is nullable here.(é»‰™
+]
+java:S2259Ğ"AA "NullPointerException" could be thrown; "mvt" is nullable here.(ØàÊúÿÿÿÿ
+S
+java:S3655Ö"7Call "Optional#isPresent()" before accessing the value.(©æ·³şÿÿÿÿ
+G
+java:S3655i"2Call "pri.isPresent()" before accessing the value.(ÊáÍU
+_
+java:S2583e"DChange this condition so that it does not always evaluate to "false"(õÎ¸”øÿÿÿÿ
+Z
+java:S2583¢"DChange this condition so that it does not always evaluate to "false"(éâÌ(
+Z
+java:S2583ö"DChange this condition so that it does not always evaluate to "false"(éâÌ(
+\	java:S107)"BConstructor has 17 parameters, which is greater than 7 authorized.(¼ã¥†şÿÿÿÿ
+h	java:S100C"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(©Á±™úÿÿÿÿ
+[
+java:S4684I"@Replace this persistent entity with a simple POJO or DTO object.(œæ€­ÿÿÿÿÿ
+Q	java:S125N"<This block of commented-out lines of code should be removed.(ºç¸ì
+[
+java:S4684^"@Replace this persistent entity with a simple POJO or DTO object.(øŠÚúÿÿÿÿ
+[
+java:S4684y"@Replace this persistent entity with a simple POJO or DTO object.(š‹ŸÅÿÿÿÿÿ
+V	java:S125z"<This block of commented-out lines of code should be removed.(ùß´úÿÿÿÿ
+R
+java:S1854¡";Remove this useless assignment to local variable "indexId".(Æ ñû
+R
+java:S1854¾"6Remove this useless assignment to local variable "id".(Öšùúÿÿÿÿ
+W
+java:S4684—"@Replace this persistent entity with a simple POJO or DTO object.(ÄóçË
+\
+java:S4684˜"@Replace this persistent entity with a simple POJO or DTO object.(¤ÓÅ‡ûÿÿÿÿ
+C
+java:S1481¡",Remove this unused "indexId" local variable.(Æ ñû
+
+java:S2159¢"zRemove this call to "equals"; comparisons against null always return false; consider using '== null' to check for nullity.(éâÌ(
+C
+java:S1481¾"'Remove this unused "id" local variable.(Öšùúÿÿÿÿ
+Q	java:S125Å"<This block of commented-out lines of code should be removed.(ßôîe
+W	java:S125Ö"<This block of commented-out lines of code should be removed.(à¤ğ¬şÿÿÿÿ
+R
+java:S1854õ";Remove this useless assignment to local variable "indexId".(Æ ñû
+R
+java:S1854‘"6Remove this useless assignment to local variable "id".(Öšùúÿÿÿÿ
+W
+java:S4684ë"@Replace this persistent entity with a simple POJO or DTO object.(¿‹úù
+\
+java:S4684ì"@Replace this persistent entity with a simple POJO or DTO object.(¤ÓÅ‡ûÿÿÿÿ
+C
+java:S1481õ",Remove this unused "indexId" local variable.(Æ ñû
+
+java:S2159ö"zRemove this call to "equals"; comparisons against null always return false; consider using '== null' to check for nullity.(éâÌ(
+C
+java:S1481‘"'Remove this unused "id" local variable.(Öšùúÿÿÿÿ
+R	java:S125˜"<This block of commented-out lines of code should be removed.(ª÷°ï
+W	java:S125ª"<This block of commented-out lines of code should be removed.(à¤ğ¬şÿÿÿÿ
+O	java:S106¹"9Replace this use of System.out or System.err by a logger.(Ò¦šØ
+R	java:S125º"<This block of commented-out lines of code should be removed.(†Üøÿ
+\
+java:S4684Ä"@Replace this persistent entity with a simple POJO or DTO object.(„êÒµúÿÿÿÿ
+O	java:S106ã"9Replace this use of System.out or System.err by a logger.(ñ±·ß
+W	java:S125ì"<This block of commented-out lines of code should be removed.(èª¤ıÿÿÿÿ
+\
+java:S4684ñ"@Replace this persistent entity with a simple POJO or DTO object.(©ëÈÙşÿÿÿÿ
+R	java:S125ô"<This block of commented-out lines of code should be removed.(ô¦äÚ
+O	java:S106ƒ"9Replace this use of System.out or System.err by a logger.(ñ±·ß
+W	java:S125‡"<This block of commented-out lines of code should be removed.(èª¤ıÿÿÿÿ
+N
+java:S1854¡"7Remove this useless assignment to local variable "cp1".(Ú‚õ˜
+W
+java:S1854­";Remove this useless assignment to local variable "message".(êê˜†ùÿÿÿÿ
+\
+java:S4684š"@Replace this persistent entity with a simple POJO or DTO object.(©¿ûÊøÿÿÿÿ
+R	java:S125"<This block of commented-out lines of code should be removed.(Âö·
+?
+java:S1481¡"(Remove this unused "cp1" local variable.(Ú‚õ˜
+R	java:S125¢"<This block of commented-out lines of code should be removed.(‚Ìä³
+W	java:S125¦"<This block of commented-out lines of code should be removed.(Ó’ÕÃûÿÿÿÿ
+R	java:S125ª"<This block of commented-out lines of code should be removed.(ßÌºû
+N
+java:S3972¬"7Move this "if" to a new line or add the missing "else".(òº´
+H
+java:S1481­",Remove this unused "message" local variable.(êê˜†ùÿÿÿÿ
+S
+java:S3972°"7Move this "if" to a new line or add the missing "else".(ùúè¾ÿÿÿÿÿ
+\
+java:S4684Ë"@Replace this persistent entity with a simple POJO or DTO object.(©¿ûÊøÿÿÿÿ
+J
+java:S1068"4Remove this unused "ventesRepository" private field.(½»¶
+Q
+java:S1068"6Remove this unused "stationsRepository" private field.(»¡³˜şÿÿÿÿ
+P
+java:S1068":Remove this unused "stockGestociRepository" private field.(´š–Ô
+K
+java:S1068 "5Remove this unused "clientsRepository" private field.(¶Öâ

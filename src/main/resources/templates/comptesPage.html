@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layout}">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Compte</title>
+    <script type="text/javascript" th:src="@{js/main.js}"
+            src="../static/assets/js/main.js"></script>
+</head>
+
+<div layout:fragment="page_content" class="main-content">
+    <section class="section">
+        <div class="section-header">
+            <h1>Comptes</h1>
+            <div class="section-header-button">
+
+                <button type="button" class="btn btn-primary mr-4"
+                        data-toggle="modal" data-target="#modalComptes">
+                    Nouveau
+                </button>
+            </div>
+            <a th:href="@{/raf/depenses/home}" class="btn btn-primary" >Dépenses</a>
+            <div class="section-header-breadcrumb">
+                <div class="breadcrumb-item active"><a th:href="@{/}">Accueil</a></div>
+                <div class="breadcrumb-item"><a th:href="@{/admin/home}">Administration</a></div>
+                <div class="breadcrumb-item">Comptes</div>
+            </div>
+
+        </div>
+
+        <div class="section-body">
+            <h2 class="section-title">Comptes</h2>
+            <p class="section-lead">
+                Vous pouvez gérer tous les comptes
+            </p>
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4>Liste des Comptes</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="clearfix mb-3"></div>
+                            <div class="table-responsive">
+                                <table class="table table-striped" id="table-2">
+                                    <thead>
+                                    <tr>
+                                        <th>N° Compte</th>
+                                        <th>Banque</th>
+                                        <th>Solde veille</th>
+                                        <th>Solde indicatif</th>
+                                       <th>Date Création</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                    </thead>
+                                    <tr th:each="cp : ${listeCompte}">
+                                        <td  th:text="${cp.getNumeroCompte()}" class="align-middle"></td>
+                                        <td  th:text="${cp.getBanque()}" class="align-middle"></td>
+                                        <td  th:text="${cp.getSoldeVeille()}" class="align-middle"></td>
+                                        <td  th:text="${cp.getSolde()}" class="align-middle"></td>
+                                         <td th:text="${cp.getDateEnreg()}" class="badge badge-light mt-3"></td>
+                                         <td>
+                                             <a  th:href="@{'/admin/station/' + ${cp.id}}" class="btn btn-info" onclick="return confirm('Etes-vous sur de vouloir modifier?');">Modifier</a>
+                                             <button type="button" class="btn btn-danger mr-4"
+                                                     data-toggle="modal" data-target="#modalComptesDelete">
+                                                 Supprimer
+                                             </button>
+                                         </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+
+    <div class="modal fade" id="modalComptes" tabindex="-1" role="dialog"
+         aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg"style="width: 1000px; height: 600px"  role="document">
+            <div class="modal-content">
+                <div class="modal-header" >
+                    <h5 class="modal-title" id="exampleModalLabel" >Fenêtre d'enregistrement d'un compte</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <!--                        <span aria-hidden="true">&times;</span>-->
+                    </button>
+                </div>
+                <div class="myForm">
+                    <form th:action="@{/raf/comptes/saveAccount}" method="post" th:object="${compte}">
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-12 col-md-12 col-lg-12 ">
+                                    <div class="card">
+
+                                            <div class=" row">
+                                                <div class=" col-md-6">
+                                                    <div class="form-group">
+                                                        <label>N° Numéro</label>
+                                                        <input type="text" for="id" name="numeroCompte" class="form-control"
+                                                               autocomplete="off" value="" required id="numeroCompte" th:field="*{numeroCompte}" >
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label>Banque</label>
+                                                        <input type="text" for="id" name="banque" class="form-control"
+                                                               autocomplete="off" value="" required id="banque" th:field="*{banque}" >
+                                                    </div>
+
+
+                                                </div>
+                                                <div class=" col-md-6">
+                                                    <div class="form-group">
+                                                        <label>Solde veille</label>
+                                                        <input type="text" for="id" name="veille" class="form-control"
+                                                               autocomplete="off" required value="" id="veille" th:field="*{soldeVeille}" >
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label>Solde Incatif</label>
+                                                        <input type="text" for="id" name="solde" class="form-control"
+                                                               autocomplete="off" value="" required id="solde" th:field="*{solde}" >
+                                                    </div>
+                                                </div>
+                                            </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="modal-footer" style="margin-right: 45%">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                            <button type="submit" class="btn btn-primary">Valider</button>
+                        </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <div class="modal fade" id="modalComptesDelete" tabindex="-1" role="dialog"
+         aria-labelledby="exampleModalLabel1" aria-hidden="true">
+        <div class="modal-dialog modal-lg"style="width: 1000px; height: 600px"  role="document">
+            <div class="modal-content">
+                <div class="modal-header" >
+                    <h5 class="modal-title" id="exampleModalLabel1" >Fenêtre d'avertissement lors de la supression d'un compte associé à des opérations</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <!--                        <span aria-hidden="true">&times;</span>-->
+                    </button>
+                </div>
+                <div class="myForm">
+                    <form >
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-12 col-md-12 col-lg-12 ">
+                                    <div class="card">
+
+                                        <div class=" row">
+                                            <div class=" col-md-6">
+
+
+                                                <div class="form-group">
+                                                    <p class="aler alert-danger"> <strong>ATTENTION!!</strong><br>
+                                                        Vous êtes sur le point de supprimer un compte a qui est lié des opéartions(Versements - depenses). <br/><br/>
+                                                    <hr>
+                                                    <hr>
+                                                    <b><i>Vous devez vou s'assurer que tous les versements et dépenses liés à ce comptes soient supprimer bien avant de faire l'action de la suppression.</i></b>
+                                                    </p>
+                                                </div>
+
+                                            </div>
+                                            <div class="col-md-6">
+                                                <img th:src="@{/img/attention.png}" class="img-fluid">
+                                            </div>
+
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="modal-footer" style="margin-right: 45%">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                            <button type="submit" class="btn btn-primary">Valider</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+</div>
+
+</div>
+<style type="text/css">
+    .scrollable-menu{
+        height: auto;
+        max-height: 200px;
+        overflow-y: hidden;
+    }
+</style>
+</html>
+

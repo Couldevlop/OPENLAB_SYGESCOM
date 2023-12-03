@@ -1,0 +1,10 @@
+
+M
+java:S3655U"7Call "Optional#isPresent()" before accessing the value.(¡´Ï
+c	java:S100+"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ª´°À
+h
+java:S3776+"RRefactor this method to reduce its Cognitive Complexity from 19 to the 15 allowed.(ª´°À
+B
+java:S1125O"'Remove the unnecessary boolean literal.(ü‡§şùÿÿÿÿ
+V	java:S125i"<This block of commented-out lines of code should be removed.(šêÂ‹ûÿÿÿÿ
+h	java:S100z"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(‚×ˆƒûÿÿÿÿ

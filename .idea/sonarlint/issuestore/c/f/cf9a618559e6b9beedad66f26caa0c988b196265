@@ -1,0 +1,20 @@
+
+S	java:S1061"9Replace this use of System.out or System.err by a logger.(®£ºÄþÿÿÿÿ
+Q	java:S1253"<This block of commented-out lines of code should be removed.(šö’Ô
+[
+java:S46849"@Replace this persistent entity with a simple POJO or DTO object.(«‹Þæüÿÿÿÿ
+V	java:S125A"<This block of commented-out lines of code should be removed.(¦§·Ùÿÿÿÿÿ
+Q	java:S125W"<This block of commented-out lines of code should be removed.(ŠÕô€
+V	java:S125Y"<This block of commented-out lines of code should be removed.(æÀö€øÿÿÿÿ
+M
+java:S1128"8Remove this unused import 'org.apache.tomcat.jni.Local'.(å¡.
+B
+java:S1128"-Remove this unused import 'org.slf4j.Logger'.(íØ®6
+J
+java:S1128"4Remove this unused import 'org.slf4j.LoggerFactory'.(–ÿÚÞ
+l
+java:S1128"QRemove this unused import 'org.springframework.format.annotation.DateTimeFormat'.(‡ˆôƒøÿÿÿÿ
+k
+java:S1128	"PRemove this unused import 'org.springframework.scheduling.annotation.Scheduled'.(‚¡®Üûÿÿÿÿ
+F
+java:S1128"+Remove this unused import 'java.util.List'.(Õë±Äøÿÿÿÿ

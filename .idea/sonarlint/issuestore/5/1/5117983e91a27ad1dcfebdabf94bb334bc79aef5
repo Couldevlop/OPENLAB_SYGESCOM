@@ -1,0 +1,33 @@
+
+g
+java:S11927"QDefine a constant instead of duplicating this literal "corporateDirecte" 4 times.(ú±£¯
+f	java:S117`"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ÌòÃ
+a
+java:S2259¤"JA "NullPointerException" could be thrown; "stockgestoci" is nullable here.(ĞÙüã
+a
+java:S2259Ë"JA "NullPointerException" could be thrown; "stockgestoci" is nullable here.(ÊÍş²
+e
+java:S2259u"JA "NullPointerException" could be thrown; "stockgestoci" is nullable here.(ÎÂ½ øÿÿÿÿ
+^
+java:S2259"GA "NullPointerException" could be thrown; "livraison" is nullable here.(ş¬ ¥
+V	java:S107"AConstructor has 8 parameters, which is greater than 7 authorized.(¼õÃ­
+V	java:S125"<This block of commented-out lines of code should be removed.(òùÑßøÿÿÿÿ
+Q	java:S125)"<This block of commented-out lines of code should be removed.(”ÏïÀ
+[
+java:S46842"@Replace this persistent entity with a simple POJO or DTO object.(æŸÖ¨ıÿÿÿÿ
+[
+java:S4684;"@Replace this persistent entity with a simple POJO or DTO object.(İ¥µÿÿÿÿÿ
+V
+java:S4684<"@Replace this persistent entity with a simple POJO or DTO object.(Ä€²×
+V	java:S125O"<This block of commented-out lines of code should be removed.(§Ãæ†úÿÿÿÿ
+c	java:S100_"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ÎíĞ”
+V
+java:S4684_"@Replace this persistent entity with a simple POJO or DTO object.(ÎíĞ”
+\
+java:S4684Š"@Replace this persistent entity with a simple POJO or DTO object.(©ïì×ÿÿÿÿÿ
+\
+java:S4684œ"@Replace this persistent entity with a simple POJO or DTO object.(©¿ûÊøÿÿÿÿ
+W
+java:S4684Â"@Replace this persistent entity with a simple POJO or DTO object.(€°·
+G
+java:S1068"1Remove this unused "docRepository" private field.(™î

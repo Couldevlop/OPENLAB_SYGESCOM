@@ -1,0 +1,10 @@
+
+|
+java:S1488""fImmediately return this expression instead of assigning it to the temporary variable "ecartStations1".(Ÿ¨ó†
+o	java:S120"ZRename this package name to match the regular expression '^[a-z_]+(\.[a-z_][a-z0-9_]*)*$'.(’­åë
+X
+java:S1128"=Remove this unused import 'ci.doci.sygescom.domaine.Indexes'.(þ¸²¾þÿÿÿÿ
+F
+java:S1128"+Remove this unused import 'java.util.List'.(Õë±Äøÿÿÿÿ
+P
+java:S1068"5Remove this unused "indexesRepository" private field.(š™ôŽûÿÿÿÿ

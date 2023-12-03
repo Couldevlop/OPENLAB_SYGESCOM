@@ -47,7 +47,7 @@
                         </div>
                         <div class="card-body">
                             <div class="clearfix mb-3"></div>
-                            <div class="alert alert-danger" th:if="${message}" th:text="${mesage}"></div>
+                            <div class="alert alert-danger" th:if="${message}" th:text="${message}"></div>
                             <div class="table-responsive">
                                 <table class="table table-striped" id="table-2" sec:authorize="hasAnyRole('ADMIN','SUPERVISEUR')">
                                     <thead>
@@ -81,10 +81,19 @@
                                             <a th:if="${b.accepter.equals(false)}" th:href="@{'/superviseur/bl/' + ${b.id}}"
                                                class="btn btn-info" onclick="return confirm('Etes-vous sur de vouloir Consulter?');">Modifier
                                             </a>
-                                            <a th:if="${b.accepter.equals(true)}"
+                                            <a sec:authorize="hasAnyRole('SUPERVISEUR','ADMIN')" th:if="${b.accepter.equals(true)}"
                                                class="btn btn-success" ><font color="white"> BL est Validé par le gérant</font>
                                             </a>
-                                            <a th:if="${b.accepter.equals(false)}" th:href="@{'/superviseur/bl/' + ${b.id} + '/delete'}"
+                                            <a sec:authorize="hasRole('SUPERVISEUR')" th:if="${b.blchauffeurgestoci.equals(false)}" th:href="@{'/superviseur/blchauffeur/' + ${b.id}}"
+                                               class="btn btn-dark" ><font color="white">BL Gestoci</font>
+                                            </a>
+                                            <a sec:authorize="hasRole('SUPERVISEUR')" th:if="${b.blchauffeurgestoci.equals(true)}"
+                                               class="btn btn-dark" ><font color="white">BL Station</font>
+                                            </a>
+                                            <a  sec:authorize="hasRole('ADMIN')" th:if="${b.blchauffeurgestoci.equals(true)}" th:href="@{'/admin/blannulation/' + ${b.id}}"
+                                               class="btn btn-dark" ><font color="white">Annulation BL</font>
+                                            </a>
+                                            <a  th:if="${b.accepter.equals(false)}" th:href="@{'/superviseur/bl/' + ${b.id} + '/delete'}"
                                                class="btn btn-danger" onclick="return confirm('Etes-vous sur de vouloir supprimer?');">Supprimer
                                             </a>
                                         </td>

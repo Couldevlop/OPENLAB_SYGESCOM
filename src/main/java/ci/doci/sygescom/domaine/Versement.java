@@ -28,4 +28,7 @@ public class Versement {
     @ManyToOne
     @JoinColumn(name = "doc_id")
     private Doc doc;
+    @ManyToOne
+    @JoinColumn(name = "compte_id", nullable = false)
+    private Comptes compte;
 }

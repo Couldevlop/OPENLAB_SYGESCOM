@@ -74,7 +74,7 @@ public class UserManagementController {
 
     @PostMapping("/newuser")
     public String createUser(@ModelAttribute("user") User user, Model model) {
-        if(userRepository.findByLogin(user.getLogin()).get() != null){
+        if(userRepository.findByLogin(user.getLogin()).isPresent()){
             model.addAttribute("message", "Un utilisateur existe déjà avec ce login");
             return "errors";
         }

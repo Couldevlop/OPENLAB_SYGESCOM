@@ -1,0 +1,13 @@
+
+k
+java:S1192)"VDefine a constant instead of duplicating this literal "redirect:/admin/roles" 3 times.(è‹[
+R
+java:S3655H"7Call "Optional#isPresent()" before accessing the value.(Ã‹Íÿÿÿÿÿ
+X
+java:S1854("=Remove this useless assignment to local variable "roleSaved".(åÌÀşÿÿÿÿ
+V
+java:S4684'"@Replace this persistent entity with a simple POJO or DTO object.(ªÁäœ
+I
+java:S1481(".Remove this unused "roleSaved" local variable.(åÌÀşÿÿÿÿ
+[
+java:S4684E"@Replace this persistent entity with a simple POJO or DTO object.(œË½Øúÿÿÿÿ
