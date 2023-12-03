@@ -1,8 +1,0 @@
-
-[	java:S112T"FDefine and throw a dedicated exception instead of using a generic one.(™¼ò¿
-a
-java:S1192<"FDefine a constant instead of duplicating this literal "ADMIN" 4 times.(Á·Öúÿÿÿÿ
-g
-java:S1192<"LDefine a constant instead of duplicating this literal "SUPERVISEUR" 3 times.(Á·Öúÿÿÿÿ
-‚
-java:S1130T"lRemove the declaration of thrown exception 'java.lang.Exception', as it cannot be thrown from method's body.(™¼ò¿
