@@ -1,7 +1,8 @@
 package ci.doci.sygescom.domaine;
 
+
+
 import lombok.*;
-import org.hibernate.annotations.Cascade;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,10 +14,11 @@ import java.util.*;
 
 @Entity
 @Table(name = "doci_user")
-@Data
+@Builder
+@Setter
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
 @EqualsAndHashCode(exclude = "stations")
 public class User implements UserDetails {
     @Id
@@ -30,7 +32,7 @@ public class User implements UserDetails {
     @Column(unique = true)
     private String login;
     private String contact;
-   // private String codeExploitant;
+    // private String codeExploitant;
     private boolean statut = true;
     private boolean activated=true;
     @ManyToOne
@@ -87,6 +89,7 @@ public class User implements UserDetails {
     public void removeRole(Role role) {
         this.roles.remove(role);
     }
+
 
 
 }

@@ -4,8 +4,7 @@ package ci.doci.sygescom.controller;
 import ci.doci.sygescom.domaine.StockStation;
 import ci.doci.sygescom.repository.IndexesRepository;
 import ci.doci.sygescom.repository.StockStationRepository;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
+
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -40,18 +39,7 @@ public class GraphiqueController {
     @GetMapping("/superadmin/stat/stock")
     public String getPiechartData(Model model){
         List<StockStation>stock = stockStationRepository.findAll();
-        JsonArray jsonStation = new JsonArray();
-        JsonArray jsonQteEssence = new JsonArray();
-        JsonObject json = new JsonObject();
-        stock.forEach(data ->{
-            jsonStation.add(data.getStations().getNom());
-            jsonQteEssence.add(data.getQteGlobaleEssence());
-        });
-        json.add("stations", jsonStation);
-        json.add("qteEssence", jsonQteEssence);
-        model.addAttribute("nomStation", jsonStation);
-        model.addAttribute("qte", jsonQteEssence);
-        model.addAttribute("donnee", json.toString());
+
 
         Map<String, Integer> data = new LinkedHashMap<String, Integer>();
         data.put("Ashish", 30);
