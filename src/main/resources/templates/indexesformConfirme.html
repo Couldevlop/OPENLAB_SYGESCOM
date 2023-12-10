@@ -30,89 +30,93 @@
             </p>
 
             <div class="row" >
-                <div class="card" style="margin: auto; width: 60%">
+                <div class="card" style="margin: auto; width: 40%">
                         <div class="card-header">
                             <h4>Enregistrer nouveau indexe</h4>
                         </div>
                         <div class="card-body">
-                            <div class="alert alert-danger" th:if="${message}" th:text="${message}"></div>
+                            <div class="alert alert-dark" th:if="${message}" th:text="${message}"></div>
                             </h6>
-                            <form th:action="@{/gerant/newindexesconfirme}"  method="post" th:object="${data}">
+                            <form th:action="@{/gerant/newindexes}"  method="post">
                                 <div class="form-row">
                                     <div class="form-group col-md-12">
-                                        <h6  th:text="${station.nom}" style="margin-left: 40%"></h6>
+                                        <h6  th:text="${dataIndex.stations.nom}" style="margin-left: 40%"></h6>
                                     </div>
                                 </div>
                                 <div class="form-row">
                                     <div class="form-group col-md-6">
                                         <label for="inputEmail4">Indexe Essence1</label>
-                                        <input type="text" class="form-control" required th:field="*{super1}" id="inputEmail4">
-                                        <h8 class="alert alert-warning"  th:if="${errorS1}"  th:text="${errorS1}"></h8>
+                                        <input type="text" class="form-control"  id="inputEmail4"
+                                               name="super1"  th:value="${dataIndex.super1}" required th:placeholder="${dataIndex.super1}">
+
                                     </div>
                                     <div class="form-group col-md-6">
-                                        <label for="inputPassword4">Indexe Essence2</label>
-                                        <input type="text" class="form-control" required th:field="*{super2}" >
-                                        <h8 class="alert alert-warning"  th:if="${errorS1}"  th:text="${errorS2}"></h8>
+                                        <label>Indexe Essence2</label>
+                                        <input type="text" class="form-control" name="super2" required th:value="${dataIndex.super2}"
+                                               th:placeholder="${dataIndex.super2}">
+
                                     </div>
                                 </div>
                                 <div class="form-row">
                                     <div class="form-group col-md-6">
                                         <label for="inputEmail4">Indexe Essence3</label>
-                                        <input type="text" class="form-control"required th:field="*{super3}">
-                                        <h8 class="alert alert-warning"  th:if="${errorS1}"  th:text="${errorS4}"></h8>
+                                        <input type="text" class="form-control" name="super3" required th:value="${dataIndex.super3}"
+                                               th:placeholder="${dataIndex.super3}">
+
                                     </div>
                                     <div class="form-group col-md-6">
-                                        <label for="inputPassword4">Indexe Essence4</label>
-                                        <input type="text" class="form-control" required th:field="*{super4}">
-                                        <h8 class="alert alert-warning"  th:if="${errorS1}"  th:text="${errorS4}"></h8>
+                                        <label>Indexe Essence4</label>
+                                        <input type="text" class="form-control" name="super4" required th:value="${dataIndex.super4}"
+                                               th:placeholder="${dataIndex.super4}">
                                     </div>
                                 </div>
                                 <div class="form-row">
                                     <div class="form-group col-md-6">
                                         <label for="inputEmail4">Indexe Gazoil1</label>
-                                        <input type="text" class="form-control" required th:field="*{gazoil1}"  placeholder="0.0">
-                                        <h8 class="alert alert-warning"  th:if="${errorS1}"  th:text="${errorG1}"></h8>
+                                        <input type="text" class="form-control" name="gazoil1"
+                                               th:value="${dataIndex.gazoil1}" required th:placeholder="${dataIndex.gazoil1}">
+
                                     </div>
                                     <div class="form-group col-md-6">
-                                        <label for="inputPassword4">Indexe Gazoil2</label>
-                                        <input type="text" class="form-control" required th:field="*{gazoil2}" >
-                                        <h8 class="alert alert-warning"  th:if="${errorS1}"  th:text="${errorG2}"></h8>
+                                        <label >Indexe Gazoil2</label>
+                                        <input type="text" class="form-control" required name="gazoil2" th:value="${dataIndex.gazoil2}"
+                                               th:placeholder="${dataIndex.gazoil2}">
                                     </div>
                                 </div>
                                 <div class="form-row">
                                     <div class="form-group col-md-6">
                                         <label for="inputEmail4">Indexe Gazoil3</label>
-                                        <input type="text" class="form-control" required th:field="*{gazoil3}" >
-                                        <h8 class="alert alert-warning"  th:if="${errorG3}"  th:text="${errorG3}"></h8>
+                                        <input type="text" class="form-control" name="gazoil3"
+                                               th:value="${dataIndex.gazoil3}" required th:placeholder="${dataIndex.gazoil3}">
                                     </div>
                                     <div class="form-group col-md-6">
-                                        <label for="inputPassword4">Indexe Gazoil4</label>
-                                        <input type="text" class="form-control" required th:field="*{gazoil4}">
-                                        <h8 class="alert alert-warning"  th:if="${errorG4}"  th:text="${errorG4}"></h8>
+                                        <label >Indexe Gazoil4</label>
+                                        <input type="text" class="form-control" required name="gazoil4"
+                                               th:value="${dataIndex.gazoil4}"  th:placeholder="${dataIndex.gazoil4}">
                                     </div>
                                 </div>
                                 <div class="form-row">
                                     <div class="form-group col-md-6">
                                         <label for="inputEmail4" style="color: #bd2130">Jauge Essence</label>
-                                        <input type="text" class="form-control" required th:field="*{cuveEssence}">
+                                        <input type="text" class="form-control" required name="cuveEssence" th:value="${dataIndex.cuveEssence}" th:placeholder="${dataIndex.cuveEssence}">
                                     </div>
                                     <div class="form-group col-md-6">
-                                        <label  style="color: #bd2130">Jauge Gazoil</label>
-                                        <input type="text" class="form-control" required th:field="*{cuveGazoil}">
+                                        <label style="color: #bd2130">Jauge Gazoil</label>
+                                        <input type="text" class="form-control" required name="cuveGazoil" th:value="${dataIndex.cuveGazoil}" th:placeholder="${dataIndex.cuveGazoil}">
                                     </div>
                                 </div>
                                 <div class="form-group row mb-6">
                                     <div class="col-sm-12 col-md-6" style="margin-left: 40%">
-                                        <button type="submit" class="btn btn-primary">Valider</button>
+                                        <button type="submit" class="btn btn-primary">VALIDER</button>
                                     </div>
                                 </div>
                             </form>
                         </div>
                     </div>
-
-
             </div>
         </div>
     </section>
+
+
 </div>
 </html>

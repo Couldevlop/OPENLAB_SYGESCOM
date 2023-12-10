@@ -2,10 +2,12 @@ package ci.doci.sygescom.repository;
 
 import ci.doci.sygescom.domaine.ControleDepotage;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -17,15 +19,23 @@ public interface ControlDepotageRepository extends JpaRepository<ControleDepotag
 
     ControleDepotage findByDateJourAndStationAndDateDepot(LocalDate d, String station, LocalDate d2);
 
+    @Modifying
+    @Transactional
     @Query(value = "DELETE FROM divineoil.doci_indexes WHERE stations_id =:id AND date_jour >=:localDate", nativeQuery = true)
     void deleteligneIndexOfStation(@Param("id") Long id, @Param("localDate") LocalDate localDate);
 
+    @Modifying
+    @Transactional
     @Query(value = "DELETE FROM divineoil.doci_historystockstation WHERE stations_id =:id AND date_jour >=:localDate", nativeQuery = true)
     void deleteligneHistoOfStation(@Param("id") Long id, @Param("localDate") LocalDate localDate);
 
+    @Modifying
+    @Transactional
     @Query(value = "DELETE FROM divineoil.doci_data_index WHERE stations_id =:id AND date_jour >=:localDate", nativeQuery = true)
     void deleteligneInDataIndexOfStation(@Param("id") Long id, @Param("localDate") LocalDate localDate);
 
+    @Modifying
+    @Transactional
     @Query(value = "DELETE FROM divineoil.doci_ecarts_stations WHERE stations_id =:id AND date_jour >=:localDate", nativeQuery = true)
     void deleteligneEcartOfStation(@Param("id") Long id, @Param("localDate") LocalDate localDate);
 

@@ -2,9 +2,11 @@ package ci.doci.sygescom.controller;
 
 
 import ci.doci.sygescom.domaine.*;
+import ci.doci.sygescom.domaine.dto.StationsDTO;
 import ci.doci.sygescom.repository.*;
 import ci.doci.sygescom.service.DocStorageService;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -31,6 +33,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Controller
 @Slf4j
@@ -51,6 +54,7 @@ public class BonlivraisonControlleur {
 
     private final Path rootLocation = Paths.get("filestorage");
     private  final  IndexesRepository indexesRepository;
+    private ModelMapper modelMapper;
 
     public BonlivraisonControlleur(BonlivraisonRepository bonlivraisonRepository, DocStorageService docStorageService, LogActionRepository logActionRepository, DocRepository docRepository, StationsRepository stationsRepository, PrestataireRepository prestataireRepository, UserRepository userRepository, StockStationRepository stockStationRepository, BonDeCommandeRepository bonDeCommandeRepository, StockGestociRepository stockGestociRepository, StockInitStationsRepository stockInitStationsRepository, VersementRepository versementRepository, HistoryStockStationRepository historyStockStationRepository, IndexesRepository indexesRepository) {
         this.bonlivraisonRepository = bonlivraisonRepository;
@@ -682,18 +686,88 @@ public class BonlivraisonControlleur {
     }
 
     @GetMapping("/superviseur/bl/{id}")
-    public String modilfierBlParSuperviseur(Model model, @AuthenticationPrincipal User user,
-                                            @PathVariable("id") long id){
+    public String modilfierBlParSuperviseur(Model model,
+                                            @PathVariable("id") long id,
+                                            @AuthenticationPrincipal User user){
         Optional<BonLivraison> bl = bonlivraisonRepository.findById(id);
+
         if(bl.isPresent()){
             BonLivraison bonLivraison = bl.get();
             model.addAttribute("bl", bonLivraison);
+            List<StationsDTO> stationsList = stationsRepository.findAll().stream().map(StationsDTO::mapToDto).collect(Collectors.toList());
+            model.addAttribute("stations", stationsList);
+            model.addAttribute("prestataire", prestataireRepository.findAll());
+            model.addAttribute("user", user);
+
             return "blmodif";
         }else {
             return "listbl";
         }
 
  }
+
+    @GetMapping("/superviseur/blchauffeur/{id}")
+    public String modilfierBlChauffeurParSuperviseur(Model model,
+                                            @PathVariable("id") long id,
+                                            @AuthenticationPrincipal User user){
+        Optional<BonLivraison> bl = bonlivraisonRepository.findById(id);
+
+        if(bl.isPresent()){
+            BonLivraison bonLivraison = bl.get();
+            Stockgestoci stockgestoci = stockGestociRepository.findAll().stream().findFirst().get();
+            double qtE = stockgestoci.getQteGlobalEs()-bonLivraison.getQteEs();
+            double qtG = stockgestoci.getQteGlobaleGaz() - bonLivraison.getQteGaz();
+            stockgestoci.setQteGlobalEs(qtE);
+            stockgestoci.setQteGlobaleGaz(qtG);
+            bonLivraison.setBlchauffeurgestoci(true);
+            bonlivraisonRepository.save(bonLivraison);
+            stockGestociRepository.save(stockgestoci);
+
+            model.addAttribute("bl", bonlivraisonRepository.findAll());
+            model.addAttribute("BonLivraison", new BonLivraison());
+            model.addAttribute("station", stationsRepository.findAll());
+            model.addAttribute("p", prestataireRepository.findAll());
+            model.addAttribute("user", userRepository.findByStations(user.getStations()));
+            model.addAttribute("bc", bonDeCommandeRepository.findAll());
+            model.addAttribute("bonlivre", bonlivraisonRepository.findBonLivraisonByStationsAndAccepterFalseAndRejeterIsFalse(user.getStations()));
+            return "bl";
+        }else {
+            return "listbl";
+        }
+
+    }
+
+    @GetMapping("/admin/blannulation/{id}")
+    public String annulationBl(Model model, @PathVariable("id") long id,
+                               @AuthenticationPrincipal User user){
+        Optional<BonLivraison> bl = bonlivraisonRepository.findById(id);
+
+        if(bl.isPresent()){
+            BonLivraison bonLivraison = bl.get();
+            Stockgestoci stockgestoci = stockGestociRepository.findAll().stream().findFirst().get();
+            double qtEssenceAnnule = stockgestoci.getQteGlobalEs() + bonLivraison.getQteEs();
+            double qtGazoiAnnule = stockgestoci.getQteGlobaleGaz() + bonLivraison.getQteGaz();
+
+            stockgestoci.setQteGlobalEs(qtEssenceAnnule);
+            stockgestoci.setQteGlobaleGaz(qtGazoiAnnule);
+            bonLivraison.setBlchauffeurgestoci(false);
+            bonlivraisonRepository.save(bonLivraison);
+            stockGestociRepository.save(stockgestoci);
+            model.addAttribute("message", "Annulation de l'écriture du BL N° " + bonLivraison.getNumBL() + " réalisée avec succès");
+
+            model.addAttribute("bl", bonlivraisonRepository.findAll());
+            model.addAttribute("BonLivraison", new BonLivraison());
+            model.addAttribute("station", stationsRepository.findAll());
+            model.addAttribute("p", prestataireRepository.findAll());
+            model.addAttribute("user", userRepository.findByStations(user.getStations()));
+            model.addAttribute("bc", bonDeCommandeRepository.findAll());
+            model.addAttribute("bonlivre", bonlivraisonRepository.findBonLivraisonByStationsAndAccepterFalseAndRejeterIsFalse(user.getStations()));
+            return "bl";
+        }else {
+            return "listbl";
+        }
+
+    }
 
     @GetMapping("/superviseur/ecartStation")
     public String getEacrtStation(Model model){

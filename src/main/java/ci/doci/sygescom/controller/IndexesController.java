@@ -5,6 +5,8 @@ import ci.doci.sygescom.domaine.dto.IndexeDTO;
 import ci.doci.sygescom.repository.*;
 import ci.doci.sygescom.service.*;
 import ci.doci.sygescom.util.IndexeDataExcelExport;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -35,7 +37,8 @@ import static java.lang.Math.abs;
 @Slf4j
 public class IndexesController {
 
-    private final   IndexesRepository indexesRepository;
+    private final   IndexesTempRepository indexesTempRepository;
+    private final IndexesRepository indexesRepository;
     private final  ZoneRepository zoneRepository;
     private final  StationsRepository stationsRepository;
     private final MouvementsRepository mouvementsRepository;
@@ -55,8 +58,9 @@ public class IndexesController {
 
     private final ModelMapper modelMapper;
 
-    public IndexesController(IndexesRepository indexesRepository, ZoneRepository zoneRepository,
+    public IndexesController(IndexesTempRepository indexesTempRepository, IndexesRepository indexesRepository, ZoneRepository zoneRepository,
                              StationsRepository stationsRepository, MouvementsRepository mouvementsRepository, StockInitStationsRepository stockInitStationsRepository, StockStationRepository stockStationRepository, LogActionRepository logActionRepository, OperationIndexesService service, DataIndexService dataIndexService, EcartStationService ecartStationService, EmailService emailService, HistoryStockStationRepository historyStockStationRepository, JavaMailSender mailSendder, ControlDepotageRepository controlDepotageRepository, BonlivraisonRepository bonlivraisonRepository, ModelMapper modelMapper) {
+        this.indexesTempRepository = indexesTempRepository;
         this.indexesRepository = indexesRepository;
         this.zoneRepository = zoneRepository;
         this.stationsRepository = stationsRepository;
@@ -85,11 +89,11 @@ public class IndexesController {
                                 Model model, RedirectAttributes redirectAttributes){
          LocalDate localDate = LocalDate.now();
          DataIndex indexesSaved = _returnToDataIndexSaved(user, localDate, data);
-         Indexes indexes = buildIndexTable(indexesSaved);
+         IndexesTemp indexes = buildIndexTable(indexesSaved);
 
         Stations stationParam = stationsRepository.findById(data.getStations().getId()).orElse(null);
-        List<Indexes> indd = indexesRepository.findAll();
-        for (Indexes i: indd) {
+        List<IndexesTemp> indd = indexesTempRepository.findAll();
+        for (IndexesTemp i: indd) {
             if(i.getStations().equals(stationParam)){
                 redirectAttributes.addFlashAttribute("error", "Indexes déjà paramétrés.");
                 return "redirect:indexe1";
@@ -107,14 +111,14 @@ public class IndexesController {
                 logAction.setNomAction("Prise d'indexe");
                 LogAction logAction1 = logActionRepository.save(logAction);
                 log.info(logAction1.toString());
-                indexesRepository.save(indexes);
+                indexesTempRepository.save(indexes);
                 return "redirect:/parametrages/indexe1";
             }
 
         }
         indexes.setDateCreation(LocalDate.now());
         indexes.setCreateBy(user.getUsername());
-        indexesRepository.save(indexes);
+        indexesTempRepository.save(indexes);
         return "redirect:/parametrages/indexe1";
 
     }
@@ -122,17 +126,17 @@ public class IndexesController {
 
     @GetMapping("/gerant/indexe")
     public String getAllIndexes(Model model, @AuthenticationPrincipal User user){
-        model.addAttribute("indexe", indexesRepository.findIndexesByStationsId(user.getStations().getId()));
+        model.addAttribute("indexe", indexesTempRepository.findIndexesByStationsId(user.getStations().getId()));
         return "indexes";
     }
 
     @GetMapping("/gerant/newindexes")
     public String indexe(Model model, @AuthenticationPrincipal User use) {
         model.addAttribute("data", new DataIndex());
-        if(indexesRepository.lastId(use.getStations().getId()) != 0){
-            Long id = indexesRepository.lastId(use.getStations().getId());
-            Optional<Indexes> ind = indexesRepository.findById(id);//recupère le dernier enregistrement
-            Indexes indexes = ind.get();
+        if(indexesTempRepository.lastId(use.getStations().getId()) != 0){
+            Long id = indexesTempRepository.lastId(use.getStations().getId());
+            Optional<IndexesTemp> ind = indexesTempRepository.findById(id);//recupère le dernier enregistrement
+            IndexesTemp indexes = ind.get();
             model.addAttribute("ind",indexes);
         }
 
@@ -155,30 +159,37 @@ public class IndexesController {
     }
 
     @PostMapping("/admin/tocorrect-index")
-    public String toCorrectIndex(@RequestParam("date1") String date1,
-                                 @RequestParam("stations") String id,
+    public String toCorrectIndex(@RequestParam(value = "date1", required = false) String date1,
+                                 @RequestParam(value = "stations", required = true) String id,
+                                 @AuthenticationPrincipal User user,
                                  RedirectAttributes model){
 
         //Date localDate = date1;
-        if(id == null || date1 == null ){
-            model.addFlashAttribute("message", "Aucune données ne correspond à la station choisie. merci de vous assurer que vous avez bien selectionner une station et une date");
+        if(id == null){
+            model.addFlashAttribute("message", "Aucune données ne correspond à la station choisie. merci de vous assurer que vous avez bien selectionner une station");
             model.addFlashAttribute("stations", stationsRepository.findAll());
         }
-
+        Long idStation = Long.parseLong(id);
         if(stockStationRepository.findStockStationByStationsId(Long.parseLong(id)) != null){
-            //Date date = new Date();
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyy-MM-dd");
-            LocalDate localDate = LocalDate.parse(date1, formatter);
-            //LocalDate localDate = date1.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-             StockStation stockStation = stockStationRepository.findStockStationByStationsId(Long.parseLong(id));
-            String nomSatation = stockStation.getStations().getNom();
-            List<ControleDepotage> cd = controlDepotageRepository.dataQueryPOfStation(localDate, nomSatation);
-            if(cd.isEmpty()){
+            if(!date1.isEmpty()){
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                LocalDate localDate = LocalDate.parse(date1, formatter);
+                List<IndexesTemp> indexesTempList = indexesTempRepository.findByStationsIdAndDateJour(idStation, localDate);
+                model.addFlashAttribute("nomStation", user.getStations().getNom());
+                model.addFlashAttribute("indexSemaine", indexesTempList);
+                return "redirect:/admin/correction-index";
+            }
+
+            LocalDate d1 = LocalDate.now();
+            LocalDate d2 = d1.minusDays(7);
+            List<IndexesTemp> indexesTempSemaineList = indexesTempRepository.listeIndexSemaineParStationSelectionnee(d2, d1, idStation);
+
+            if(indexesTempSemaineList.isEmpty()){
                 model.addFlashAttribute("message", "Désolé aucun résultat ne correspond à votre demande. Nous vous retournons un tableau vide.");
                 return "redirect:/admin/correction-index";
             }
-            model.addFlashAttribute("nomStation", nomSatation);
-            model.addFlashAttribute("controleDepotage", cd);
+            model.addFlashAttribute("nomStation", user.getStations().getNom());
+            model.addFlashAttribute("indexSemaine", indexesTempSemaineList);
             return "redirect:/admin/correction-index";
         }else{
             model.addFlashAttribute("message", "La station selectionnée ne contient aucune données ou elle n'est pas paramétrée");
@@ -198,72 +209,50 @@ public class IndexesController {
             model.addAttribute("message", "Une erreur s'est produite, merci de rééssayer à nouveau");
             model.addAttribute("stations", stationsRepository.findAll());
             return "indexCorrectionForm";
-        }/*if(!controlDepotageRepository.existsById(id)){
-            model.addAttribute("message", "Aucune données ne correspond à votre demande");
-            return "indexCorrectionForm";
-        }*/
-        ControleDepotage cd = controlDepotageRepository.dataQuery(id);
-        LocalDate localDate = cd.getDateJour();
-        if(stationsRepository.findByNom(cd.getStation()).equals(null)){
-            model.addAttribute("message","Aucune station  portant le nom " + cd.getStation() + " n'a été trouvée");
-            model.addAttribute("stations", stationsRepository.findAll());
-            return "indexCorrectionForm";
         }
-        Stations station = stationsRepository.findByNom(cd.getStation());
-        if(stockStationRepository.findStockStationByStations(station) == null){
-            model.addAttribute("message","Aucun stock de station pour la station " + cd.getStation() + " n'a été trouvée");
-            model.addAttribute("stations", stationsRepository.findAll());
-            return "indexCorrectionForm";
-        }
+        IndexesTemp indexesTemp = indexesTempRepository.findById(id).orElse(null);
 
-        StockStation st = stockStationRepository.findStockStationByStations(station);
-        LocalDate date1 = localDate.minusDays(-1);
-        /*if(controlDepotageRepository.findByDateJourAndStationAndDateDepot(date1, cd.getStation(), cd.getDateDepot()) == null){
-            model.addAttribute("message","Aucun sauvegarde n'a été trouvée dans la table d'historique pour la date " + date1 + " et pour la station " + cd.getStation());
-            return "indexCorrectionForm";
-        }*/
-        //ControleDepotage cd2 =controlDepotageRepository.findByDateJourAndStationAndDateDepot(date1, cd.getStation(), cd.getDateDepot());
-
-        //Comparer les dernier élements de l'historique et de la table stockStation
-        if(cd.getGasoilApresDepot()<0 || cd.getEssenceApresDepot()<0){
-            deleteLingne(station.getId(), date1);
-        }
-         st.setQteGlobaleEssence(cd.getEssenceAvantDepot());
-         st.setQteGlobaleGazoile(cd.getGasoilAvantDepot());
-         stockStationRepository.save(st);
-         if(historyStockStationRepository.verifierDateEtStationDansHistorique(localDate, cd.getId()).isEmpty()){
-             model.addAttribute("message","La station n'a pas de ligne d'historique ");
-             model.addAttribute("stations", stationsRepository.findAll());
-             return "indexCorrectionForm";
-         }
-         deleteLigneHitorique(cd.getId(), localDate);
-         deleteLigneEcart(id, localDate);
-         deleteLigneDataIndex(id, localDate);
-         model.addAttribute("message", "La correction a été éffectuée avec succes");
-        model.addAttribute("stations", stationsRepository.findAll());
-           return "indexCorrectionForm";
+            model.addAttribute("stations", user.getStations().getNom());
+            model.addAttribute("indexAModifier", indexesTemp);
+            return "correctionIndexAdmin";
 
     }
 
-    private void deleteLigneEcart(Long id, LocalDate localDate) {
-        controlDepotageRepository.deleteligneEcartOfStation(id, localDate);
-    }
 
-    private void deleteLigneDataIndex(Long id, LocalDate localDate) {
-        controlDepotageRepository.deleteligneInDataIndexOfStation(id, localDate);
-    }
-
-    private void deleteLigneHitorique(Long id, LocalDate localDate) {
-        controlDepotageRepository.deleteligneHistoOfStation(id, localDate);
-    }
-
-    private void deleteLingne(Long id, LocalDate date1) {
-         controlDepotageRepository.deleteligneIndexOfStation(id, date1);
-    }
 
 //------------------------------------------------------------------------------------------------------------------------
 //---------------------------------- FIN DE CORRECTION DES ERREURS SUR LES INDEX------------------------------------------
 //-------------------------------------------------------------------------------------------------------------------------
+    @GetMapping("/gerant/newindexesConfirme")
+    public String confirmation(){
+        return "indexesformConfirme";
+    }
+
+    @PostMapping("/gerant/newindexesconfirme")
+     public String confirmCreateIndex(@Valid @ModelAttribute("data") DataIndex data,
+                                      Model model, RedirectAttributes redirectAttributes,
+                                      @AuthenticationPrincipal User user){
+            if(data.getSuper1()==0 || data.getGazoil1()==0 || data.getCuveGazoil()==0 || data.getCuveEssence() == 0){
+                redirectAttributes.addFlashAttribute("message","Merci de bien renseigner les champs du formulaire");
+                return "redirect:/gerant/newindexes";
+            }
+
+            /*ObjectMapper objectMapper =  new ObjectMapper();
+            objectMapper.registerModule(new JavaTimeModule());
+            DataIndex dataIndex = objectMapper.readValue(data, DataIndex.class);*/
+            data.setStations(user.getStations());
+            data.setCreateBy(user.getLogin());
+            data.setDateJour(LocalDate.now());
+            redirectAttributes.addFlashAttribute("dataIndex", data);
+            redirectAttributes.addFlashAttribute("message", "ATTENTION!!!. " +
+                    "Nous vous rappellons que toute erreur peut impacter négativement les différents soldes théoriques de votre station. Merci de bien vouloir vérifier les informations saisies. " +
+                    "Si elles sont correctes, clicquez sur VALIDER. Sinon, Prière de les corriger et de valider pour terminer votre saisie.");
+           // System.out.printf(data.toString());
+            return "redirect:/gerant/newindexesConfirme";
+
+     }
+
+
     @PostMapping("/gerant/newindexes")
     public String createIndexe(@Valid @ModelAttribute("data") DataIndex data,
                                Errors errors,
@@ -271,16 +260,17 @@ public class IndexesController {
                                Model model, RedirectAttributes redirectAttributes){
 
         //Recupération du dernier enregistrement
-        Indexes In = null;
+        IndexesTemp In = null;
         long index0= 0;
 
         LocalDate localDate = LocalDate.now();
         DataIndex indexesSaved = _returnToDataIndexSaved(user, localDate, data);
         indexesSaved.setStations(user.getStations());
-        Indexes indexes = buildIndexTable(indexesSaved);
+        //Indexes indexes = buildIndexTable(indexesSaved);
+        IndexesTemp indexes = buildIndexTable(indexesSaved);
         long st = user.getStations().getId();
         //long id = indexesRepository.lastId(st);
-        if(indexesRepository.lastId(st) == null){
+        if(indexesTempRepository.lastId(st) == null){
             redirectAttributes.addFlashAttribute("message", "Désolé les initiales des indexes de la station n'ont pas été renseignées convenablement");
             return "redirect:/gerant/newindexes";
         }
@@ -294,9 +284,9 @@ public class IndexesController {
 
         System.out.println(" Premier heruer " + heurePremierePrise + " || " + " seconde prise " + heureDeuxiemePrise + " || " + time);
 
-        if(indexesRepository.lastId(st) != null){
-            long lastId= indexesRepository.lastId(st);
-            Indexes dernierIndex = indexesRepository.findById(lastId).get();
+        if(indexesTempRepository.lastId(st) != null){
+            long lastId= indexesTempRepository.lastId(st);
+            IndexesTemp dernierIndex = indexesTempRepository.findById(lastId).get();
             if(dernierIndex.isEtat() == false){
                 redirectAttributes.addFlashAttribute("message", "Désolé vous avez soit déjà effectué votre prise, soit vous n'êtes pas dans la plage horaire autorisée des saisies.");
                 return "redirect:/gerant/newindexes";
@@ -317,13 +307,13 @@ public class IndexesController {
             }
 */
 
-            List <Indexes> index = indexesRepository.findIndexesByStationsId(st);
-            for(Indexes ind: index){
+            List <IndexesTemp> index = indexesTempRepository.findIndexesByStationsId(st);
+            for(IndexesTemp ind: index){
                 long index1 = ind.getId();
                 if(index1>index0){
                     index0 =index1;
                 }
-                In = indexesRepository.findById(index0).get();
+                In = indexesTempRepository.findById(index0).get();
             }
 
 
@@ -400,10 +390,10 @@ public class IndexesController {
             }
         }
 
-        Optional<Indexes> ind = indexesRepository.findById(indexesRepository.lastId(st));
+        Optional<IndexesTemp> ind = indexesTempRepository.findById(indexesTempRepository.lastId(st));
         StockStation stInit = null;
         if(ind.isPresent()){
-            Indexes indexes1 = ind.get();
+            IndexesTemp indexes1 = ind.get();
             if(indexes1.getCuveEssence() ==0.0 || indexes1.getCuveGazoil() ==0.0){
                  stInit = stockStationRepository.findStockStationByStations(indexes1.getStations());
                 indexes1.setCuveEssence(stInit.getEssenceInit());
@@ -448,9 +438,9 @@ public class IndexesController {
             // -------------insertion dans EcartStaion(ecart cuve)-------------------
 
             EcartStations ecartStations = new EcartStations();
-            List<Indexes> indexesList = indexesRepository.findIndexesByDateJour(LocalDate.now());
+            List<IndexesTemp> indexesList = indexesTempRepository.findIndexesByDateJour(LocalDate.now());
             if(!indexesList.isEmpty()){
-                for(Indexes indx : indexesList){
+                for(IndexesTemp indx : indexesList){
                     if(indx.getStations().getId() == user.getStations().getId()){
                         ecartStations.setFirstCuveEssence(indx.getCuveEssence()) ;
                         ecartStations.setFirstCuveGazoil(indx.getCuveGazoil());
@@ -532,7 +522,7 @@ public class IndexesController {
             StockStation savedStockStation = stockStationRepository.save(sta);
             indexes.setPrise(1);
             indexes.setEtat(true);
-            indexesRepository.save(indexes);
+            indexesTempRepository.save(indexes);
 
             //---------- Envoie de mail d'alerte -----------------
 
@@ -584,13 +574,13 @@ public class IndexesController {
                               @RequestParam("gazoilIndexeFin") long gazoilIndexeFin,
                               @RequestParam("id") String id,
                               @AuthenticationPrincipal User user)  {
-        Indexes indexes = indexesRepository.findById(Long.parseLong(id)).orElse(null);
+        IndexesTemp indexes = indexesTempRepository.findById(Long.parseLong(id)).orElse(null);
         indexes.setCuveEssence(cuveEssence);
         indexes.setCuveGazoil(cuveGazoil);
         indexes.setStations(user.getStations());
         indexes.setDateCreation(indexes.getDateCreation());
         indexes.setDateJour(LocalDate.now());
-        indexesRepository.save(indexes);
+        indexesTempRepository.save(indexes);
         return "redirect:/parametrages/indexe";
     }
 
@@ -598,7 +588,7 @@ public class IndexesController {
     public String voirPompe(Model model,
                             @PathVariable("id") String id,
                             @AuthenticationPrincipal User user) {
-        Indexes indexes = indexesRepository.findById(Long.parseLong(id)).orElse(null);
+        IndexesTemp indexes = indexesTempRepository.findById(Long.parseLong(id)).orElse(null);
         model.addAttribute("indexes", indexes);
         Long idStation = user.getStations().getId();
         Stations st = stationsRepository.findById(idStation).orElse(null);
@@ -608,7 +598,7 @@ public class IndexesController {
 
     @GetMapping("/parametrages/indexes/{id}/delete")
     public String delete(@PathVariable String id) {
-        indexesRepository.deleteById(Long.parseLong(id));
+        indexesTempRepository.deleteById(Long.parseLong(id));
         return "redirect:/parametrages/pompe";
     }
 
@@ -618,7 +608,7 @@ public class IndexesController {
         Long id = use.getStations().getId();
         Stations st = stationsRepository.findById(id).orElse(null);
         //Indexes in = indexesRepository.findByStations(st);
-        List<Indexes> indx = indexesRepository.findAll();
+        List<IndexesTemp> indx = indexesTempRepository.findAll();
         // model.addAttribute("indexes", in);
         model.addAttribute("indexeList", indx);
         model.addAttribute("station", st);
@@ -695,8 +685,8 @@ public class IndexesController {
 
     //------------------- FONCTIONS UTILIAIRES------------------------
 
-    private Indexes buildIndexTable(DataIndex in){
-        Indexes indexes = Indexes.builder()
+    private IndexesTemp buildIndexTable(DataIndex in){
+        return IndexesTemp.builder()
                 .createBy(in.getCreateBy())
                 .cuveEssence(in.getCuveEssence())
                 .cuveGazoil(in.getCuveGazoil())
@@ -718,7 +708,6 @@ public class IndexesController {
                 .stations(in.getStations())
                 .id(in.getId())
                 .build();
-        return indexes;
     }
 
     private DataIndex _returnToDataIndexSaved(User user, LocalDate localDate, DataIndex data){
@@ -806,46 +795,46 @@ public class IndexesController {
 
    @Scheduled(cron =" 0 0 9,11 * * ?")// Fermeture
     public void blockPriseIndex(){
-        List<Indexes> indexes = indexesRepository.findIndexesByDateJour(LocalDate.now());
-        for(Indexes ind: indexes){
+        List<IndexesTemp> indexes = indexesTempRepository.findIndexesByDateJour(LocalDate.now());
+        for(IndexesTemp ind: indexes){
             ind.setEtat(false);
-            indexesRepository.save(ind);
+            indexesTempRepository.save(ind);
         }
     }
 
     @Scheduled(cron =" 0 0 12,14 * * ?")//ouverture
     public void ouvrePriseIndex(){
-        List<Indexes> indexes = indexesRepository.findIndexesByDateJour(LocalDate.now());
-        for(Indexes ind: indexes){
+        List<IndexesTemp> indexes = indexesTempRepository.findIndexesByDateJour(LocalDate.now());
+        for(IndexesTemp ind: indexes){
             ind.setEtat(true);
-            indexesRepository.save(ind);
+            indexesTempRepository.save(ind);
         }
     }
 
 
     @Scheduled(cron =" 0 0 15,17 * * ?")
     public void blockPriseIndex1(){
-        List<Indexes> indexes = indexesRepository.findIndexesByDateJour(LocalDate.now());
-        for(Indexes ind: indexes){
+        List<IndexesTemp> indexes = indexesTempRepository.findIndexesByDateJour(LocalDate.now());
+        for(IndexesTemp ind: indexes){
             ind.setEtat(false);
-            indexesRepository.save(ind);
+            indexesTempRepository.save(ind);
         }
     }
 
     @Scheduled(cron =" 0 0 18,21 * * ?")
     public void ouvertPriseIndex2(){
-        List<Indexes> indexes = indexesRepository.findIndexesByDateJour(LocalDate.now());
-        for(Indexes ind: indexes){
+        List<IndexesTemp> indexes = indexesTempRepository.findIndexesByDateJour(LocalDate.now());
+        for(IndexesTemp ind: indexes){
             ind.setEtat(true);
-            indexesRepository.save(ind);
+            indexesTempRepository.save(ind);
         }
     }
     @Scheduled(cron =" 0 0 22,5 * * ?")
     public void blockPriseIndex2(){
-        List<Indexes> indexes = indexesRepository.findIndexesByDateJour(LocalDate.now());
-        for(Indexes ind: indexes){
+        List<IndexesTemp> indexes = indexesTempRepository.findIndexesByDateJour(LocalDate.now());
+        for(IndexesTemp ind: indexes){
             ind.setEtat(false);
-            indexesRepository.save(ind);
+            indexesTempRepository.save(ind);
         }
     }
 
@@ -863,20 +852,79 @@ public class IndexesController {
 
         // Je convertis la date de String en localDate et je la passe à ma fonction
         LocalDate localDate = LocalDate.parse(date1, formatter);
-        List<Indexes> indexes = indexesRepository.findIndexesByDateJour(localDate);
+        List<IndexesTemp> indexes = indexesTempRepository.findIndexesByDateJour(localDate);
 
         // je parcours chaque résultat(les 3 enregistrements par station) et pour chaque resultat
         // Pour chaque station je recupère la dernière saisie et je mets le setEtat à true et voila!!!
-        for(Indexes index: indexes){
+        for(IndexesTemp index: indexes){
             Long id = index.getId();
-            Indexes indexes1 = indexesRepository.findById(id).get();
+            IndexesTemp indexes1 = indexesTempRepository.findById(id).get();
             indexes1.setEtat(true);
-            indexesRepository.save(indexes1);
+            indexesTempRepository.save(indexes1);
         }
 
     }
 
+    //@Scheduled(cron = "0 0 0 7 * ?")
+    //@Scheduled(cron = "10 * * * * ?")
+    public void schedulderService(){
 
+
+        List<IndexesTemp> dernieresSaisies = new ArrayList<>();
+
+        //Recuperation de tous les élements de la table indexesTemps
+        LocalDate d1 = LocalDate.now();
+        LocalDate d2 = d1.minusDays(7);
+        List<IndexesTemp>  indexesTempList = indexesTempRepository.listeIndexSemaine( d2, d1);
+
+        //Parcours de la liste pour recuperer la liste des stations qui ont fait leurs prises
+        List<Long> idIndexeTmp = indexesTempRepository.lesIndex();
+
+       //Liste des dernières saisies par station
+        idIndexeTmp.forEach(idStation -> {
+            Long id = indexesTempRepository.lastIdIndex(idStation);
+            IndexesTemp indexesTemp = indexesTempRepository.findById(id).get();
+            dernieresSaisies.add(indexesTemp);
+        });
+
+
+        // Liste des dernières saisies par station
+        indexesTempList.forEach(indexes1 -> {
+            Indexes ind = Indexes.builder()
+                    .id(indexes1.getId())
+                    .prise(indexes1.getPrise())
+                    .stations(indexes1.getStations())
+                    .initIndex(indexes1.isInitIndex())
+                    .QtiteRestantGasoil(indexes1.getQtiteRestantGasoil())
+                    .QtiteRestantEssence(indexes1.getQtiteRestantEssence())
+                    .super4(indexes1.getSuper4())
+                    .super3(indexes1.getSuper3())
+                    .super2(indexes1.getSuper2())
+                    .super1(indexes1.getSuper1())
+                    .gazoil4(indexes1.getGazoil4())
+                    .gazoil3(indexes1.getGazoil3())
+                    .gazoil2(indexes1.getGazoil2())
+                    .gazoil1(indexes1.getGazoil1())
+                    .cuveGazoil(indexes1.getCuveGazoil())
+                    .DifPriseGaz(indexes1.getDifPriseGaz())
+                    .DifPriseEss(indexes1.getDifPriseEss())
+                    .dateJour(indexes1.getDateJour())
+                    .dateCreation(indexes1.getDateCreation())
+                    .cuveEssence(indexes1.getCuveEssence())
+                    .createBy(indexes1.getCreateBy())
+                    .etat(indexes1.isEtat())
+                    .stockCuveEssence(indexes1.getStockCuveEssence())
+                    .stockCuveGazoil(indexes1.getStockCuveGazoil())
+                    .build();
+            indexesRepository.save(ind);
+            indexesTempRepository.deleteById(indexes1.getId());
+        });
+
+        // on repositionne les derners enregistrements de chaque station
+        indexesTempRepository.saveAll(dernieresSaisies);
+//       indexesTempRepository.saveAll(dernieresSaisies);
+
+    }
 
 
 }

@@ -50,6 +50,7 @@ public class BonLivraison {
     private Boolean hierachie = false;
    private LocalDate dateValidation;
     private Boolean cloturer = false;
+    private Boolean blchauffeurgestoci = false;
 
 
 }

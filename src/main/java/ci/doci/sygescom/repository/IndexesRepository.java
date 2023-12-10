@@ -42,7 +42,7 @@ public interface IndexesRepository extends JpaRepository<Indexes, Long> {
 
     List<Indexes> findIndexesByDateJourBetween(LocalDate date1, LocalDate dta2);
 
-    //*****************************REPORTING********************************
+
 
 
 

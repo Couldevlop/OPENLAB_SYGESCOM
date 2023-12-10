@@ -18,6 +18,6 @@ public interface HistoryStockStationRepository extends JpaRepository<HistoryStoc
 
     List<HistoryStockStation> findHistoryStockStationByDateJourAndStationsAndMotif(LocalDate d, Stations st, String motif);
 
-    @Query(value = "SELECT * FROM divineoil.doci_historystockstation where date_depot=:d and stations_id=:t", nativeQuery = true)
+    @Query(value = "SELECT * FROM divineoil.doci_historystockstation where date_jour=:d and stations_id=:t", nativeQuery = true)
     List<HistoryStockStation> verifierDateEtStationDansHistorique(@Param("d") LocalDate d, @Param("t") Long id);
 }

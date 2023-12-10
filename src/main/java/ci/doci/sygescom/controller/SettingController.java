@@ -23,17 +23,17 @@ public class SettingController {
     private final StockGestociRepository stockGestociRepository;
     private final StationsRepository stationsRepository;
     private final StockStationRepository stockStationRepository;
-    private final IndexesRepository indexesRepository;
+    private final IndexesTempRepository indexesTempRepository;
     private final ZoneRepository zoneRepository;
     private final LogActionRepository logActionRepository;
 
-    public SettingController(StockInitGestociRepository stockInitGestociRepository, StockInitStationsRepository stockInitStationsRepository, StockGestociRepository stockGestociRepository, StationsRepository stationsRepository, StockStationRepository stockStationRepository, IndexesRepository indexesRepository, ZoneRepository zoneRepository, LogActionRepository logActionRepository) {
+    public SettingController(StockInitGestociRepository stockInitGestociRepository, StockInitStationsRepository stockInitStationsRepository, StockGestociRepository stockGestociRepository, StationsRepository stationsRepository, StockStationRepository stockStationRepository, IndexesTempRepository indexesTempRepository, ZoneRepository zoneRepository, LogActionRepository logActionRepository) {
         this.stockInitGestociRepository = stockInitGestociRepository;
         this.stockInitStationsRepository = stockInitStationsRepository;
         this.stockGestociRepository = stockGestociRepository;
         this.stationsRepository = stationsRepository;
         this.stockStationRepository = stockStationRepository;
-        this.indexesRepository = indexesRepository;
+        this.indexesTempRepository = indexesTempRepository;
         this.zoneRepository = zoneRepository;
         this.logActionRepository = logActionRepository;
     }
@@ -190,15 +190,15 @@ public class SettingController {
 
     @GetMapping("/parametrages/indexe1")
     public String getAllIndexes1(Model model){
-        List<Indexes> ide = indexesRepository.findAll();
-        for(Indexes i : ide){
+        List<IndexesTemp> ide = indexesTempRepository.findAll();
+        for(IndexesTemp i : ide){
             double CuvEss = i.getCuveEssence();
             if (CuvEss ==0){
                 CuvEss = 1;
 
             }
         }
-        model.addAttribute("indexe", indexesRepository.findAll());
+        model.addAttribute("indexe", indexesTempRepository.findAll());
         return "indexes1";
     }
 

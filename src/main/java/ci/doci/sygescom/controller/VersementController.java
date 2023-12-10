@@ -5,6 +5,7 @@ import ci.doci.sygescom.domaine.User;
 import ci.doci.sygescom.domaine.Versement;
 import ci.doci.sygescom.repository.DocRepository;
 import ci.doci.sygescom.repository.VersementRepository;
+import ci.doci.sygescom.service.ComptesService;
 import ci.doci.sygescom.service.DocStorageService;
 import ci.doci.sygescom.service.VersementService;
 import org.springframework.core.io.ByteArrayResource;
@@ -26,12 +27,14 @@ public class VersementController {
     private final VersementRepository versementRepository;
     private final DocRepository docRepository;
     private final DocStorageService docStorageService;
+    private final ComptesService comptesService;
 
-    public VersementController(VersementService versementService, VersementRepository versementRepository, DocRepository docRepository, DocStorageService docStorageService) {
+    public VersementController(VersementService versementService, VersementRepository versementRepository, DocRepository docRepository, DocStorageService docStorageService, ComptesService comptesService) {
         this.versementService = versementService;
         this.versementRepository = versementRepository;
         this.docRepository = docRepository;
         this.docStorageService = docStorageService;
+        this.comptesService = comptesService;
     }
 
 
@@ -41,6 +44,7 @@ public class VersementController {
         String nomStation = user.getStations().getNom();
         model.addAttribute("listVersement", versementRepository.findVersementByStation(nomStation));
         model.addAttribute("AllVersement", versementRepository.findAll());
+        model.addAttribute("comptes", comptesService.getAllAccount());
         return "versement";
     }
 

@@ -16,6 +16,10 @@
             <div th:if="${rep !=true}" class="section-header-button">
                 <a sec:authorize="hasAnyRole('SUPERVISEUR','ADMIN','GERANT')" th:href="@{/gerant/newindexes}" class="btn btn-primary">Nouveau</a>
             </div>
+            <!--<button type="button" class="btn btn-primary mr-4"
+                    data-toggle="modal" data-target="#modalComptes">
+                Nouvelle dépense
+            </button>-->
             <div th:if="${rep}" class="section-header-button">
                 <a  th:href="@{/parametrages/newindexes}" class="btn btn-primary">Nouveau</a>
             </div>
@@ -95,7 +99,83 @@
             </div>
         </div>
     </section>
+    <div class="modal fade" id="modalComptes" tabindex="-1" role="dialog"
+         aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg"style="width: 1000px; height: 600px"  role="document">
+            <div class="modal-content">
+                <div class="modal-header" >
+                    <h5 class="modal-title" id="exampleModalLabel" >Fenêtre d'enregistrement d'une dépense</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <!--                        <span aria-hidden="true">&times;</span>-->
+                    </button>
+                </div>
+                <div class="myForm">
+                    <form th:action="@{/raf/depenses/saveDepense}" method="post">
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-12 col-md-12 col-lg-12 ">
+                                    <div class="card">
 
+                                        <div class=" row">
+                                            <div class=" col-md-6">
+                                                <div class="form-group">
+                                                    <label>Libelle</label>
+                                                    <input type="text" for="id" name="libelle" class="form-control"
+                                                           autocomplete="off" value="" required id="numeroCompte"  >
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>N° transaction</label>
+                                                    <input type="text" for="id" name="transaction" class="form-control"
+                                                           autocomplete="off" value="" required id="transaction"  >
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label>Montant</label>
+                                                    <input type="text" for="id" name="montant" class="form-control"
+                                                           autocomplete="off" value="" required id="montant" >
+                                                </div>
+
+
+                                            </div>
+                                            <div class=" col-md-6">
+                                                <div class="form-group">
+                                                    <label>Compte</label>
+                                                    <select name="compte"  class="form-control selectric dropdown scrollable-menu"
+                                                            id="compte" required>
+                                                        <option value=""> Selectionnez une banque</option>
+                                                        <option>SGBCI</option>
+                                                    </select>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Commentaire</label>
+                                                    <input type="text" for="id" name="commentaire" class="form-control"
+                                                           autocomplete="off" required value="" id="veille">
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label>Auteur</label>
+                                                    <input type="text" for="id" name="auteur" class="form-control"
+                                                           autocomplete="off" required value="" id="auteur"
+                                                            disabled>
+                                                </div>
+
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="modal-footer" style="margin-right: 45%">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                            <button type="submit" class="btn btn-primary">Valider</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 </html>

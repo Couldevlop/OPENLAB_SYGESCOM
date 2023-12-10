@@ -91,8 +91,8 @@
                        class="btn btn-primary btn-lg btn-block btn-icon-split">
                         <i class="fas fa-rocket"></i> BL en attente
                     </a>
-                    <li sec:authorize="hasAnyRole('LOGISTIQUE','SUPERVISEUR' )" class="nav-link"></li>
-                    <a sec:authorize="hasAnyRole('LOGISTIQUE','SUPERVISEUR')" th:href="@{/superviseur/listbl}"
+                    <li sec:authorize="hasAnyRole('LOGISTIQUE','SUPERVISEUR','ADMIN' )" class="nav-link"></li>
+                    <a sec:authorize="hasAnyRole('LOGISTIQUE','SUPERVISEUR','ADMIN')" th:href="@{/superviseur/listbl}"
                        class="btn btn-primary btn-lg btn-block btn-icon-split">
                         <i class="fas fa-rocket"></i> Gestion BL
                     </a>
@@ -180,6 +180,11 @@
                     <a sec:authorize="hasAnyRole('SUPERVISEUR','DG','COMPTABLE','RAF','ADMIN')" th:href="@{/superviseur/ventes-corporates/validation-adv}"
                        class="btn btn-primary btn-lg btn-block btn-icon-split">
                         <i class="fas fa-rocket"></i> Validation AVD
+                    </a>
+                    <li sec:authorize="hasAnyRole('SUPERADMIN','DG','COMPTABLE','RAF','ADMIN')" class="nav-link"></li>
+                    <a sec:authorize="hasAnyRole('SUPERADMIN','DG','COMPTABLE','RAF','ADMIN')" th:href="@{/raf/comptes/home}"
+                       class="btn btn-primary btn-lg btn-block btn-icon-split">
+                        <i class="fas fa-rocket"></i> Gestions Comptes
                     </a>
                     <li sec:authorize="hasRole('ADMIN')" class="nav-link"></li>
                     <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin/correction-index}"

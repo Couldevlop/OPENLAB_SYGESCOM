@@ -13,7 +13,7 @@
     <section class="section">
         <div class="section-header">
             <div class="section-header-back">
-                <a th:href="@{/admin/zone}" class="btn btn-icon"><i class="fas fa-arrow-left"></i></a>
+                <a th:href="@{/admin/correction-index}" class="btn btn-icon"><i class="fas fa-arrow-left"></i></a>
             </div>
             <h1>Zone de Correction Index</h1>
             <div class="section-header-breadcrumb">
@@ -41,7 +41,7 @@
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group  mb-4 col-md-6 ml-5" >
-                                            <label class="col-form-label  col-3 col-md-1 col-lg-3">Station</label>
+                                            <label class="col-form-label  col-3 col-md-2 col-lg-3">Station</label>
                                             <div class="col-sm-12 col-md-12">
                                                 <select name="stations"  class="form-control selectric dropdown scrollable-menu"
                                                         id="stations" required>
@@ -57,7 +57,7 @@
                                         <div class="form-group  mb-10 col-md-6">
                                             <label class="col-form-label  col-3 col-md-1 col-lg-3">Date</label>
                                             <div class="col-sm-12 col-md-12">
-                                                <input type="date" class="form-control"  name="date1"  autocomplete="off" required>
+                                                <input type="date" class="form-control"  name="date1"  autocomplete="off">
                                             </div>
                                         </div>
 
@@ -71,35 +71,39 @@
                                     </div>
                                 </div>
                             </form>
-                            <div class="row" th:if="${controleDepotage}">
+                            <div class="row" th:if="${indexSemaine}">
                                 <div class="clearfix mb-3"></div>
                                 <div class="table-responsive">
                                     <table class="table table-striped" id="table-2">
                                         <thead>
                                         <tr>
-                                           <th>Station</th>
-                                            <th>Date Depotage</th>
-                                            <th>Date</th>
-                                            <th> Essence avant</th>
-                                            <th> Essence après</th>
-                                            <th> Gasoil avant</th>
-                                            <th> Gasoil apres</th>
+                                           <th>Super1</th>
+                                            <th>Super2</th>
+                                            <th>Super3</th>
+                                            <th> Super4</th>
+                                            <th> Gazoil1</th>
+                                            <th> Gasoil2</th>
+                                            <th> Gasoil3</th>
+                                            <th> Gasoil4</th>
+                                            <th> Cuve Essence</th>
+                                            <th> Cuve Gazoil</th>
                                             <th>Actions</th>
                                             <!--                                        <th>Action</th>-->
                                         </tr>
                                         </thead>
-                                        <tr th:each="cp :${controleDepotage}">
-                                           <td  th:text="${cp.getStation()}" class="align-middle"></td>
-                                            <td  th:text="${cp.getDateDepot()}" class="align-middle"></td>
-                                            <td  th:text="${cp.getDateJour()}" class="align-middle"></td>
-                                            <td  th:text="${cp.getEssenceAvantDepot()}" class="align-middle"></td>
-                                            <td  th:text="${cp.getEssenceApresDepot()}" class="align-middle"></td>
-
-                                            <td  th:text="${cp.getGasoilAvantDepot()}" class="align-middle"></td>
-                                            <td  th:text="${cp.getGasoilApresDepot()}" class="align-middle"></td>
-
+                                        <tr th:each="ind :${indexSemaine}">
+                                           <td  th:text="${ind.super1}" class="align-middle"></td>
+                                            <td  th:text="${ind.super2}" class="align-middle"></td>
+                                            <td  th:text="${ind.super3}" class="align-middle"></td>
+                                            <td  th:text="${ind.super4}" class="align-middle"></td>
+                                            <td  th:text="${ind.gazoil1}" class="align-middle"></td>
+                                            <td  th:text="${ind.gazoil2}" class="align-middle"></td>
+                                            <td  th:text="${ind.gazoil3}" class="align-middle"></td>
+                                            <td  th:text="${ind.gazoil4}" class="align-middle"></td>
+                                            <td  th:text="${ind.cuveEssence}" class="align-middle"></td>
+                                            <td  th:text="${ind.cuveGazoil}" class="align-middle"></td>
                                             <td>
-                                                <a  th:href="@{'/admin/correction/' + ${cp.id_}}" class="btn btn-info" onclick="return confirm('Etes-vous sur de vouloir apporter une correction?');">Correction</a>
+                                                <a  th:href="@{'/admin/correction/' + ${ind.id}}" class="btn btn-info" onclick="return confirm('Etes-vous sur de vouloir apporter une correction?');">Correction</a>
                                             </td>
                                         </tr>
                                         </tbody>

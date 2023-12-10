@@ -151,11 +151,13 @@
                                                     </div>
                                                     <div class="form-group">
                                                         <label>Banque</label>
-                                                        <select name="stations"  class="form-control selectric dropdown scrollable-menu"
+                                                        <select name="compte"  class="form-control selectric dropdown scrollable-menu"
                                                                 id="vendeur" required th:field="*{banque}">
                                                             <option value=""> Selectionnez une banque</option>
-                                                            <option value="SGCI"> SGCI</option>
-                                                            <option value="BICICI"> BICICI</option>
+                                                            <option th:each="b : ${comptes}"
+                                                                    th:value="${b.getId()}"
+                                                                    th:text="${b.getBanque()}">SGBCI</option>
+                                                            <!--<option value="BICICI"> BICICI</option>
                                                             <option value="BNI"> BNI</option>
                                                             <option value="BACI"> BACI</option>
                                                             <option value="BPCI"> BANQUE POPULAIRE</option>
@@ -175,7 +177,7 @@
                                                             <option value="ORABANK"> UBA</option>
                                                             <option value="ORABANK"> AFRILAND FIRST BANK</option>
                                                             <option value="ORABANK"> CITI</option>
-                                                            <option value="ORABANK"> SIB</option>
+                                                            <option value="ORABANK"> SIB</option>-->
                                                         </select>
                                                     </div>
                                                 </div>

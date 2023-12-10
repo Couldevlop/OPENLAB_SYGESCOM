@@ -112,7 +112,7 @@
                                         <td th:if="${c.doc.id}"><a th:href="@{'/superviseur/downloadFile/'+${c.doc.id}}" class="badge badge-primary" style="margin: auto">Download</a></td>
                                         <td th:if="${c.doc.id}==null"><a href="#" class="badge badge-primary" style="margin: auto">Aucun</a></td>
                                         <td>
-                                            <a th:href="@{'/assistante/bc-modifier/' + ${c.id}}"
+                                            <a th:if="${c.aaccepte == false}" th:href="@{'/assistante/bc-modifier/' + ${c.id}}"
                                                class="btn btn-info" onclick="return confirm('Etes-vous sur de vouloir modifier?');">Modifier
                                             </a>
                                             <!-- 24/12/2022 -->
