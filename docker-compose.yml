@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: yourdatabase
+      MYSQL_USER: youruser
+      MYSQL_PASSWORD: yourpassword
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+  mysql-exporter:
+    image: prom/mysqld-exporter
+    environment:
+      DATA_SOURCE_NAME: youruser:yourpassword@(mysql:3306)/yourdatabase
+    ports:
+      - "9104:9104"
+
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/yourdatabase
+      SPRING_DATASOURCE_USERNAME: youruser
+      SPRING_DATASOURCE_PASSWORD: yourpassword
+
+  prometheus:
+    image: prom/prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-data:/var/lib/grafana
+
+volumes:
+  mysql-data:
+  grafana-data:
